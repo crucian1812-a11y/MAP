@@ -1,4 +1,32 @@
 {
   "updated": "2026-09-10",
-  "voices": []
+  "voices": [
+    {
+      "id": "ru_RU-dmitri-medium",
+      "title": "Дмитрий",
+      "tracks": {
+        "point-bauman": "audio/point-bauman--ru_RU-dmitri-medium.mp3",
+        "point-krasnyevorota": "audio/point-krasnyevorota--ru_RU-dmitri-medium.mp3",
+        "point-meshanskaya": "audio/point-meshanskaya--ru_RU-dmitri-medium.mp3",
+        "point-narkomzem": "audio/point-narkomzem--ru_RU-dmitri-medium.mp3",
+        "point-ogorod": "audio/point-ogorod--ru_RU-dmitri-medium.mp3",
+        "point-petropavel": "audio/point-petropavel--ru_RU-dmitri-medium.mp3",
+        "point-sakharov": "audio/point-sakharov--ru_RU-dmitri-medium.mp3",
+        "point-sklif": "audio/point-sklif--ru_RU-dmitri-medium.mp3",
+        "point-suharev": "audio/point-suharev--ru_RU-dmitri-medium.mp3",
+        "point-ulanskiy": "audio/point-ulanskiy--ru_RU-dmitri-medium.mp3",
+        "point-vysotka": "audio/point-vysotka--ru_RU-dmitri-medium.mp3",
+        "scene-bauman": "audio/scene-bauman--ru_RU-dmitri-medium.mp3",
+        "scene-narkomzem": "audio/scene-narkomzem--ru_RU-dmitri-medium.mp3",
+        "scene-ogorod": "audio/scene-ogorod--ru_RU-dmitri-medium.mp3",
+        "scene-petropavel": "audio/scene-petropavel--ru_RU-dmitri-medium.mp3",
+        "scene-sakharov": "audio/scene-sakharov--ru_RU-dmitri-medium.mp3",
+        "scene-sheremetev": "audio/scene-sheremetev--ru_RU-dmitri-medium.mp3",
+        "scene-suharev": "audio/scene-suharev--ru_RU-dmitri-medium.mp3",
+        "scene-ulan": "audio/scene-ulan--ru_RU-dmitri-medium.mp3",
+        "scene-vorota": "audio/scene-vorota--ru_RU-dmitri-medium.mp3",
+        "scene-vysotka": "audio/scene-vysotka--ru_RU-dmitri-medium.mp3"
+      }
+    }
+  ]
 }
