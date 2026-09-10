@@ -171,6 +171,11 @@ const Stage = (() => {
 
     (scene.beats || []).forEach(b => at(b.t, () => {
       el.layers.classList.add(b.cls);
+      if (b.cls === 'is-boom' && el.flash) {
+        el.flash.classList.remove('is-on');
+        void el.flash.offsetWidth;
+        el.flash.classList.add('is-on');
+      }
       if (b.fxFront) { if (stopFront) stopFront(); stopFront = Particles.start(el.fxFront, b.fxFront); }
       if (b.fxBack) { if (stopBack) stopBack(); stopBack = Particles.start(el.fxBack, b.fxBack); }
       if (b.tint !== undefined) { el.tint.style.background = b.tint; el.tint.style.opacity = b.tint ? '1' : '0'; }
@@ -230,7 +235,8 @@ const Stage = (() => {
       layers: document.getElementById('layers'),
       caption: document.getElementById('stage-caption'),
       aim: document.getElementById('stage-aim'),
-      title: document.getElementById('stage-title')
+      title: document.getElementById('stage-title'),
+      flash: document.getElementById('stage-flash')
     };
     document.getElementById('stage-close').addEventListener('click', close);
     document.getElementById('stage-replay').addEventListener('click', () => { Sound.resume(); render(); });

@@ -72,6 +72,10 @@ button{font:inherit;color:inherit;cursor:pointer}
 .thumb{position:absolute;inset:0}
 .thumb .layer{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;transform:none}
 .thumb .layer svg.fit{width:100%;height:100%;margin-bottom:0}
+.thumb .photo{margin:0;height:100%}
+.thumb .photo__wrap{height:100%}
+.thumb .photo__img{height:100%;width:auto;max-height:none;max-width:none}
+.thumb .pin__label,.thumb .pin__line{display:none}
 .thumb *{
   animation-play-state:paused!important;
   animation-delay:-7s!important;
@@ -365,8 +369,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 .sc-temple .bell{transform-box:fill-box;transform-origin:50% 0}
 .layers.is-ring .sc-temple .bell{animation:ring 1.4s ease-in-out infinite}
 @keyframes ring{0%,100%{transform:rotate(-16deg)}50%{transform:rotate(16deg)}}
-.sc-temple .ring{opacity:0;transform-box:fill-box;transform-origin:50% 50%}
-.layers.is-ring .sc-temple .ring{animation:ring-out 2.4s ease-out infinite}
+.ring{opacity:0;transform-box:fill-box;transform-origin:50% 50%}
+.layers.is-ring .ring{animation:ring-out 2.4s ease-out infinite}
 @keyframes ring-out{0%{opacity:.7;scale:.3}100%{opacity:0;scale:1.5}}
 .baker{opacity:0;transition:opacity 1.6s ease}
 .layers.is-bake .baker{opacity:1}
@@ -395,34 +399,92 @@ button{font:inherit;color:inherit;cursor:pointer}
 }
 
 /* ================= фото-реконструкции ================= */
-.photo{position:relative;display:inline-block;line-height:0;margin-bottom:6vh}
-.photo img{display:block;width:auto;height:auto;max-height:70vh;max-width:94vw}
+.photo{position:relative;display:inline-block;line-height:0;margin-bottom:12vh}
+.photo__wrap{position:relative;display:inline-block;line-height:0;will-change:transform}
+.photo__img{display:block;width:auto;height:auto;max-height:64vh;max-width:92vw}
 
-/* дальний размытый дубль — даёт объём при наклоне телефона */
-.photo--haze{filter:blur(16px) saturate(.75);opacity:.45;transform:scale(1.1)}
+/* дальний размытый дубль — глубина при наклоне телефона */
+.photo--haze{filter:blur(18px) saturate(.7);opacity:.4;transform:scale(1.12)}
 
-/* появление и растворение */
-.sc-photo .photo__img{
-  animation:photo-in 3.2s cubic-bezier(.2,.8,.25,1) both;
-  filter:drop-shadow(0 26px 50px rgba(0,0,0,.55));
-  transition:opacity 2.8s ease,filter 2.8s ease,transform 2.8s ease
+/* появление: объект «печатается» снизу вверх, потом наводится резкость */
+.sc-photo .photo{animation:photo-reveal 2.6s cubic-bezier(.25,.8,.3,1) both}
+.sc-photo .photo__wrap{animation:photo-focus 3s ease-out both, ken-burns 26s ease-in-out 3s infinite alternate}
+@keyframes photo-reveal{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes photo-focus{
+  0%{filter:blur(16px) brightness(1.6) saturate(.3)}
+  60%{filter:blur(2px) brightness(1.1) saturate(.9)}
+  100%{filter:blur(0) brightness(1) saturate(1)}
 }
-@keyframes photo-in{
-  0%{opacity:0;filter:blur(26px) brightness(1.7) saturate(.4);transform:translateY(56px) scale(1.07)}
-  55%{opacity:.85}
-  100%{opacity:1;filter:blur(0) brightness(1) saturate(1);transform:none}
+@keyframes ken-burns{from{transform:scale(1) translate(0,0)}to{transform:scale(1.06) translate(-1.5%,-1%)}}
+
+/* тень на земле */
+.photo__shadow{
+  position:absolute;left:8%;right:8%;bottom:-2.5%;height:7%;border-radius:50%;
+  background:radial-gradient(closest-side, rgba(0,0,0,.55), rgba(0,0,0,0));
+  filter:blur(10px);opacity:0;animation:fade-in 1.6s ease-out 1.6s forwards
 }
-.layers.is-fade .sc-photo .photo__img{opacity:.1;filter:blur(12px) brightness(1.4) saturate(.3);transform:scale(1.05)}
+
+/* лучи в воздухе за объектом */
+.photo__rays{
+  position:absolute;left:-30%;right:-30%;top:-25%;bottom:-10%;pointer-events:none;
+  background:conic-gradient(from 200deg at 50% 22%,
+    rgba(255,238,190,0) 0deg, rgba(255,238,190,.16) 8deg, rgba(255,238,190,0) 16deg,
+    rgba(255,238,190,0) 26deg, rgba(255,238,190,.12) 33deg, rgba(255,238,190,0) 40deg,
+    rgba(255,238,190,0) 300deg, rgba(255,238,190,.1) 312deg, rgba(255,238,190,0) 322deg);
+  mix-blend-mode:screen;opacity:0;transition:opacity 2.4s ease;
+  animation:rays-turn 40s linear infinite
+}
+@keyframes rays-turn{to{transform:rotate(6deg)}}
+.layers.is-lit .photo__rays,.layers.is-sun .photo__rays{opacity:.75}
+
+/* слои-эффекты по силуэту объекта */
+.fx{
+  position:absolute;inset:0;pointer-events:none;
+  -webkit-mask-image:var(--img);mask-image:var(--img);
+  -webkit-mask-size:100% 100%;mask-size:100% 100%;
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat
+}
+.fx--glow{
+  background:radial-gradient(58% 40% at 50% 68%, rgba(255,198,96,.9), rgba(255,170,60,0) 72%);
+  mix-blend-mode:screen;opacity:0;transition:opacity 2.2s ease
+}
+.layers.is-lit .sc-photo .fx--glow{opacity:.55;animation:glow-pulse 6s ease-in-out infinite}
+.fx--shine{
+  background:linear-gradient(102deg, rgba(255,255,255,0) 38%, rgba(255,255,255,.5) 50%, rgba(255,255,255,0) 62%);
+  background-size:260% 100%;mix-blend-mode:screen;opacity:.85;
+  animation:shine 7s ease-in-out 2.6s infinite
+}
+@keyframes shine{0%{background-position:180% 0}55%,100%{background-position:-90% 0}}
+.fx--scan{
+  background:linear-gradient(to top, rgba(255,236,180,0) 0%, rgba(255,236,180,.85) 3%, rgba(255,236,180,0) 7%);
+  background-size:100% 100%;mix-blend-mode:screen;opacity:0;
+  animation:scan-up 2.6s cubic-bezier(.25,.8,.3,1) both
+}
+@keyframes scan-up{0%{opacity:1;background-position:0 -100%}92%{opacity:1}100%{opacity:0;background-position:0 100%}}
+
+/* финал: объект разлетается полосами */
+.shard{
+  position:absolute;inset:0;background-image:var(--img);background-size:100% 100%;
+  clip-path:inset(calc(var(--i) * 25%) 0 calc((3 - var(--i)) * 25%) 0);
+  opacity:0;pointer-events:none
+}
+.layers.is-fade .sc-photo .photo__img,
+.layers.is-fade .sc-photo .fx{opacity:0;transition:opacity 1.2s ease}
+.layers.is-fade .sc-photo .shard{animation:shard-away 3.4s ease-in forwards;animation-delay:calc(var(--i) * .18s)}
+@keyframes shard-away{
+  0%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+  100%{opacity:0;transform:translateY(-14%) translateX(calc((var(--i) - 1.5) * 6%)) scale(1.06);filter:blur(14px)}
+}
 .layers.is-fade .photo--haze{opacity:0;transition:opacity 2.4s ease}
-.layers.is-fade .pin{opacity:0}
+.layers.is-fade .pin,.layers.is-fade .photo__shadow{opacity:0;transition:opacity 1s ease}
 
-/* тёплый свет в окнах */
-.sc-photo .photo::after{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background:radial-gradient(42% 26% at 46% 62%, rgba(255,196,92,.7), rgba(255,170,60,0) 72%);
-  mix-blend-mode:screen;opacity:0;transition:opacity 2.4s ease
-}
-.layers.is-lit .sc-photo .photo::after{opacity:.3;animation:glow-pulse 6s ease-in-out infinite}
+/* сезоны и время суток */
+.sc-photo .photo__img{transition:filter 2.4s ease}
+.layers.is-autumn .sc-photo .photo__img{filter:sepia(.3) saturate(1.35) hue-rotate(-14deg)}
+.layers.is-winter .sc-photo .photo__img{filter:saturate(.45) brightness(1.12) hue-rotate(6deg)}
+.layers.is-spring .sc-photo .photo__img{filter:saturate(1.15) brightness(1.04)}
+.layers.is-dusk .sc-photo .photo__img{filter:saturate(.9) brightness(.72) hue-rotate(-8deg)}
+.layers.is-old .sc-photo .photo__img{filter:sepia(.75) contrast(1.1) brightness(.95)}
 
 /* выноски */
 .pin{position:absolute;transform:translate(-50%,-50%);opacity:0;animation:pin-in .8s ease-out var(--d,0s) forwards;transition:opacity .8s ease}
@@ -443,6 +505,25 @@ button{font:inherit;color:inherit;cursor:pointer}
 @keyframes pin-in{from{opacity:0;transform:translate(-50%,-50%) scale(.6)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 @keyframes pin-pulse{0%,100%{box-shadow:0 0 0 4px rgba(255,255,255,.28)}50%{box-shadow:0 0 0 10px rgba(255,255,255,.05)}}
 
-/* высотка: наклон и выпрямление уже на фотографии */
-.sc-photo.sc-vys .photo{transform-origin:50% 100%;transform:rotate(5deg);transition:transform 3.4s cubic-bezier(.3,.8,.3,1)}
+/* высотка: наклон и выпрямление прямо на фотографии */
+.sc-photo.sc-vys .photo__wrap{transform-origin:50% 100%;animation:none;transition:transform 3.4s cubic-bezier(.3,.8,.3,1)}
+.sc-photo.sc-vys .photo{transform:rotate(4.5deg);transform-origin:50% 100%;transition:transform 3.4s cubic-bezier(.3,.8,.3,1)}
 .layers.is-straight .sc-photo.sc-vys .photo{transform:rotate(0deg)}
+
+/* уланы: кадр едет вслед за всадниками */
+.sc-photo.sc-ride .photo__wrap{animation:photo-focus 3s ease-out both, ride-by 14s ease-in-out infinite alternate}
+@keyframes ride-by{from{transform:scale(1.1) translateX(3%)}to{transform:scale(1.02) translateX(-4%)}}
+
+/* съёмка с рук: кадр чуть дышит */
+.stage__layers{animation:handheld 14s ease-in-out infinite}
+@keyframes handheld{
+  0%,100%{transform:translate(0,0) rotate(0deg)}
+  25%{transform:translate(2px,-3px) rotate(.12deg)}
+  50%{transform:translate(-3px,2px) rotate(-.1deg)}
+  75%{transform:translate(2px,3px) rotate(.08deg)}
+}
+
+/* вспышка на весь экран */
+.stage__flash{position:absolute;inset:0;z-index:7;pointer-events:none;background:#fff;opacity:0}
+.layers.is-boom ~ .stage__flash,.stage__flash.is-on{animation:flash-white .9s ease-out}
+@keyframes flash-white{0%{opacity:0}12%{opacity:.85}100%{opacity:0}}
