@@ -10,10 +10,12 @@
 
 import argparse
 import json
+import os
 import pathlib
 import shutil
 import subprocess
 import sys
+import time
 from urllib.request import urlopen
 
 from piper.download_voices import VOICES_JSON, download_voice
@@ -28,9 +30,69 @@ PREFERRED = [
 ]
 
 
+# HuggingFace иногда рвёт соединение на середине модели, поэтому качаем curl-ом
+# с повторами, а каталог читаем с несколькими подходами.
+HF_BASE = os.environ.get(
+    "PIPER_VOICES_BASE",
+    "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0",
+)
+
+_catalogue_cache: dict | None = None
+
+
 def catalogue() -> dict:
-    with urlopen(VOICES_JSON, timeout=120) as r:
-        return json.load(r)
+    global _catalogue_cache
+    if _catalogue_cache is not None:
+        return _catalogue_cache
+    last = None
+    for attempt in range(1, 6):
+        try:
+            with urlopen(VOICES_JSON, timeout=120) as r:
+                _catalogue_cache = json.load(r)
+                return _catalogue_cache
+        except Exception as exc:      # обрыв соединения, таймаут, что угодно
+            last = exc
+            print(f"Каталог голосов не дался ({exc}), попытка {attempt}", file=sys.stderr)
+            time.sleep(attempt * 4)
+    raise SystemExit(f"Не удалось прочитать каталог голосов: {last}")
+
+
+def fetch(url: str, dest: pathlib.Path) -> None:
+    """curl умеет докачивать и переживать обрыв, urlopen — нет."""
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    subprocess.run(
+        ["curl", "-sSfL", "--retry", "8", "--retry-all-errors", "--retry-delay", "4",
+         "--connect-timeout", "20", "--max-time", "900", "-o", str(dest), url],
+        check=True,
+    )
+
+
+def ensure_voice(voice: str, voice_dir: pathlib.Path) -> None:
+    """Модель весит десятки мегабайт: если уже лежит — не трогаем."""
+    onnx = voice_dir / f"{voice}.onnx"
+    conf = voice_dir / f"{voice}.onnx.json"
+    if onnx.exists() and conf.exists() and onnx.stat().st_size > 1_000_000:
+        print(f"{voice}: модель уже на месте")
+        return
+
+    files = list(catalogue().get(voice, {}).get("files", {}))
+    onnx_path = next((f for f in files if f.endswith(".onnx")), None)
+    conf_path = next((f for f in files if f.endswith(".onnx.json")), None)
+    if onnx_path and conf_path:
+        print(f"{voice}: качаю модель")
+        fetch(f"{HF_BASE}/{onnx_path}", onnx)
+        fetch(f"{HF_BASE}/{conf_path}", conf)
+        return
+
+    # каталог не подсказал путей — пусть качает сам piper
+    for attempt in range(1, 4):
+        try:
+            download_voice(voice, voice_dir)
+            return
+        except Exception as exc:
+            print(f"{voice}: {exc}, попытка {attempt}", file=sys.stderr)
+            time.sleep(attempt * 6)
+    raise SystemExit(f"Не удалось скачать голос {voice}")
 
 
 def list_voices(prefix: str) -> list[str]:
@@ -57,7 +119,7 @@ def resolve(requested: list[str]) -> list[str]:
 
 def synthesize(text_file: pathlib.Path, voice: str, voice_dir: pathlib.Path,
                out_dir: pathlib.Path, length_scale: float, silence: float) -> pathlib.Path:
-    download_voice(voice, voice_dir)
+    ensure_voice(voice, voice_dir)
     wav = out_dir / f"{text_file.stem}--{voice}.wav"
     subprocess.run(
         [
