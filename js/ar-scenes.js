@@ -66,7 +66,7 @@ SCENES.push({
     { depth: 1.1, z: 2, cls: 'sc-photo', html: photoLayer('suharev.webp', 0.869, [
       { x: 38, y: 17, text: 'Обсерватория', side: 'r', t: 3.2 },
       { x: 42, y: 34, text: 'Часы', t: 4.6 },
-      { x: 40, y: 58, text: 'Навигацкая школа', t: 8.4 }
+      { x: 34, y: 58, text: 'Навигацкая школа', side: 'r', t: 8.4 }
     ]) },
     { depth: 1.6, z: 3, html: `
       <svg class="fit" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
@@ -112,7 +112,7 @@ SCENES.push({
     { depth: 1.1, z: 2, cls: 'sc-photo', html: photoLayer('vorota2.webp', 0.804, [
       { x: 50, y: 5, text: 'Слава с трубой', side: 'r', t: 3.4 },
       { x: 50, y: 31, text: 'Барельеф', t: 6.0 },
-      { x: 21, y: 63, text: 'Колонны Ухтомского', t: 8.6 }
+      { x: 26, y: 63, text: 'Колонны', side: 'r', t: 8.6 }
     ]) }
   ],
   beats: [
@@ -144,7 +144,7 @@ SCENES.push({
   layers: [
     { depth: .45, z: 1, html: photoHaze('vysotka2.webp', 1.092) },
     { depth: 1.05, z: 2, cls: 'sc-photo sc-vys', html: photoLayer('vysotka2.webp', 1.092, [
-      { x: 50, y: 3, text: 'Шпиль со звездой', side: 'r', t: 3.0 },
+      { x: 52, y: 4, text: 'Шпиль со звездой', t: 3.0 },
       { x: 24, y: 60, text: 'Боковые крылья', t: 10.2 }
     ]) }
   ],
@@ -217,7 +217,7 @@ SCENES.push({
     { depth: .45, z: 1, html: photoHaze('sheremetev.webp', 1.460) },
     { depth: 1.1, z: 2, cls: 'sc-photo', html: photoLayer('sheremetev.webp', 1.460, [
       { x: 50, y: 9, text: 'Купол', side: 'r', t: 3.4 },
-      { x: 57, y: 42, text: 'Колоннада Кваренги', t: 7.6 },
+      { x: 60, y: 44, text: 'Колоннада', t: 7.6 },
       { x: 22, y: 70, text: 'Ограда', side: 'r', t: 11.0 }
     ]) }
   ],
