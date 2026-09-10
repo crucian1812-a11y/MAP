@@ -401,7 +401,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 /* ================= фото-реконструкции ================= */
 .photo{position:relative;display:inline-block;line-height:0;margin-bottom:12vh}
 .photo__wrap{position:relative;display:inline-block;line-height:0;will-change:transform}
-.photo__img{display:block;width:auto;height:auto;max-height:64vh;max-width:92vw}
+.photo__img{display:block;width:auto;height:auto;max-height:64vh;max-width:96vw}
 
 /* дальний размытый дубль — глубина при наклоне телефона */
 .photo--haze{filter:blur(18px) saturate(.7);opacity:.4;transform:scale(1.12)}

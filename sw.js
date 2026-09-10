@@ -1,16 +1,24 @@
 /* Кэш приложения: после первого захода сайт открывается и без сети.
    Тайлы карты не кэшируются — их слишком много, интернет на прогулке всё же нужен. */
-const CACHE = 'walk-bauman-v5';
+const CACHE = 'walk-bauman-v7';
 const FILES = [
   './', './index.html', './ar.html',
   './css/style.css', './css/ar.css',
   './js/data.js', './js/geo.js', './js/map.js', './js/app.js',
   './js/ar-particles.js', './js/ar-scenes.js', './js/ar-engine.js',
-  './assets/suharev.webp', './assets/vorota2.webp', './assets/vysotka2.webp',
-  './assets/ogorod.webp', './assets/sheremetev.webp', './assets/petropavel.webp',
-  './assets/bauman.webp', './assets/ulan.webp', './assets/sakharov.webp',
-  './assets/narkomzem.webp', './assets/narkomzem-scheme.webp',
-  './manifest.webmanifest', './icons/icon.svg'
+  './assets/bauman-haze.webp', './assets/bauman-thumb.webp', './assets/bauman.webp',
+  './assets/narkomzem-haze.webp', './assets/narkomzem-scheme-haze.webp', './assets/narkomzem-scheme-thumb.webp',
+  './assets/narkomzem-scheme.webp', './assets/narkomzem-thumb.webp', './assets/narkomzem.webp',
+  './assets/ogorod-haze.webp', './assets/ogorod-thumb.webp', './assets/ogorod.webp',
+  './assets/petropavel-haze.webp', './assets/petropavel-thumb.webp', './assets/petropavel.webp',
+  './assets/sakharov-haze.webp', './assets/sakharov-thumb.webp', './assets/sakharov.webp',
+  './assets/sheremetev-haze.webp', './assets/sheremetev-thumb.webp', './assets/sheremetev.webp',
+  './assets/suharev-haze.webp', './assets/suharev-thumb.webp', './assets/suharev.webp',
+  './assets/suharev2-haze.webp', './assets/suharev2-thumb.webp', './assets/suharev2.webp',
+  './assets/ulan-haze.webp', './assets/ulan-thumb.webp', './assets/ulan.webp',
+  './assets/vorota2-haze.webp', './assets/vorota2-thumb.webp', './assets/vorota2.webp',
+  './assets/vysotka2-haze.webp', './assets/vysotka2-thumb.webp', './assets/vysotka2.webp',
+  './manifest.webmanifest', './icons/icon.svg', './icons/icon-180.png'
 ];
 
 self.addEventListener('install', e => {

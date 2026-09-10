@@ -88,6 +88,7 @@ const Stage = (() => {
 
   /* ---------------- камера ---------------- */
   async function startCamera() {
+    stopCamera();              // если сцену переключили на лету, прежний поток гасим
     try {
       stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } },

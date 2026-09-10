@@ -45,7 +45,7 @@ const photoLayer = (file, ar, pins = [], extra = '', inner = '') => `
 
 const photoHaze = (file, ar) => `
   <div class="photo photo--haze" style="--ar:${ar}">
-    <div class="photo__wrap"><img class="photo__img" src="assets/${file}" alt=""></div>
+    <div class="photo__wrap"><img class="photo__img" src="assets/${file.replace('.webp', '-haze.webp')}" alt=""></div>
   </div>`;
 
 const SCENES = [];
@@ -146,7 +146,7 @@ SCENES.push({
     { depth: .45, z: 1, html: photoHaze('vysotka2.webp', 1.092) },
     { depth: 1.05, z: 2, cls: 'sc-photo sc-vys', html: photoLayer('vysotka2.webp', 1.092, [
       { x: 52, y: 4, text: 'Шпиль со звездой', t: 3.0 },
-      { x: 24, y: 60, text: 'Боковые крылья', t: 10.2 }
+      { x: 27, y: 60, text: 'Боковые крылья', side: 'r', t: 10.2 }
     ]) }
   ],
   beats: [
