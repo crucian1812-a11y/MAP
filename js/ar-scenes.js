@@ -19,6 +19,22 @@ const glowFilter = (id, blur, color) => `
     <feMerge><feMergeNode in="g"/><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
   </filter>`;
 
+
+/* Фото-слой: вырезанная реконструкция плюс живые выноски.
+   --ar держит пропорции картинки, поэтому подписи ложатся точно на объект. */
+const photoLayer = (file, ar, pins = []) => `
+  <div class="photo" style="--ar:${ar}">
+    <img class="photo__img" src="assets/${file}" alt="">
+    ${pins.map((pin, i) => `
+      <div class="pin pin--${pin.side || 'l'}" style="left:${pin.x}%;top:${pin.y}%;--d:${pin.t || 0}s">
+        <span class="pin__dot"></span><span class="pin__line"></span>
+        <span class="pin__label">${pin.text}</span>
+      </div>`).join('')}
+  </div>`;
+
+const photoHaze = (file, ar) => `
+  <div class="photo photo--haze" style="--ar:${ar}"><img src="assets/${file}" alt=""></div>`;
+
 const SCENES = [];
 
 /* ============================================================
@@ -34,95 +50,29 @@ SCENES.push({
   tint: 'radial-gradient(120% 80% at 50% 30%, rgba(30,40,80,.45), rgba(10,14,30,.72))',
   fxBack: { type: 'dust', rate: 40 },
   layers: [
-    { depth: .35, z: 1, html: `
-      <svg class="fit" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
-        <g class="sk-far" fill="#0d1730" opacity=".55">
-          <path d="M0 900 v-150 h60 v-40 h50 v40 h70 v-90 h40 v90 h60 v-60 h80 v60 h70 v-120 h40 v120 h80 v-70 h60 v70 h60 v-40 h60 v40 h70 v190z"/>
-          ${rep(9, i => `<rect x="${40 + i * 84}" y="${770 + (i % 3) * 14}" width="10" height="14" fill="#ffca62" opacity=".5"/>`)}
-        </g>
-      </svg>` },
-    { depth: 1, z: 2, cls: 'sc-tower', html: `
-      <svg class="fit" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax meet">
-        <defs>
-          ${brickPattern('br-t', '#d9c7a8', '#c9b087')}
-          ${brickPattern('br-t2', '#c2a882', '#b1946c')}
-          ${glowFilter('gl-warm', 6, '#ffca62')}
-          <linearGradient id="tw-shade" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#000" stop-opacity=".35"/>
-            <stop offset=".45" stop-color="#000" stop-opacity="0"/>
-            <stop offset="1" stop-color="#000" stop-opacity=".28"/>
-          </linearGradient>
-        </defs>
-
-        <!-- призрачный контур, который прочерчивается первым -->
-        <path class="ghost-line"
-          d="M60 880 L60 560 L92 560 L92 470 L130 470 L130 300 L160 300 L160 210 L200 60 L240 210 L240 300 L270 300 L270 470 L308 470 L308 560 L340 560 L340 880 Z"
-          fill="none" stroke="#ffe6a8" stroke-width="3"/>
-
-        <g class="tower-body">
-          <!-- нижний ярус -->
-          <rect x="60" y="560" width="280" height="320" fill="url(#br-t)"/>
-          <rect x="60" y="548" width="280" height="18" rx="3" fill="#a8452f"/>
-          ${rep(3, i => `
-            <path d="M${96 + i * 92} 880 v-120 a26 26 0 0 1 52 0 v120z" fill="#2a2118"/>
-            <path d="M${96 + i * 92} 880 v-120 a26 26 0 0 1 52 0 v120z" fill="none" stroke="#efe0c4" stroke-width="4"/>`)}
-          ${rep(4, i => `<rect class="win" x="${80 + i * 68}" y="600" width="34" height="46" rx="4" fill="#3b3226"/>`)}
-
-          <!-- средний ярус -->
-          <rect x="92" y="470" width="216" height="92" fill="url(#br-t2)"/>
-          <rect x="86" y="458" width="228" height="16" rx="3" fill="#a8452f"/>
-          ${rep(3, i => `<rect class="win" x="${118 + i * 62}" y="492" width="34" height="48" rx="4" fill="#3b3226"/>`)}
-
-          <!-- ярус с часами -->
-          <rect x="130" y="300" width="140" height="176" fill="url(#br-t)"/>
-          <rect x="124" y="290" width="152" height="16" rx="3" fill="#a8452f"/>
-          <g class="clock">
-            <circle cx="200" cy="360" r="42" fill="#f6efe0" stroke="#3b3226" stroke-width="5"/>
-            ${rep(12, i => `<rect x="199" y="322" width="2.5" height="8" fill="#3b3226"
-                 transform="rotate(${i * 30} 200 360)"/>`)}
-            <line class="hand-h" x1="200" y1="360" x2="200" y2="336" stroke="#3b3226" stroke-width="5" stroke-linecap="round"/>
-            <line class="hand-m" x1="200" y1="360" x2="200" y2="326" stroke="#a8452f" stroke-width="3" stroke-linecap="round"/>
-            <circle cx="200" cy="360" r="4" fill="#3b3226"/>
-          </g>
-          <rect class="win win--bruce" x="176" y="228" width="48" height="58" rx="6" fill="#3b3226"/>
-
-          <!-- верхний ярус и шатёр -->
-          <rect x="160" y="210" width="80" height="84" fill="url(#br-t2)"/>
-          <path d="M200 60 L160 214 h80z" fill="#a8452f"/>
-          <path d="M200 60 L160 214 h80z" fill="none" stroke="#7d3222" stroke-width="3"/>
-          ${rep(5, i => `<path d="M200 ${86 + i * 26} l-${13 + i * 6.5} ${26} h${26 + i * 13}z" fill="#8f3a28" opacity=".55"/>`)}
-          <rect x="196" y="18" width="8" height="46" fill="#e8b93b"/>
-          <path class="flag" d="M204 22 l46 12 l-46 12z" fill="#e2603b"/>
-          <circle cx="200" cy="14" r="7" fill="#ffd166" filter="url(#gl-warm)"/>
-
-          <rect x="60" y="60" width="280" height="820" fill="url(#tw-shade)"/>
-        </g>
-
-        <!-- свет из окна Брюса -->
-        <g class="bruce-beam">
-          <path d="M200 258 L60 20 L340 20 Z" fill="url(#beam-g)" opacity=".0"/>
-          <defs><linearGradient id="beam-g" x1="0" y1="1" x2="0" y2="0">
-            <stop offset="0" stop-color="#ffe6a8" stop-opacity=".55"/>
-            <stop offset="1" stop-color="#ffe6a8" stop-opacity="0"/>
-          </linearGradient></defs>
-        </g>
-      </svg>` },
-    { depth: 1.5, z: 3, html: `
+    { depth: .45, z: 1, html: photoHaze('suharev.webp', 0.869) },
+    { depth: 1.1, z: 2, cls: 'sc-photo', html: photoLayer('suharev.webp', 0.869, [
+      { x: 38, y: 17, text: 'Обсерватория', side: 'r', t: 3.2 },
+      { x: 42, y: 34, text: 'Часы', t: 4.6 },
+      { x: 40, y: 58, text: 'Навигацкая школа', t: 8.4 }
+    ]) },
+    { depth: 1.6, z: 3, html: `
       <svg class="fit" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
         ${rep(5, i => `
         <g class="crow" style="animation-delay:${i * 1.4}s;--r:${90 + i * 34}px">
           <g class="crow__wing">
-            <path d="M0 0 q-13 -12 -26 -3 q14 3 26 3z" fill="#0e1526"/>
-            <path d="M0 0 q13 -12 26 -3 q-14 3 -26 3z" fill="#0e1526"/>
-            <ellipse cx="0" cy="2" rx="8" ry="4" fill="#0e1526"/>
+            <path d="M0 0 q-13 -12 -26 -3 q14 3 26 3z" fill="#2b3550"/>
+            <path d="M0 0 q13 -12 26 -3 q-14 3 -26 3z" fill="#2b3550"/>
+            <ellipse cx="0" cy="2" rx="8" ry="4" fill="#2b3550"/>
           </g>
         </g>`)}
       </svg>` }
   ],
+
   beats: [
     { t: 2600, cls: 'is-lit' },
-    { t: 7600, cls: 'is-stars', fxFront: { type: 'stars', rate: 26 } },
-    { t: 13500, cls: 'is-fade', fxBack: { type: 'dust', rate: 90 } }
+    { t: 7600, cls: 'is-stars', fxFront: { type: 'stars', rate: 22 } },
+    { t: 13500, cls: 'is-fade', fxBack: { type: 'dust', rate: 110 } }
   ],
   captions: [
     { t: 400, text: '1695 год', big: true, hold: 2600 },
@@ -143,87 +93,27 @@ SCENES.push({
   title: 'Красные Ворота',
   place: 'Площадь Красные Ворота',
   aim: 'Встань у красного вестибюля метро «Красные Ворота» и наведи камеру на площадь, в сторону Садового кольца. Арка стояла посреди проезжей части.',
-  lead: 'Триумфальная арка Ухтомского: красная, с золотой Славой на крыше. Снесли в 1927-м.',
+  lead: 'Триумфальная арка Ухтомского: красная, с золотом и гербом. Снесли в 1927-м.',
   tint: 'radial-gradient(120% 90% at 50% 40%, rgba(60,20,20,.35), rgba(12,10,24,.6))',
   fxBack: { type: 'dust', rate: 22 },
   layers: [
-    { depth: 1, z: 2, cls: 'sc-arch', html: `
-      <svg class="fit" viewBox="0 -120 560 980" preserveAspectRatio="xMidYMax meet">
-        <defs>
-          ${glowFilter('gl-gold', 7, '#ffcf5c')}
-          <linearGradient id="red-g" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#d1523a"/><stop offset="1" stop-color="#9e3423"/>
-          </linearGradient>
-          <linearGradient id="gold-g" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#ffe9a8"/><stop offset=".5" stop-color="#e8b93b"/><stop offset="1" stop-color="#b8862a"/>
-          </linearGradient>
-          <linearGradient id="stone-g" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#fbf3e4"/><stop offset="1" stop-color="#ded0b8"/>
-          </linearGradient>
-        </defs>
-
-        <g class="arch-body">
-          <rect x="60" y="250" width="440" height="600" fill="url(#red-g)"/>
-          <path d="M280 330 a110 110 0 0 1 110 110 v410 h-220 v-410 a110 110 0 0 1 110 -110z" fill="#120c18"/>
-          <path d="M280 330 a110 110 0 0 1 110 110 v410" fill="none" stroke="url(#gold-g)" stroke-width="7"/>
-          <path d="M280 330 a110 110 0 0 0 -110 110 v410" fill="none" stroke="url(#gold-g)" stroke-width="7"/>
-
-          <!-- колонны -->
-          ${rep(4, i => `
-          <g transform="translate(${i < 2 ? 74 + i * 46 : 394 + (i - 2) * 46},0)">
-            <rect x="0" y="276" width="34" height="560" fill="url(#stone-g)"/>
-            ${rep(9, j => `<rect x="4" y="${300 + j * 60}" width="4" height="44" rx="2" fill="#c9b89a" opacity=".8"/>`)}
-            <rect x="-6" y="262" width="46" height="20" rx="4" fill="#fdf7ea"/>
-            <rect x="-6" y="830" width="46" height="20" rx="4" fill="#fdf7ea"/>
-          </g>`)}
-
-          <!-- антаблемент и фронтон -->
-          <rect x="44" y="228" width="472" height="34" rx="4" fill="url(#stone-g)"/>
-          <rect x="60" y="196" width="440" height="34" rx="4" fill="url(#red-g)"/>
-          <path d="M100 196 L280 96 L460 196z" fill="url(#red-g)"/>
-          <path d="M100 196 L280 96 L460 196z" fill="none" stroke="url(#stone-g)" stroke-width="9"/>
-          <circle cx="280" cy="166" r="24" fill="url(#gold-g)" filter="url(#gl-gold)"/>
-          ${rep(7, i => `<circle cx="${140 + i * 47}" cy="245" r="6" fill="url(#gold-g)"/>`)}
-
-          <!-- фигуры в нишах -->
-          ${rep(2, i => `
-          <g transform="translate(${i ? 404 : 116},430)" opacity=".9">
-            <rect x="0" y="0" width="40" height="120" rx="20" fill="#7d2c1f"/>
-            <circle cx="20" cy="26" r="13" fill="url(#stone-g)"/>
-            <path d="M6 44 q14 -10 28 0 l6 74 h-40z" fill="url(#stone-g)"/>
-          </g>`)}
-        </g>
-
-        <!-- Слава спускается сверху и трубит -->
-        <g transform="translate(0,-108)"><g class="glory">
-          <g filter="url(#gl-gold)">
-            <path class="glory__wing-l" d="M266 58 q-74 -6 -112 -58 q60 2 112 28z" fill="url(#gold-g)" opacity=".9"/>
-            <path class="glory__wing-r" d="M294 58 q74 -6 112 -58 q-60 2 -112 28z" fill="url(#gold-g)" opacity=".9"/>
-            <path d="M262 48 q18 -14 36 0 l12 92 q-30 12 -60 0z" fill="url(#gold-g)"/>
-            <path d="M252 138 q-28 34 -16 72 q24 -26 32 -50z" fill="url(#gold-g)" opacity=".85"/>
-            <circle cx="280" cy="28" r="16" fill="url(#gold-g)"/>
-            <path d="M292 28 l84 -36 l-8 26 l14 20 l-18 8 l-14 -20 l-58 20z" fill="url(#gold-g)"/>
-            <path d="M268 12 q12 -14 24 0 q-12 -6 -24 0z" fill="#fff4cf" opacity=".8"/>
-          </g>
-        </g></g>
-      </svg>` },
-    { depth: 1.7, z: 3, html: `
-      <svg class="fit" viewBox="0 -120 560 980" preserveAspectRatio="xMidYMax meet">
-        <g class="ribbon">
-          <path d="M40 700 q240 -70 480 0 q-240 44 -480 0z" fill="#a8452f" opacity=".9"/>
-          <text x="280" y="706" text-anchor="middle" font-size="42" font-family="Georgia,serif" fill="#ffe9a8">1757</text>
-        </g>
-      </svg>` }
+    { depth: .45, z: 1, html: photoHaze('vorota.webp', 0.937) },
+    { depth: 1.1, z: 2, cls: 'sc-photo', html: photoLayer('vorota.webp', 0.937, [
+      { x: 44, y: 7, text: 'Императорский герб', side: 'r', t: 3.4 },
+      { x: 46, y: 30, text: '«Слава России»', t: 5.6 },
+      { x: 30, y: 56, text: 'Колонны', t: 8.0 }
+    ]) }
   ],
+
   beats: [
     { t: 3000, cls: 'is-lit' },
-    { t: 5200, cls: 'is-trumpet', fxFront: { type: 'sparks', rate: 150, x: .5, y: .12 } },
+    { t: 5200, cls: 'is-trumpet', fxFront: { type: 'sparks', rate: 120, x: .46, y: .38 } },
     { t: 11000, cls: 'is-fade', fxFront: { type: 'dust', rate: 120 } }
   ],
   captions: [
     { t: 500, text: '«Красный» значило «красивый»', big: true, hold: 3000 },
     { t: 3400, text: 'Первые ворота — деревянные, 1709 год. Встречали войска после Полтавы.', hold: 4000 },
-    { t: 7600, text: 'Каменные построил Дмитрий Ухтомский. Наверху — Слава с трубой.', hold: 4000 },
+    { t: 7600, text: 'Каменные построил Дмитрий Ухтомский', hold: 3600 },
     { t: 12000, text: '1927 — арку снесли, чтобы расширить улицу', big: true, hold: 4200 }
   ],
   sound: [{ t: 300, s: 'rumble' }, { t: 5300, s: 'fanfare' }, { t: 11200, s: 'crack' }]
@@ -242,48 +132,13 @@ SCENES.push({
   tint: 'radial-gradient(120% 90% at 50% 20%, rgba(20,50,90,.4), rgba(8,14,30,.68))',
   fxBack: { type: 'frost', rate: 26 },
   layers: [
-    { depth: .9, z: 2, cls: 'sc-vys', html: `
-      <svg class="fit" viewBox="0 0 520 900" preserveAspectRatio="xMidYMax meet">
-        <defs>
-          ${glowFilter('gl-ice', 8, '#9fd8ff')}
-          <linearGradient id="wall-g" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#8f8a7c"/><stop offset=".35" stop-color="#d9d2c2"/>
-            <stop offset=".72" stop-color="#b9b2a2"/><stop offset="1" stop-color="#7d7768"/>
-          </linearGradient>
-          <linearGradient id="ice-g" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#bfe8ff" stop-opacity=".9"/>
-            <stop offset="1" stop-color="#6fa8d8" stop-opacity=".35"/>
-          </linearGradient>
-        </defs>
-
-        <!-- подземная часть: тоннель метро и трубы заморозки -->
-        <g class="underground">
-          <rect x="0" y="742" width="520" height="158" fill="#2a2318"/>
-          <rect class="ice-soil" x="0" y="742" width="520" height="158" fill="url(#ice-g)"/>
-          <ellipse cx="260" cy="820" rx="120" ry="52" fill="#0e1220"/>
-          <ellipse cx="260" cy="820" rx="120" ry="52" fill="none" stroke="#8aa6c0" stroke-width="5"/>
-          ${rep(9, i => `<rect class="pipe" x="${28 + i * 54}" y="748" width="7" height="140" rx="3" fill="#7fc7f5" style="animation-delay:${i * .12}s"/>`)}
-          <text x="260" y="828" text-anchor="middle" font-size="26" fill="#8aa6c0" font-family="Georgia,serif">метро</text>
-        </g>
-
-        <!-- сам дом, наклонён и потом выпрямляется -->
-        <g class="building">
-          <rect x="120" y="470" width="280" height="280" fill="url(#wall-g)"/>
-          <rect x="60" y="600" width="400" height="150" fill="#b3ac9c"/>
-          <rect x="170" y="230" width="180" height="250" fill="url(#wall-g)"/>
-          <rect x="196" y="150" width="128" height="90" fill="#c9c2b2"/>
-          <path d="M260 44 L196 156 h128z" fill="#9c9484"/>
-          <path d="M260 44 L252 76 h16z" fill="#e8b93b"/>
-          <rect x="256" y="-30" width="8" height="76" fill="#e8b93b"/>
-          <g class="star" transform="translate(260,-38)" filter="url(#gl-ice)">
-            <path d="M0 -16 L4.7 -4.9 L16 -4.9 L6.6 2.5 L10.6 14 L0 7 L-10.6 14 L-6.6 2.5 L-16 -4.9 L-4.7 -4.9z" fill="#ffe9a8"/>
-          </g>
-          ${rep(24, i => `<rect class="win" x="${186 + (i % 4) * 42}" y="${258 + Math.floor(i / 4) * 34}" width="26" height="20" rx="2" fill="#3d4452"/>`)}
-          ${rep(18, i => `<rect class="win" x="${134 + (i % 6) * 42}" y="${496 + Math.floor(i / 6) * 40}" width="26" height="22" rx="2" fill="#3d4452"/>`)}
-          ${rep(14, i => `<rect class="win" x="${74 + (i % 7) * 52}" y="${630 + Math.floor(i / 7) * 44}" width="28" height="24" rx="2" fill="#3d4452"/>`)}
-        </g>
-      </svg>` }
+    { depth: .45, z: 1, html: photoHaze('vysotka.webp', 0.770) },
+    { depth: 1.05, z: 2, cls: 'sc-photo sc-vys', html: photoLayer('vysotka.webp', 0.770, [
+      { x: 42, y: 5, text: 'Шпиль со звездой', side: 'r', t: 3.0 },
+      { x: 38, y: 52, text: '24 этажа', t: 9.6 }
+    ]) }
   ],
+
   beats: [
     { t: 3400, cls: 'is-frozen' },
     { t: 7200, cls: 'is-melt', fxBack: { type: 'drops', rate: 34 } },
