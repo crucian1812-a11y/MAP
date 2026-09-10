@@ -4,6 +4,7 @@ const WalkMap = (() => {
   let map, meMarker, meCircle, routeLine, doneLine;
   const markers = {};
   let onPick = null;
+  let ready = false;      // без Leaflet карты нет, а остальной квест должен работать
 
   function pinIcon(point, state) {
     const cls = 'pin' + (state === 'done' ? ' pin--done' : state === 'next' ? ' pin--next' : '');
@@ -49,10 +50,12 @@ const WalkMap = (() => {
     });
 
     map.fitBounds(routeLine.getBounds(), { padding: [40, 40] });
+    ready = true;
     return map;
   }
 
   function setStates(doneIds, nextId) {
+    if (!ready) return;
     POINTS.forEach(p => {
       const state = doneIds.includes(p.id) ? 'done' : (p.id === nextId ? 'next' : 'idle');
       markers[p.id].setIcon(pinIcon(p, state));
@@ -60,6 +63,7 @@ const WalkMap = (() => {
   }
 
   function showMe(pos, accuracy) {
+    if (!ready) return;
     if (!meMarker) {
       meMarker = L.marker(pos, {
         icon: L.divIcon({ className: '', html: '<div class="me-dot"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }),
@@ -73,16 +77,21 @@ const WalkMap = (() => {
   }
 
   function traceDone(pos) {
+    if (!ready) return;
     const pts = doneLine.getLatLngs();
     const last = pts[pts.length - 1];
     if (!last || Geo.distance([last.lat, last.lng], pos) > 8) doneLine.addLatLng(pos);
   }
 
-  function follow(pos, zoom) { map.setView(pos, zoom || Math.max(map.getZoom(), 16)); }
-  function flyToPoint(p) { map.setView(p.coords, 17); }
-  function fitRoute() { map.fitBounds(routeLine.getBounds(), { padding: [40, 40] }); }
+  function follow(pos, zoom) {
+    if (!ready) return; map.setView(pos, zoom || Math.max(map.getZoom(), 16)); }
+  function flyToPoint(p) {
+    if (!ready) return; map.setView(p.coords, 17); }
+  function fitRoute() {
+    if (!ready) return; map.fitBounds(routeLine.getBounds(), { padding: [40, 40] }); }
 
   function setCalibration(on) {
+    if (!ready) return;
     Object.values(markers).forEach(m => {
       if (on) m.dragging.enable(); else m.dragging.disable();
     });
@@ -92,7 +101,8 @@ const WalkMap = (() => {
     return POINTS.map(p => `  { id: '${p.id}', coords: [${p.coords[0]}, ${p.coords[1]}] }`).join(',\n');
   }
 
-  function invalidate() { map && setTimeout(() => map.invalidateSize(), 60); }
+  function invalidate() {
+    if (!ready) return; map && setTimeout(() => map.invalidateSize(), 60); }
 
   return { init, setStates, showMe, traceDone, follow, flyToPoint, fitRoute, setCalibration, exportCoords, invalidate };
 })();

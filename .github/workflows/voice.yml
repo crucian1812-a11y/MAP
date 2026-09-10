@@ -1,0 +1,78 @@
+name: Озвучить прогулку
+
+# Голоса Piper лежат на HuggingFace, а из сессии Claude он закрыт политикой сети.
+# У раннера интернет свободный — поэтому синтез живёт здесь.
+on:
+  workflow_dispatch:
+    inputs:
+      voices:
+        description: Голоса через запятую; пусто — выбрать автоматически
+        required: false
+        default: ru_RU-dmitri-medium
+      length_scale:
+        description: Темп речи, больше единицы — медленнее
+        required: false
+        default: '1.05'
+      bitrate:
+        description: Битрейт mp3
+        required: false
+        default: 56k
+      only_manifest:
+        description: Не синтезировать, только пересобрать список голосов (для своих записей)
+        type: boolean
+        required: false
+        default: false
+
+concurrency:
+  group: voice
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  speak:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+
+      - name: Поставить синтез и кодек
+        if: ${{ !inputs.only_manifest }}
+        run: |
+          set -euo pipefail
+          pip install --quiet piper-tts
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+
+      - name: Собрать тексты из данных сайта
+        if: ${{ !inputs.only_manifest }}
+        run: node scripts/build-voice-scripts.js
+
+      - name: Какие русские голоса есть в каталоге
+        if: ${{ !inputs.only_manifest }}
+        run: python3 scripts/tts.py --list ru
+
+      - name: Синтез
+        if: ${{ !inputs.only_manifest }}
+        env:
+          VOICES: ${{ inputs.voices }}
+          LENGTH: ${{ inputs.length_scale }}
+          BITRATE: ${{ inputs.bitrate }}
+        run: |
+          set -euo pipefail
+          python3 scripts/tts.py audio/scripts \
+            --out audio \
+            --voices "$VOICES" \
+            --length-scale "$LENGTH" \
+            --bitrate "$BITRATE"
+          ls -la audio | head -30
+
+      - name: Обновить список голосов
+        run: node scripts/build-audio-manifest.js
+
+      - name: Закоммитить звук
+        run: scripts/commit-and-push.sh "Озвучка голосом ${{ inputs.voices }}" audio/

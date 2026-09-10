@@ -1,0 +1,34 @@
+name: Положить Leaflet в репозиторий
+
+# Без локальной копии карта тянется с unpkg, и на прогулке без сети квест остаётся без карты.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Версия Leaflet
+        required: false
+        default: '1.9.4'
+
+permissions:
+  contents: write
+
+jobs:
+  vendor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Скачать
+        env:
+          V: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          base="https://unpkg.com/leaflet@${V}/dist"
+          mkdir -p vendor/leaflet/images
+          curl -sSfL "$base/leaflet.js"  -o vendor/leaflet/leaflet.js
+          curl -sSfL "$base/leaflet.css" -o vendor/leaflet/leaflet.css
+          for f in layers.png layers-2x.png marker-icon.png marker-icon-2x.png marker-shadow.png; do
+            curl -sSfL "$base/images/$f" -o "vendor/leaflet/images/$f"
+          done
+          ls -la vendor/leaflet
+      - name: Закоммитить
+        run: scripts/commit-and-push.sh "Локальная копия Leaflet ${{ inputs.version }}" vendor/

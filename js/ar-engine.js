@@ -192,11 +192,23 @@ const Stage = (() => {
     }));
 
     (scene.sound || []).forEach(s => at(s.t, () => Sound.play(s.s)));
+
+    // рассказчик, если для сцены записана озвучка
+    if (typeof Voice !== 'undefined') {
+      Voice.stop();
+      const sceneId = scene.id;
+      at(700, () => Voice.load().then(() => {
+        if (soundOn && Voice.has('scene-' + sceneId) && scene && scene.id === sceneId) {
+          Voice.play('scene-' + sceneId, null);
+        }
+      }));
+    }
   }
 
   async function open(id) {
     scene = SCENES.find(s => s.id === id);
     if (!scene) return;
+    if (typeof Voice !== 'undefined') Voice.load();
     location.hash = id;
     el.stage.hidden = false;
     document.body.classList.add('stage-open');
@@ -215,6 +227,7 @@ const Stage = (() => {
 
   function close() {
     clearTimers();
+    if (typeof Voice !== 'undefined') Voice.stop();
     if (stopBack) { stopBack(); stopBack = null; }
     if (stopFront) { stopFront(); stopFront = null; }
     if (stopTilt) { stopTilt(); stopTilt = null; }
@@ -249,7 +262,7 @@ const Stage = (() => {
       soundOn = !soundOn;
       localStorage.setItem('ar-sound', soundOn ? 'on' : 'off');
       paint();
-      if (soundOn) Sound.resume();
+      if (soundOn) Sound.resume(); else if (typeof Voice !== 'undefined') Voice.stop();
     });
     paint();
 

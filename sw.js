@@ -1,11 +1,11 @@
 /* Кэш приложения: после первого захода сайт открывается и без сети.
    Тайлы карты не кэшируются — их слишком много, интернет на прогулке всё же нужен. */
-const CACHE = 'walk-bauman-v7';
+const CACHE = 'walk-bauman-v9';
 const FILES = [
   './', './index.html', './ar.html',
   './css/style.css', './css/ar.css',
   './js/data.js', './js/geo.js', './js/map.js', './js/app.js',
-  './js/ar-particles.js', './js/ar-scenes.js', './js/ar-engine.js',
+  './js/voice.js', './js/ar-particles.js', './js/ar-scenes.js', './js/ar-engine.js',
   './assets/bauman-haze.webp', './assets/bauman-thumb.webp', './assets/bauman.webp',
   './assets/narkomzem-haze.webp', './assets/narkomzem-scheme-haze.webp', './assets/narkomzem-scheme-thumb.webp',
   './assets/narkomzem-scheme.webp', './assets/narkomzem-thumb.webp', './assets/narkomzem.webp',
@@ -21,8 +21,20 @@ const FILES = [
   './manifest.webmanifest', './icons/icon.svg', './icons/icon-180.png'
 ];
 
+/* Появляются со временем: локальный Leaflet кладёт один воркфлоу, озвучку — другой.
+   Их отсутствие не должно ронять установку кэша. */
+const OPTIONAL = [
+  './vendor/leaflet/leaflet.js', './vendor/leaflet/leaflet.css',
+  './audio/manifest.json'
+];
+
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
+  e.waitUntil(
+    caches.open(CACHE)
+      .then(c => c.addAll(FILES).then(() =>
+        Promise.all(OPTIONAL.map(u => c.add(u).catch(() => {})))))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', e => {

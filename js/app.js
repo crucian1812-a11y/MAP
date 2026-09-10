@@ -189,24 +189,15 @@
   }
 
   /* ---------- чтение вслух ---------- */
-  let speaking = false;
-  function stopSpeech() {
-    if (window.speechSynthesis) window.speechSynthesis.cancel();
-    speaking = false;
-    document.getElementById('btn-speak').textContent = '🔊';
-  }
+  function stopSpeech() { Voice.stop(); }
+
   function toggleSpeech() {
-    if (!window.speechSynthesis) { toast('Браузер не умеет читать вслух'); return; }
-    if (speaking) { stopSpeech(); return; }
+    if (Voice.isSpeaking()) { Voice.stop(); return; }
     const p = POINTS.find(x => x.id === currentPointId);
     if (!p) return;
-    const text = [p.look].concat(p.story).concat(['А ещё. ' + p.fact]).join(' ');
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'ru-RU'; u.rate = 0.95; u.pitch = 1.05;
-    u.onend = stopSpeech;
-    speechSynthesis.speak(u);
-    speaking = true;
-    document.getElementById('btn-speak').textContent = '⏸';
+    const text = [p.name + '.', p.look].concat(p.story).concat(['А ещё. ' + p.fact]).join(' ');
+    const how = Voice.play('point-' + p.id, text);
+    if (how === 'none') toast('Браузер не умеет читать вслух');
   }
 
   /* ---------- список точек ---------- */
@@ -280,6 +271,11 @@
         <pre id="calib-out" style="white-space:pre-wrap;font-size:12px;color:#4a5876;margin-top:10px"></pre>
       </div>
       <div class="set">
+        <h3>Голос рассказчика</h3>
+        <p id="voice-note">Ищу записанные озвучки…</p>
+        <div class="row" id="voice-row"></div>
+      </div>
+      <div class="set">
         <h3>Сцены дополненной реальности</h3>
         <p>Десять анимаций отдельными кнопками, без геолокации. Можно смотреть в любом порядке.</p>
         <a class="btn btn--wide" href="ar.html" style="display:flex;align-items:center;justify-content:center;text-decoration:none">Открыть «Оживи Москву»</a>
@@ -303,6 +299,25 @@
       WalkMap.setCalibration(e.target.checked);
       toast(e.target.checked ? 'Метки можно двигать на карте' : 'Метки закреплены');
     });
+    Voice.load().then(list => {
+      const note = document.getElementById('voice-note');
+      const row = document.getElementById('voice-row');
+      if (!note || !row) return;
+      const voices = Voice.voices();
+      note.textContent = voices.length
+        ? 'Записанные голоса лежат в репозитории. Системный — тот, что стоит в телефоне.'
+        : 'Записей пока нет, читает голос телефона. Озвучку можно сгенерировать через GitHub Actions.';
+      const options = [{ id: 'system', title: 'Системный' }].concat(voices.map(v => ({ id: v.id, title: v.title })));
+      row.innerHTML = options.map(o =>
+        `<button class="btn ${o.id === Voice.currentId() ? 'btn--primary' : ''}" data-voice="${o.id}">${o.title}</button>`
+      ).join('');
+      row.querySelectorAll('[data-voice]').forEach(b => b.addEventListener('click', () => {
+        Voice.setVoice(b.dataset.voice);
+        row.querySelectorAll('[data-voice]').forEach(x => x.classList.toggle('btn--primary', x === b));
+        Voice.play('point-' + POINTS[0].id, 'Так звучит рассказчик. Идём гулять.');
+      }));
+    });
+
     document.getElementById('set-reset').addEventListener('click', () => {
       state.done = []; state.quiz = {}; autoOpened = {}; save(); refreshProgress(); updateSheet();
       toast('Прогресс сброшен');
@@ -355,15 +370,59 @@
     });
   }
 
+  /* ---------- карта грузится локально, а если её нет — с CDN ---------- */
+  const LEAFLET_CDN = {
+    js: 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+    css: 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
+  };
+  function loadScript(src) {
+    return new Promise(res => {
+      const el = document.createElement('script');
+      el.src = src;
+      el.onload = () => res(true);
+      el.onerror = () => res(false);
+      document.head.appendChild(el);
+    });
+  }
+  async function ensureLeaflet() {
+    if (window.L) return true;
+    if (await loadScript('vendor/leaflet/leaflet.js')) return true;
+    const link = document.createElement('link');
+    link.rel = 'stylesheet'; link.href = LEAFLET_CDN.css;
+    document.head.appendChild(link);
+    return loadScript(LEAFLET_CDN.js);
+  }
+
+  function mapUnavailable() {
+    const hint = document.getElementById('gps-hint');
+    hint.hidden = false;
+    hint.textContent = 'Карта не загрузилась: нет интернета. Истории, значки и сцены работают, точки открывай кнопкой «Все точки».';
+    document.getElementById('map').style.background =
+      'repeating-linear-gradient(135deg,#efe7d7 0 18px,#e8dfcc 18px 36px)';
+  }
+
   /* ---------- запуск ---------- */
   function init() {
-    WalkMap.init({
-      onPick: id => openStory(id),
-      onMoved: () => {
-        const out = document.getElementById('calib-out');
-        if (out) out.textContent = WalkMap.exportCoords();
+    Voice.onChange(on => { document.getElementById('btn-speak').textContent = on ? '⏸' : '🔊'; });
+    Voice.load();
+
+    ensureLeaflet().then(ok => {
+      if (!ok) { mapUnavailable(); return; }
+      try {
+        WalkMap.init({
+          onPick: id => openStory(id),
+          onMoved: () => {
+            const out = document.getElementById('calib-out');
+            if (out) out.textContent = WalkMap.exportCoords();
+          }
+        });
+        refreshProgress();
+        if (pos) { WalkMap.showMe(pos, acc); }
+      } catch (e) {
+        mapUnavailable();
       }
     });
+
     refreshProgress();
     updateSheet();
     startGeo();
