@@ -1,0 +1,13 @@
+{
+  "name": "Прогулка-квест: от Аптекарского огорода до сада Баумана",
+  "short_name": "Прогулка",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fbf6ec",
+  "theme_color": "#1b2a4a",
+  "orientation": "portrait",
+  "lang": "ru",
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#1b2a4a">
+<title>Прогулка с папой · от Аптекарского огорода до сада Баумана</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ЭКРАН: карта -->
+<div id="screen-map" class="screen is-active">
+  <header class="topbar">
+    <button class="topbar__btn" id="btn-menu" aria-label="Меню">☰</button>
+    <div class="topbar__title">
+      <b>Прогулка-квест</b>
+      <span id="progress-text">0 из 11 точек</span>
+    </div>
+    <button class="topbar__btn" id="btn-badges" aria-label="Значки">🏅</button>
+  </header>
+  <div class="progress"><div class="progress__bar" id="progress-bar"></div></div>
+
+  <div id="map"></div>
+
+  <div class="gps-hint" id="gps-hint" hidden></div>
+
+  <div class="map-btns">
+    <button class="map-btn" id="btn-locate" aria-label="Показать себя на карте">◎</button>
+    <button class="map-btn" id="btn-fit" aria-label="Весь маршрут">🗺</button>
+  </div>
+
+  <section class="sheet" id="sheet">
+    <button class="sheet__grip" id="sheet-grip" aria-label="Свернуть или развернуть"></button>
+    <div class="sheet__head">
+      <div class="compass" id="compass" aria-hidden="true"><div class="compass__needle">➤</div></div>
+      <div class="sheet__info">
+        <div class="sheet__label">Следующая точка</div>
+        <div class="sheet__name" id="next-name">—</div>
+        <div class="sheet__dist" id="next-dist">Ищу спутники…</div>
+      </div>
+    </div>
+    <div class="sheet__body">
+      <div class="hotcold" id="hotcold">Иди по маршруту</div>
+      <div class="sheet__actions">
+        <button class="btn btn--primary" id="btn-open">Мы на месте!</button>
+        <button class="btn" id="btn-list">Все точки</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ЭКРАН: история точки -->
+<div id="screen-story" class="screen">
+  <header class="topbar topbar--story">
+    <button class="topbar__btn" id="story-back" aria-label="Назад">←</button>
+    <div class="topbar__title"><b id="story-title">Точка</b><span id="story-sub"></span></div>
+    <button class="topbar__btn" id="btn-speak" aria-label="Прочитать вслух">🔊</button>
+  </header>
+  <div class="story" id="story-body"></div>
+</div>
+
+<!-- ЭКРАН: дополненная реальность -->
+<div id="screen-ar" class="screen screen--ar">
+  <video id="ar-video" playsinline muted autoplay></video>
+  <div id="ar-stage"></div>
+  <div class="ar-hud">
+    <button class="ar-close" id="ar-close" aria-label="Выйти">✕</button>
+    <div class="ar-tip" id="ar-tip">Наведи камеру вокруг себя</div>
+  </div>
+  <div class="ar-hint" id="ar-hint" hidden><span id="ar-hint-arrow">←</span> <span id="ar-hint-text">Поверни телефон</span></div>
+</div>
+
+<!-- ЭКРАН: список точек -->
+<div id="screen-list" class="screen">
+  <header class="topbar">
+    <button class="topbar__btn" id="list-back" aria-label="Назад">←</button>
+    <div class="topbar__title"><b>Все точки</b><span>Можно открыть заранее</span></div>
+    <span class="topbar__btn topbar__btn--ghost"></span>
+  </header>
+  <div class="list" id="list-body"></div>
+</div>
+
+<!-- ЭКРАН: значки -->
+<div id="screen-badges" class="screen">
+  <header class="topbar">
+    <button class="topbar__btn" id="badges-back" aria-label="Назад">←</button>
+    <div class="topbar__title"><b>Значки</b><span id="badges-count"></span></div>
+    <span class="topbar__btn topbar__btn--ghost"></span>
+  </header>
+  <div class="badges" id="badges-body"></div>
+  <div class="diploma" id="diploma" hidden></div>
+</div>
+
+<!-- ЭКРАН: настройки -->
+<div id="screen-settings" class="screen">
+  <header class="topbar">
+    <button class="topbar__btn" id="settings-back" aria-label="Назад">←</button>
+    <div class="topbar__title"><b>Настройки</b><span>и режим тренировки</span></div>
+    <span class="topbar__btn topbar__btn--ghost"></span>
+  </header>
+  <div class="settings" id="settings-body"></div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/data.js"></script>
+<script src="js/scenes.js"></script>
+<script src="js/geo.js"></script>
+<script src="js/ar.js"></script>
+<script src="js/map.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
