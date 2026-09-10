@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0d1424">
+<title>Оживи Москву · дополненная реальность</title>
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/ar.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero__in">
+    <div class="hero__kicker">Прогулка с папой · дополненная реальность</div>
+    <h1>Оживи Москву</h1>
+    <p>Десять мест по маршруту от проспекта Мира до сада Баумана. Нажимаешь кнопку, наводишь камеру
+      куда написано — и на пустом месте вырастает то, чего там давно нет. Геолокация не нужна,
+      всё работает где угодно, хоть дома на диване.</p>
+    <div class="hero__note">Нужен доступ к камере. Звук включён — можно выключить кнопкой в углу.</div>
+  </div>
+</header>
+
+<main class="cards" id="cards"></main>
+
+<footer class="foot">
+  <p>Каждая сцена живёт по своей ссылке — можно вынести на домашний экран телефона отдельными кнопками.</p>
+  <a class="foot__link" href="index.html">← Вернуться к квесту с картой</a>
+</footer>
+
+<!-- сцена -->
+<div class="stage" id="stage" hidden>
+  <video class="stage__cam" id="cam" playsinline muted autoplay></video>
+  <div class="stage__tint" id="tint"></div>
+  <canvas class="stage__fx" id="fx-back"></canvas>
+  <div class="stage__layers layers" id="layers"></div>
+  <canvas class="stage__fx stage__fx--front" id="fx-front"></canvas>
+  <div class="stage__vignette"></div>
+
+  <div class="stage__hud">
+    <div class="stage__top">
+      <div class="stage__name" id="stage-title"></div>
+      <button class="round" id="stage-close" aria-label="Закрыть">✕</button>
+    </div>
+    <div class="stage__aim" id="stage-aim"></div>
+    <div class="stage__caption" id="stage-caption"></div>
+    <div class="stage__bottom">
+      <button class="pill" id="stage-replay">↻ Ещё раз</button>
+      <button class="round round--sound" id="stage-sound" aria-label="Звук">🔊</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/ar-particles.js"></script>
+<script src="js/ar-scenes.js"></script>
+<script src="js/ar-engine.js"></script>
+<script>
+/* Галерея: карточки со «стоп-кадром» сцены и прямой ссылкой на каждую. */
+(() => {
+  const BEATS = 'is-lit is-stars is-built is-ride is-grow is-sun is-open is-run-lift is-curtain is-carriage is-doves is-band is-salute is-straight is-ring is-bake is-trumpet';
+
+  function card(s, i) {
+    const el = document.createElement('article');
+    el.className = 'card';
+    el.innerHTML = `
+      <div class="card__thumb">
+        <div class="layers thumb ${BEATS}" data-scene="${s.id}">
+          ${s.layers.map(l => `<div class="layer ${l.cls || ''}" style="z-index:${l.z || 1}">${l.html}</div>`).join('')}
+        </div>
+        <span class="card__num">${i + 1}</span>
+      </div>
+      <div class="card__body">
+        <h2>${s.emoji} ${s.title}</h2>
+        <div class="card__place">${s.place}</div>
+        <p class="card__lead">${s.lead}</p>
+        <div class="card__aim"><b>Куда наводить камеру</b>${s.aim}</div>
+        <div class="card__row">
+          <button class="btn btn--go" data-go="${s.id}">Запустить</button>
+          <button class="btn btn--copy" data-copy="${s.id}">Ссылка</button>
+        </div>
+      </div>`;
+    return el;
+  }
+
+  const wrap = document.getElementById('cards');
+  SCENES.forEach((s, i) => wrap.appendChild(card(s, i)));
+
+  wrap.addEventListener('click', e => {
+    const go = e.target.closest('[data-go]');
+    if (go) { Stage.open(go.dataset.go); return; }
+    const cp = e.target.closest('[data-copy]');
+    if (cp) {
+      const url = location.origin + location.pathname + '#' + cp.dataset.copy;
+      navigator.clipboard && navigator.clipboard.writeText(url);
+      const old = cp.textContent;
+      cp.textContent = 'Скопировано';
+      setTimeout(() => cp.textContent = old, 1600);
+    }
+  });
+
+  Stage.init();
+
+  // прямая ссылка вида ar.html#suharev открывает сцену сразу
+  const openFromHash = () => {
+    const id = location.hash.replace('#', '');
+    if (id && SCENES.some(s => s.id === id)) Stage.open(id);
+  };
+  window.addEventListener('hashchange', openFromHash);
+  openFromHash();
+
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+})();
+</script>
+</body>
+</html>

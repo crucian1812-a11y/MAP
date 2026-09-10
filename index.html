@@ -48,6 +48,7 @@
       <div class="sheet__actions">
         <button class="btn btn--primary" id="btn-open">Мы на месте!</button>
         <button class="btn" id="btn-list">Все точки</button>
+        <a class="btn btn--ar" href="ar.html" style="display:flex;align-items:center;justify-content:center;text-decoration:none">AR</a>
       </div>
     </div>
   </section>
@@ -61,17 +62,6 @@
     <button class="topbar__btn" id="btn-speak" aria-label="Прочитать вслух">🔊</button>
   </header>
   <div class="story" id="story-body"></div>
-</div>
-
-<!-- ЭКРАН: дополненная реальность -->
-<div id="screen-ar" class="screen screen--ar">
-  <video id="ar-video" playsinline muted autoplay></video>
-  <div id="ar-stage"></div>
-  <div class="ar-hud">
-    <button class="ar-close" id="ar-close" aria-label="Выйти">✕</button>
-    <div class="ar-tip" id="ar-tip">Наведи камеру вокруг себя</div>
-  </div>
-  <div class="ar-hint" id="ar-hint" hidden><span id="ar-hint-arrow">←</span> <span id="ar-hint-text">Поверни телефон</span></div>
 </div>
 
 <!-- ЭКРАН: список точек -->
@@ -109,9 +99,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="js/data.js"></script>
-<script src="js/scenes.js"></script>
 <script src="js/geo.js"></script>
-<script src="js/ar.js"></script>
 <script src="js/map.js"></script>
 <script src="js/app.js"></script>
 </body>

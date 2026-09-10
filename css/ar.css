@@ -1,0 +1,395 @@
+/* ================= общее ================= */
+:root{
+  --ink:#0d1424;
+  --paper:#f7f1e6;
+  --card:#fffdf8;
+  --line:#e4dac6;
+  --accent:#e2603b;
+  --gold:#e8b93b;
+  --muted:#5b6478;
+  --safe-t:env(safe-area-inset-top,0px);
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--paper);color:var(--ink)}
+body{font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+body.stage-open{overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+
+/* ================= шапка ================= */
+.hero{
+  background:
+    radial-gradient(120% 120% at 15% 0%, #23305a 0%, transparent 55%),
+    radial-gradient(100% 100% at 90% 20%, #6b3b6e 0%, transparent 60%),
+    linear-gradient(180deg,#0d1424,#1b2440);
+  color:#fff;padding:calc(var(--safe-t) + 34px) 20px 34px;
+}
+.hero__in{max-width:760px;margin:0 auto}
+.hero__kicker{font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;opacity:.62}
+.hero h1{
+  margin:.24em 0 .3em;font-size:clamp(32px,9vw,58px);line-height:1;font-weight:800;letter-spacing:-.02em;
+  background:linear-gradient(92deg,#fff 20%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero p{margin:0 0 14px;font-size:16.5px;opacity:.88;max-width:60ch}
+.hero__note{display:inline-block;font-size:13.5px;background:rgba(255,255,255,.1);padding:8px 13px;border-radius:20px}
+
+/* ================= карточки ================= */
+.cards{max-width:760px;margin:0 auto;padding:18px 14px 30px;display:grid;gap:18px}
+.card{
+  background:var(--card);border-radius:22px;overflow:hidden;
+  box-shadow:0 14px 34px rgba(13,20,36,.14);border:1px solid var(--line);
+}
+.card__thumb{
+  position:relative;height:190px;overflow:hidden;
+  background:radial-gradient(120% 100% at 50% 20%,#2b3556,#0d1424);
+}
+.card__num{
+  position:absolute;left:12px;top:10px;z-index:3;
+  min-width:30px;height:30px;padding:0 8px;border-radius:11px;
+  background:rgba(0,0,0,.45);color:#fff;font-weight:700;font-size:15px;
+  display:flex;align-items:center;justify-content:center
+}
+.card__body{padding:15px 16px 17px}
+.card__body h2{margin:0 0 3px;font-size:20px;line-height:1.22}
+.card__place{font-size:13px;color:var(--muted);margin-bottom:9px}
+.card__lead{margin:0 0 12px;font-size:15.5px}
+.card__aim{
+  background:#f4f8f3;border-left:4px solid #4a9b6a;border-radius:0 14px 14px 0;
+  padding:11px 13px;font-size:14.5px
+}
+.card__aim b{display:block;margin-bottom:3px;color:#2c7a4f;font-size:13px;text-transform:uppercase;letter-spacing:.05em}
+.card__row{display:flex;gap:10px;margin-top:14px}
+.btn{
+  flex:1;min-height:52px;border-radius:15px;border:2px solid var(--line);background:#fff;font-weight:700
+}
+.btn--go{background:var(--accent);border-color:var(--accent);color:#fff;flex:2}
+.btn:active{transform:translateY(1px)}
+
+.foot{max-width:760px;margin:0 auto;padding:6px 20px calc(var(--safe-b) + 40px);color:var(--muted);font-size:14px}
+.foot__link{display:inline-block;margin-top:8px;color:var(--accent);font-weight:700;text-decoration:none}
+
+/* стоп-кадр сцены в карточке */
+.thumb{position:absolute;inset:0}
+.thumb .layer{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;transform:none}
+.thumb .layer svg.fit{width:100%;height:100%;margin-bottom:0}
+.thumb *{
+  animation-play-state:paused!important;
+  animation-delay:-7s!important;
+  transition:none!important;
+  animation-iteration-count:1!important;
+  animation-fill-mode:both!important;
+}
+
+/* ================= сцена ================= */
+.stage{position:fixed;inset:0;z-index:100;background:#05070d;overflow:hidden}
+.stage[hidden]{display:none}
+.stage__cam{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.stage.no-cam .stage__cam{background:linear-gradient(180deg,#16233c 0%,#2d3f63 45%,#4a5a48 100%)}
+.stage__tint{position:absolute;inset:0;transition:background 1.6s ease,opacity 1.6s ease;pointer-events:none}
+.stage__fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+.stage__fx--front{z-index:6}
+.stage__layers{position:absolute;inset:0;z-index:3}
+.stage__vignette{
+  position:absolute;inset:0;z-index:7;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 45%,transparent 40%,rgba(0,0,0,.55) 100%)
+}
+.layer{
+  position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;
+  transform:translate(var(--px,0px),var(--py,0px));will-change:transform
+}
+.layer svg.fit{width:100%;height:68%;margin-bottom:21%}
+.layer.wide svg.fit{height:100%;margin-bottom:0}
+
+/* HUD */
+.stage__hud{position:absolute;inset:0;z-index:8;pointer-events:none}
+.stage__top{
+  position:absolute;top:calc(var(--safe-t) + 12px);left:12px;right:12px;
+  display:flex;align-items:center;gap:10px
+}
+.stage__name{
+  flex:1;color:#fff;font-weight:700;font-size:17px;text-shadow:0 2px 10px rgba(0,0,0,.7)
+}
+.round{
+  pointer-events:auto;width:46px;height:46px;flex:0 0 46px;border:0;border-radius:50%;
+  background:rgba(0,0,0,.5);color:#fff;font-size:19px;backdrop-filter:blur(6px)
+}
+.round--sound.is-off{opacity:.55}
+.pill{
+  pointer-events:auto;border:0;border-radius:26px;padding:13px 22px;font-weight:700;
+  background:rgba(255,255,255,.92);color:var(--ink);box-shadow:0 8px 22px rgba(0,0,0,.4)
+}
+.stage__bottom{
+  position:absolute;left:0;right:0;bottom:calc(var(--safe-b) + 16px);
+  display:flex;align-items:center;justify-content:center;gap:12px
+}
+.stage__aim{
+  pointer-events:auto;position:absolute;left:14px;right:14px;top:calc(var(--safe-t) + 66px);
+  background:rgba(8,12,22,.72);backdrop-filter:blur(8px);color:#fff;
+  padding:13px 15px;border-radius:16px;font-size:14.5px;line-height:1.45;
+  border:1px solid rgba(255,255,255,.14);transition:opacity .6s ease,transform .6s ease
+}
+.stage__aim b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.stage__aim.is-hidden{opacity:0;transform:translateY(-14px);pointer-events:none}
+
+/* титры */
+.stage__caption{
+  position:absolute;left:0;right:0;bottom:calc(var(--safe-b) + 84px);
+  display:flex;flex-direction:column;align-items:center;gap:8px;padding:0 18px
+}
+.cap{
+  max-width:min(620px,92vw);text-align:center;color:#fff;
+  background:linear-gradient(180deg,rgba(8,12,22,.62),rgba(8,12,22,.78));
+  border:1px solid rgba(255,255,255,.14);
+  padding:11px 18px;border-radius:16px;font-size:16px;line-height:1.4;
+  text-shadow:0 2px 12px rgba(0,0,0,.6);
+  animation:cap-in .7s cubic-bezier(.2,.9,.3,1) both
+}
+.cap--big{
+  font-family:Georgia,"Times New Roman",serif;font-size:26px;font-weight:700;
+  letter-spacing:.01em;color:#ffe9b8;background:linear-gradient(180deg,rgba(8,12,22,.5),rgba(8,12,22,.72));
+  padding:14px 24px
+}
+.cap.is-out{animation:cap-out .8s ease forwards}
+@keyframes cap-in{from{opacity:0;transform:translateY(26px) scale(.96);filter:blur(6px)}
+                  to{opacity:1;transform:none;filter:none}}
+@keyframes cap-out{to{opacity:0;transform:translateY(-16px);filter:blur(4px)}}
+
+/* ================= общие приёмы ================= */
+@keyframes draw{from{stroke-dashoffset:var(--len,3000)}to{stroke-dashoffset:0}}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}
+@keyframes rise-in{from{opacity:0;transform:translateY(90px) scale(.92)}to{opacity:1;transform:none}}
+@keyframes pop-in{0%{transform:scale(0);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+@keyframes sway{0%,100%{transform:rotate(-1.6deg)}50%{transform:rotate(1.6deg)}}
+@keyframes flick{0%,100%{opacity:1}42%{opacity:.55}58%{opacity:.9}72%{opacity:.5}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes flap{to{scale:1 .3}}
+@keyframes glow-pulse{0%,100%{opacity:.75;filter:brightness(1)}50%{opacity:1;filter:brightness(1.5)}}
+
+.win{transition:fill 1.1s ease,filter 1.1s ease}
+.layers.is-lit .win{fill:#ffca62}
+.layers.is-fade .tower-body,
+.layers.is-fade .arch-body{opacity:.16;filter:blur(3px) saturate(.4);transition:opacity 2.6s ease,filter 2.6s ease}
+.layers.is-fade .rider{opacity:0;transition:opacity 2.2s ease}
+
+/* ================= 1. Сухарева башня ================= */
+.sc-tower .ghost-line{
+  --len:3400;stroke-dasharray:3400;stroke-dashoffset:3400;
+  animation:draw 2.4s ease-out .2s forwards, fade-in 1.4s 2.5s reverse forwards;
+  filter:drop-shadow(0 0 8px #ffca62)
+}
+.sc-tower .tower-body{
+  opacity:0;transform-origin:50% 100%;
+  animation:rise-in 2.2s cubic-bezier(.2,.8,.25,1) 1.7s forwards
+}
+.sc-tower .flag{transform-box:fill-box;transform-origin:0% 50%;animation:sway 1.4s ease-in-out infinite}
+.sc-tower .hand-m{transform-box:fill-box;transform-origin:50% 100%;animation:spin 4s linear infinite 2s}
+.sc-tower .hand-h{transform-box:fill-box;transform-origin:50% 100%;animation:spin 24s linear infinite 2s}
+.layers.is-lit .sc-tower .win{filter:drop-shadow(0 0 10px #ffb838)}
+.layers.is-lit .sc-tower .win--bruce{fill:#fff0b8;animation:flick 2.4s ease-in-out infinite}
+.sc-tower .bruce-beam{mix-blend-mode:screen}
+.sc-tower .bruce-beam path{transition:opacity 2s ease}
+.layers.is-stars .sc-tower .bruce-beam path{opacity:.85!important}
+.crow{transform:translate(400px,240px) scale(1.9);animation:crow-fly 9s linear infinite}
+.crow__wing{transform-box:fill-box;transform-origin:50% 50%;animation:flap .34s ease-in-out infinite alternate}
+@keyframes crow-fly{
+  0%{translate:calc(var(--r) * 1) 0}
+  25%{translate:0 calc(var(--r) * -.45)}
+  50%{translate:calc(var(--r) * -1) 0}
+  75%{translate:0 calc(var(--r) * .45)}
+  100%{translate:calc(var(--r) * 1) 0}
+}
+
+/* ================= 2. Красные Ворота ================= */
+.sc-arch .arch-body{
+  opacity:0;transform-origin:50% 100%;
+  animation:rise-in 2.6s cubic-bezier(.2,.85,.25,1) .4s forwards
+}
+.sc-arch .glory{opacity:0;transform:translateY(-320px) scale(.7);transition:opacity 1.6s ease,transform 2.2s cubic-bezier(.2,.8,.3,1)}
+.layers.is-lit .sc-arch .glory{opacity:1;transform:none}
+.layers.is-trumpet .sc-arch .glory{animation:glory-float 3.4s ease-in-out infinite}
+@keyframes glory-float{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-16px) rotate(1.5deg)}}
+.sc-arch .glory__wing-l{transform-box:fill-box;transform-origin:100% 100%;animation:wing-l 1.6s ease-in-out infinite alternate}
+.sc-arch .glory__wing-r{transform-box:fill-box;transform-origin:0% 100%;animation:wing-r 1.6s ease-in-out infinite alternate}
+@keyframes wing-l{to{transform:rotate(12deg)}}
+@keyframes wing-r{to{transform:rotate(-12deg)}}
+.ribbon{opacity:0;transform:translateY(40px);animation:rise-in 1.4s ease-out 3s forwards}
+
+/* ================= 3. Высотка ================= */
+.sc-vys .building{
+  transform-box:fill-box;transform-origin:50% 100%;transform:rotate(6deg);
+  transition:transform 3.2s cubic-bezier(.3,.8,.3,1)
+}
+.layers.is-straight .sc-vys .building{transform:rotate(0deg)}
+.sc-vys .ice-soil{opacity:0;transition:opacity 2s ease}
+.layers.is-frozen .sc-vys .ice-soil{opacity:.9}
+.layers.is-melt .sc-vys .ice-soil{opacity:.15}
+.sc-vys .pipe{
+  transform-box:fill-box;transform-origin:50% 0;transform:scaleY(0);
+  animation:pipe-down 1.2s ease-out forwards;animation-play-state:paused
+}
+.layers.is-frozen .sc-vys .pipe{animation-play-state:running}
+@keyframes pipe-down{to{transform:scaleY(1)}}
+.sc-vys .star{opacity:.6}
+.layers.is-lit .sc-vys .star{animation:glow-pulse 2.4s ease-in-out infinite}
+.layers.is-lit .sc-vys .win{fill:#ffd98a;filter:drop-shadow(0 0 6px #ffb838)}
+
+/* ================= 4. Аптекарский огород ================= */
+.sc-garden{--leaf:#3f8a4d;--leaf-hi:#7fc25f}
+.sc-garden stop{transition:stop-color 1.6s ease}
+.sc-garden .trunk,.sc-garden .branches path{
+  stroke-dasharray:900;stroke-dashoffset:900;--len:900;
+  animation:draw 2.4s ease-out forwards;animation-play-state:paused
+}
+.sc-garden .branches path:nth-child(2){animation-delay:.35s}
+.sc-garden .branches path:nth-child(3){animation-delay:.6s}
+.sc-garden .branches path:nth-child(4){animation-delay:.85s}
+.sc-garden .branches path:nth-child(5){animation-delay:1.1s}
+.layers.is-grow .sc-garden .trunk,
+.layers.is-grow .sc-garden .branches path{animation-play-state:running}
+.sc-garden .leaf{transform-box:fill-box;transform-origin:50% 50%;opacity:0;transition:fill 1.4s ease}
+.layers.is-grow .sc-garden .leaf{animation:pop-in .8s cubic-bezier(.2,.9,.3,1) backwards;opacity:1}
+.layers.is-autumn .sc-garden{--leaf:#c46a2a;--leaf-hi:#e8b64a}
+.layers.is-winter .sc-garden{--leaf:#b9c9d8;--leaf-hi:#f2f7fb}
+.layers.is-winter .sc-garden .leaf{scale:.5}
+.layers.is-spring .sc-garden{--leaf:#3f8a4d;--leaf-hi:#8ed36a}
+.layers.is-spring .sc-garden .leaf{scale:1}
+.sc-garden .leaf{transition:fill 1.4s ease,scale 1.6s cubic-bezier(.3,.8,.3,1)}
+.sc-garden .peter__arm{transform-box:fill-box;transform-origin:0% 0%;animation:dig 2.2s ease-in-out 3}
+@keyframes dig{0%,100%{transform:rotate(0)}40%{transform:rotate(-26deg)}70%{transform:rotate(8deg)}}
+.sc-garden .sun{transition:opacity 2s ease}
+.layers.is-sun .sc-garden .sun{opacity:.92}
+.sc-garden .sun__rays{transform-box:fill-box;transform-origin:50% 50%;animation:spin 26s linear infinite}
+.layers.is-sun .sc-garden .sun circle{animation:glow-pulse 4s ease-in-out infinite}
+.fly{transform:translate(0px,0px) scale(.62);animation:fly-across 11s linear infinite}
+.fly__body{transform-box:fill-box;transform-origin:50% 100%;animation:flap .22s ease-in-out infinite alternate}
+@keyframes fly-across{
+  0%{translate:-60px var(--y);opacity:0}
+  10%{opacity:1}
+  50%{translate:460px calc(var(--y) - 80px)}
+  90%{opacity:1}
+  100%{translate:960px var(--y);opacity:0}
+}
+
+/* ================= 5. Странноприимный дом ================= */
+.curtain{transition:transform 3s cubic-bezier(.4,0,.2,1)}
+.layers.is-curtain .curtain--l{transform:translateX(-86%)}
+.layers.is-curtain .curtain--r{transform:translateX(86%)}
+.diva{opacity:0;transition:opacity 2.4s ease 1.2s}
+.layers.is-curtain .diva{opacity:1;animation:sway 6s ease-in-out infinite 2s}
+.layers.is-lit .diva{opacity:0}
+.sc-sher .win{transition:fill 1.4s ease}
+.layers.is-lit .sc-sher .win{filter:drop-shadow(0 0 6px #ffb838)}
+.carriage{transform:translateX(-120%);opacity:0}
+.layers.is-carriage .carriage{animation:ride 9s linear forwards}
+@keyframes ride{0%{transform:translateX(-120%);opacity:0}8%{opacity:1}92%{opacity:1}100%{transform:translateX(120%);opacity:0}}
+.wheel{transform-box:fill-box;transform-origin:50% 50%;animation:spin 1.1s linear infinite}
+.cab-win{animation:flick 3s ease-in-out infinite}
+.legs .leg{transform-box:fill-box;transform-origin:50% 0}
+.legs .leg--1{animation:gallop .42s ease-in-out infinite}
+.legs .leg--2{animation:gallop .42s ease-in-out infinite .1s}
+.legs .leg--3{animation:gallop .42s ease-in-out infinite .21s}
+.legs .leg--4{animation:gallop .42s ease-in-out infinite .31s}
+@keyframes gallop{0%,100%{transform:rotate(-24deg)}50%{transform:rotate(26deg)}}
+
+/* ================= 6. Патерностер ================= */
+.facade{transition:transform 2.4s cubic-bezier(.3,.8,.3,1),opacity 2.4s ease}
+.layers.is-open .facade--l{transform:translateX(-62%);opacity:.9}
+.layers.is-open .facade--r{transform:translateX(62%);opacity:.9}
+.chain{transition:opacity 1.4s ease}
+.layers.is-run-lift .chain{opacity:.8}
+.cabin{animation:pater 16s linear infinite;animation-play-state:paused}
+.layers.is-run-lift .cabin{animation-play-state:running}
+@keyframes pater{
+  0%{transform:translate(0px,0px)}
+  44%{transform:translate(0px,-580px)}
+  50%{transform:translate(146px,-620px)}
+  94%{transform:translate(146px,-40px)}
+  100%{transform:translate(0px,0px)}
+}
+.layers.is-lit .sc-pater .cabin rect:first-child{fill:#ffe0a0}
+
+/* ================= 7. Уланы ================= */
+.rider{opacity:0}
+.layers.is-ride .rider{animation:ulan-ride 9s linear infinite}
+@keyframes ulan-ride{
+  0%{transform:translateX(-55%);opacity:0}
+  10%{opacity:1}
+  85%{opacity:1}
+  100%{transform:translateX(115%);opacity:0}
+}
+.rider__body{transform-box:fill-box;transform-origin:50% 100%;animation:bob .42s ease-in-out infinite alternate}
+@keyframes bob{to{transform:translateY(-7px)}}
+.pennon{transform-box:fill-box;transform-origin:0% 50%;animation:pennon .5s ease-in-out infinite alternate}
+@keyframes pennon{0%{transform:skewY(-10deg) scaleX(.9)}100%{transform:skewY(12deg) scaleX(1.05)}}
+
+/* ================= 8. Сахаров ================= */
+.sc-sakh .orbit{transform-box:fill-box;transform-origin:50% 50%}
+.sc-sakh .orbit--1{animation:spin 7s linear infinite}
+.sc-sakh .orbit--2{animation:spin 5.2s linear infinite reverse}
+.sc-sakh .orbit--3{animation:spin 9s linear infinite}
+.sc-sakh .core{animation:glow-pulse 2.6s ease-in-out infinite}
+.sc-sakh .atom{transition:opacity 1.6s ease,scale 1.6s ease}
+.layers.is-boom .sc-sakh .atom{opacity:0;scale:1.8}
+.sc-sakh .flash{transform-box:fill-box;transform-origin:50% 50%;scale:0;opacity:0}
+.layers.is-boom .sc-sakh .flash{animation:flash-out 2.6s cubic-bezier(.1,.7,.3,1) forwards}
+@keyframes flash-out{0%{scale:0;opacity:1}35%{opacity:.95}100%{scale:3.6;opacity:0}}
+.sc-sakh .doves{opacity:0}
+.layers.is-doves .sc-sakh .doves{opacity:1}
+.dove{transform:translate(calc(390px + var(--sx,0px)),460px);opacity:0}
+.layers.is-doves .dove{animation:dove-up var(--d,4s) cubic-bezier(.35,.5,.4,1) infinite}
+@keyframes dove-up{
+  0%{translate:0 40px;opacity:0;scale:.35;rotate:8deg}
+  12%{opacity:1}
+  75%{opacity:1}
+  100%{translate:var(--x) -640px;opacity:0;scale:1.15;rotate:-10deg}
+}
+.dove__wing{transform-box:fill-box;transform-origin:0% 100%;animation:wing-beat .32s ease-in-out infinite alternate}
+@keyframes wing-beat{0%{rotate:-28deg}100%{rotate:34deg}}
+
+/* ================= 9. Храм Петра и Павла ================= */
+.sc-temple .bp{
+  stroke-dasharray:1400;stroke-dashoffset:1400;--len:1400;
+  animation:draw 1.6s ease-out forwards
+}
+.sc-temple .bp:nth-child(2){animation-delay:.2s}
+.sc-temple .bp:nth-child(3){animation-delay:.4s}
+.sc-temple .bp:nth-child(4){animation-delay:.6s}
+.sc-temple .bp:nth-child(5){animation-delay:.8s}
+.sc-temple .bp:nth-child(6){animation-delay:1s}
+.sc-temple .bp:nth-child(7){animation-delay:1.2s}
+.sc-temple .bp:nth-child(8){animation-delay:1.4s}
+.sc-temple .blueprint{transition:opacity 2s ease}
+.sc-temple .temple{opacity:0;transform-origin:50% 100%;transition:opacity 2.4s ease}
+.layers.is-built .sc-temple .temple{opacity:1}
+.layers.is-built .sc-temple .blueprint{opacity:.16}
+.sc-temple .bell{transform-box:fill-box;transform-origin:50% 0}
+.layers.is-ring .sc-temple .bell{animation:ring 1.4s ease-in-out infinite}
+@keyframes ring{0%,100%{transform:rotate(-16deg)}50%{transform:rotate(16deg)}}
+.sc-temple .ring{opacity:0;transform-box:fill-box;transform-origin:50% 50%}
+.layers.is-ring .sc-temple .ring{animation:ring-out 2.4s ease-out infinite}
+@keyframes ring-out{0%{opacity:.7;scale:.3}100%{opacity:0;scale:1.5}}
+.baker{opacity:0;transition:opacity 1.6s ease}
+.layers.is-bake .baker{opacity:1}
+.baker .fire{transform-box:fill-box;transform-origin:50% 100%;animation:fire .5s ease-in-out infinite alternate}
+@keyframes fire{0%{transform:scaleY(.86) scaleX(1.04)}100%{transform:scaleY(1.12) scaleX(.94)}}
+.layers.is-bake .stamp{animation:stamp 2.4s ease-in-out infinite}
+@keyframes stamp{0%,100%{transform:translateY(-90px) rotate(-5deg)}45%,55%{transform:translateY(0) rotate(0)}}
+
+/* ================= 10. Сад Баумана ================= */
+.bulb{opacity:.25;transform-box:fill-box;transform-origin:50% 50%;animation:twinkle 2.6s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.3;scale:.85}50%{opacity:1;scale:1.25;filter:drop-shadow(0 0 8px currentColor)}}
+.grot-glow{transition:opacity 2.4s ease}
+.layers.is-lit .grot-glow{opacity:1!important}
+.band{opacity:0;transition:opacity 1.6s ease}
+.layers.is-band .band{opacity:1}
+.layers.is-band .player{transform-box:fill-box;transform-origin:50% 100%;animation:bob .9s ease-in-out infinite alternate}
+.lamps circle{animation:glow-pulse 3.4s ease-in-out infinite}
+
+/* ================= крупные экраны ================= */
+@media (min-width:900px){
+  .cards{grid-template-columns:1fr 1fr;max-width:1080px}
+  .foot{max-width:1080px}
+}
+@media (prefers-reduced-motion:reduce){
+  .cap{animation:none}
+}

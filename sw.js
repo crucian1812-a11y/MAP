@@ -1,9 +1,11 @@
 /* Кэш приложения: после первого захода сайт открывается и без сети.
    Тайлы карты не кэшируются — их слишком много, интернет на прогулке всё же нужен. */
-const CACHE = 'walk-bauman-v1';
+const CACHE = 'walk-bauman-v2';
 const FILES = [
-  './', './index.html', './css/style.css',
-  './js/data.js', './js/geo.js', './js/scenes.js', './js/ar.js', './js/map.js', './js/app.js',
+  './', './index.html', './ar.html',
+  './css/style.css', './css/ar.css',
+  './js/data.js', './js/geo.js', './js/map.js', './js/app.js',
+  './js/ar-particles.js', './js/ar-scenes.js', './js/ar-engine.js',
   './manifest.webmanifest', './icons/icon.svg'
 ];
 

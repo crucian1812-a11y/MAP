@@ -16,7 +16,7 @@
   function save() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(state)); } catch (e) {} }
 
   /* ---------- экраны ---------- */
-  const screens = ['map', 'story', 'ar', 'list', 'badges', 'settings'];
+  const screens = ['map', 'story', 'list', 'badges', 'settings'];
   function show(name) {
     screens.forEach(s => document.getElementById('screen-' + s).classList.toggle('is-active', s === name));
     if (name === 'map') WalkMap.invalidate();
@@ -160,7 +160,7 @@
     });
 
     const arBtn = document.getElementById('story-ar');
-    if (arBtn) arBtn.addEventListener('click', () => AR.open(p, pos, () => show('story')));
+    if (arBtn) arBtn.addEventListener('click', () => { location.href = 'ar.html#' + p.ar; });
 
     document.getElementById('story-next').addEventListener('click', () => {
       const isNew = markDone(p.id);
@@ -280,6 +280,11 @@
         <pre id="calib-out" style="white-space:pre-wrap;font-size:12px;color:#4a5876;margin-top:10px"></pre>
       </div>
       <div class="set">
+        <h3>Сцены дополненной реальности</h3>
+        <p>Десять анимаций отдельными кнопками, без геолокации. Можно смотреть в любом порядке.</p>
+        <a class="btn btn--wide" href="ar.html" style="display:flex;align-items:center;justify-content:center;text-decoration:none">Открыть «Оживи Москву»</a>
+      </div>
+      <div class="set">
         <h3>Сбросить прогресс</h3>
         <p>Все значки и ответы исчезнут, маршрут начнётся заново.</p>
         <button class="btn" id="set-reset">Начать заново</button>
@@ -331,7 +336,6 @@
     if (p.heading !== null && p.heading !== undefined) gpsHeading = p.heading;
     WalkMap.showMe(pos, acc);
     WalkMap.traceDone(pos);
-    if (AR.isActive()) AR.setPosition(pos);
     const hint = document.getElementById('gps-hint');
     if (acc > 60) {
       hint.hidden = false;
@@ -353,7 +357,6 @@
 
   /* ---------- запуск ---------- */
   function init() {
-    AR.init();
     WalkMap.init({
       onPick: id => openStory(id),
       onMoved: () => {
