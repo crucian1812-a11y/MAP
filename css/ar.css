@@ -527,3 +527,37 @@ button{font:inherit;color:inherit;cursor:pointer}
 .stage__flash{position:absolute;inset:0;z-index:7;pointer-events:none;background:#fff;opacity:0}
 .layers.is-boom ~ .stage__flash,.stage__flash.is-on{animation:flash-white .9s ease-out}
 @keyframes flash-white{0%{opacity:0}12%{opacity:.85}100%{opacity:0}}
+
+/* ================= патерностер: свет едет по шахте ================= */
+.lift-flow{
+  position:absolute;pointer-events:none;mix-blend-mode:screen;opacity:0;
+  transition:opacity 1.4s ease;
+  background:repeating-linear-gradient(to bottom,
+    rgba(255,206,120,0) 0 58px,
+    rgba(255,206,120,.55) 72px,
+    rgba(255,176,80,0) 86px 150px);
+  background-size:100% 150px
+}
+.lift-flow--down{left:43.5%;width:9%;top:11%;height:70%;animation:flow-down 2.6s linear infinite}
+.lift-flow--up{left:53%;width:9.5%;top:11%;height:70%;animation:flow-up 2.6s linear infinite}
+@keyframes flow-down{from{background-position:0 0}to{background-position:0 150px}}
+@keyframes flow-up{from{background-position:0 0}to{background-position:0 -150px}}
+.layers.is-run-lift .lift-flow{opacity:.9}
+
+.lift-heat{
+  position:absolute;left:41%;width:24%;top:8%;height:80%;pointer-events:none;
+  background:linear-gradient(to right, rgba(255,190,90,0), rgba(255,190,90,.35), rgba(255,190,90,0));
+  mix-blend-mode:screen;opacity:0;transition:opacity 1.8s ease
+}
+.layers.is-lit .lift-heat{opacity:.55;animation:glow-pulse 5s ease-in-out infinite}
+
+/* чертёж выезжает сбоку */
+.scheme{
+  position:absolute;right:1vw;bottom:7vh;width:min(30vw,128px);
+  opacity:0;transform:translateX(40px) rotate(4deg);
+  transition:opacity 1.4s ease,transform 1.6s cubic-bezier(.25,.8,.3,1);
+  filter:drop-shadow(0 18px 30px rgba(0,0,0,.6))
+}
+.scheme img{width:100%;display:block;border-radius:10px}
+.layers.is-open .scheme{opacity:1;transform:translateX(0) rotate(-2deg);animation:scheme-sway 7s ease-in-out 1.6s infinite}
+@keyframes scheme-sway{0%,100%{transform:translateX(0) rotate(-2deg)}50%{transform:translateX(-4px) rotate(1deg)}}

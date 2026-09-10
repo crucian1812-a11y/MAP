@@ -1,6 +1,6 @@
 /* Кэш приложения: после первого захода сайт открывается и без сети.
    Тайлы карты не кэшируются — их слишком много, интернет на прогулке всё же нужен. */
-const CACHE = 'walk-bauman-v4';
+const CACHE = 'walk-bauman-v5';
 const FILES = [
   './', './index.html', './ar.html',
   './css/style.css', './css/ar.css',
@@ -9,6 +9,7 @@ const FILES = [
   './assets/suharev.webp', './assets/vorota2.webp', './assets/vysotka2.webp',
   './assets/ogorod.webp', './assets/sheremetev.webp', './assets/petropavel.webp',
   './assets/bauman.webp', './assets/ulan.webp', './assets/sakharov.webp',
+  './assets/narkomzem.webp', './assets/narkomzem-scheme.webp',
   './manifest.webmanifest', './icons/icon.svg'
 ];
 

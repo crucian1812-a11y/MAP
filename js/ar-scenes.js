@@ -24,7 +24,7 @@ const glowFilter = (id, blur, color) => `
    --img нужен для масок: свет, блики и осколки рисуются строго по силуэту объекта. */
 const assetUrl = file => new URL('assets/' + file, location.href).href;   // в CSS-переменной путь должен быть абсолютным
 
-const photoLayer = (file, ar, pins = [], extra = '') => `
+const photoLayer = (file, ar, pins = [], extra = '', inner = '') => `
   <div class="photo ${extra}" style="--ar:${ar};--img:url('${assetUrl(file)}')">
     <div class="photo__rays"></div>
     <div class="photo__shadow"></div>
@@ -40,6 +40,7 @@ const photoLayer = (file, ar, pins = [], extra = '') => `
         <span class="pin__dot"></span><span class="pin__line"></span>
         <span class="pin__label">${pin.text}</span>
       </div>`).join('')}
+    ${inner}
   </div>`;
 
 const photoHaze = (file, ar) => `
@@ -248,59 +249,23 @@ SCENES.push({
   tint: 'radial-gradient(120% 90% at 50% 40%, rgba(20,30,40,.34), rgba(8,12,18,.6))',
   fxBack: null,
   layers: [
-    { depth: 1, z: 2, cls: 'sc-pater', html: `
-      <svg class="fit" viewBox="0 0 620 900" preserveAspectRatio="xMidYMax meet">
-        <defs>
-          ${glowFilter('gl-lamp', 6, '#ffd98a')}
-          <linearGradient id="conc-g" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#9aa0a6"/><stop offset=".5" stop-color="#cfd4d8"/><stop offset="1" stop-color="#8d949a"/>
-          </linearGradient>
-        </defs>
-
-        <!-- шахта внутри -->
-        <g class="shaft">
-          <rect x="120" y="120" width="380" height="740" fill="#1a2029"/>
-          ${rep(9, i => `<g>
-            <rect x="120" y="${150 + i * 78}" width="380" height="4" fill="#2f3a46"/>
-            <text x="132" y="${176 + i * 78}" font-size="20" fill="#59677a" font-family="Georgia,serif">${9 - i}</text>
-          </g>`)}
-          <rect x="296" y="120" width="8" height="740" fill="#2f3a46"/>
-          ${rep(8, i => `
-            <g class="cabin" style="animation-delay:${-i * 1.75}s">
-              <rect x="150" y="700" width="130" height="120" rx="8" fill="#f0d9a0"/>
-              <rect x="150" y="700" width="130" height="120" rx="8" fill="none" stroke="#c9a25a" stroke-width="4"/>
-              <circle cx="176" cy="712" r="7" fill="#ffd98a" filter="url(#gl-lamp)"/>
-              <g transform="translate(196,724)" opacity="${i % 3 === 0 ? 1 : 0}">
-                <circle cx="18" cy="14" r="13" fill="#3b4a5e"/>
-                <path d="M2 74 q0 -46 16 -46 q16 0 16 46z" fill="#3b4a5e"/>
-              </g>
-            </g>`)}
-        </g>
-
-        <!-- фасад, который разъезжается и открывает шахту -->
-        <g class="facade facade--l">
-          <rect x="0" y="60" width="310" height="820" fill="url(#conc-g)"/>
-          ${rep(9, i => `<rect x="24" y="${110 + i * 84}" width="262" height="40" rx="4" fill="#4a545e"/>`)}
-          <rect x="0" y="40" width="310" height="26" rx="4" fill="#b6bcc2"/>
-        </g>
-        <g class="facade facade--r">
-          <rect x="310" y="60" width="310" height="820" fill="url(#conc-g)"/>
-          ${rep(9, i => `<rect x="334" y="${110 + i * 84}" width="262" height="40" rx="4" fill="#4a545e"/>`)}
-          <rect x="310" y="40" width="310" height="26" rx="4" fill="#b6bcc2"/>
-          <path d="M560 880 v-560 a60 60 0 0 1 60 -60 v620z" fill="#b9bfc5"/>
-        </g>
-
-        <!-- цепь патерностера -->
-        <g class="chain" opacity="0">
-          <path d="M215 780 L215 200 A28 28 0 0 1 243 172 L373 172 A28 28 0 0 1 401 200 L401 780 A28 28 0 0 1 373 808 L243 808 A28 28 0 0 1 215 780z"
-                fill="none" stroke="#5c6875" stroke-width="6" stroke-dasharray="14 12"/>
-        </g>
-      </svg>` }
+    { depth: .45, z: 1, html: photoHaze('narkomzem.webp', 0.979) },
+    { depth: 1.1, z: 2, cls: 'sc-photo sc-lift', html: photoLayer('narkomzem.webp', 0.979, [
+      { x: 52, y: 11, text: 'Шкив', side: 'r', t: 3.0 },
+      { x: 47, y: 44, text: 'Кабинка без дверей', t: 6.4 },
+      { x: 16, y: 26, text: 'Круглая башня', side: 'r', t: 11.6 }
+    ], '', `
+      <div class="lift-flow lift-flow--down"></div>
+      <div class="lift-flow lift-flow--up"></div>
+      <div class="lift-heat"></div>`) },
+    { depth: 1.5, z: 3, cls: 'sc-scheme', html: `
+      <div class="scheme"><img src="assets/narkomzem-scheme.webp" alt=""></div>` }
   ],
   beats: [
-    { t: 2200, cls: 'is-open' },
+    { t: 2200, cls: 'is-lit' },
     { t: 5200, cls: 'is-run-lift' },
-    { t: 11000, cls: 'is-lit' }
+    { t: 9400, cls: 'is-open' },
+    { t: 13200, cls: 'is-dusk' }
   ],
   captions: [
     { t: 500, text: 'Дом Наркомзема, архитектор Щусев, 1933 год', hold: 3200 },
@@ -308,7 +273,7 @@ SCENES.push({
     { t: 6200, text: 'Лифт едет по кругу и никогда не останавливается. Заходить надо на ходу.', big: true, hold: 4600 },
     { t: 11200, text: '«Патерностер» значит «Отче наш»: кабинки как чётки', hold: 4400 }
   ],
-  sound: [{ t: 2300, s: 'crack' }, { t: 5300, s: 'lift' }, { t: 11200, s: 'chime' }]
+  sound: [{ t: 2300, s: 'crack' }, { t: 5300, s: 'lift' }, { t: 9500, s: 'chime' }, { t: 13300, s: 'lift' }]
 });
 
 /* ============================================================
