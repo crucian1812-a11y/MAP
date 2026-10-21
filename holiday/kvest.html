@@ -1,3 +1,5 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Экспедиция «Каникулы»</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
@@ -45,6 +47,7 @@ h1{font-size:clamp(26px,6vw,40px);line-height:1.08;letter-spacing:-.01em}
 .stamp{width:58px;height:58px;border-radius:50%;border:2px dashed var(--line);display:grid;place-items:center;
   font-family:var(--display);font-size:22px;color:var(--line);position:relative;transition:transform .3s}
 .stamp small{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.04em}
+@media (max-width:420px){.stamps{gap:8px}.stamp{width:50px;height:50px;font-size:19px}}
 .stamp.got{border:2px solid var(--leaf);color:var(--leaf);transform:rotate(-8deg);background:color-mix(in srgb,var(--leaf) 10%,transparent)}
 .word{min-width:0}
 .word p{margin:0;font-size:13.5px;color:var(--muted);max-width:34ch}
@@ -141,6 +144,16 @@ h1{font-size:clamp(26px,6vw,40px);line-height:1.08;letter-spacing:-.01em}
 .guide ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14.5px}
 .eve{font-size:14.5px;border:1px dashed color-mix(in srgb,var(--leaf) 60%,var(--line));border-radius:12px;padding:10px 14px}
 
+.phone{margin-top:18px;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;font-size:14px}
+.phone code{font-family:var(--mono);font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:8px;
+  padding:5px 9px;user-select:all;overflow-wrap:anywhere;min-width:0}
+.phone button,.arbtn{font:inherit;font-size:13.5px;font-weight:600;border-radius:10px;padding:7px 13px;cursor:pointer;
+  border:1px solid var(--river);background:transparent;color:var(--river);text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.cam{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;border-radius:14px;padding:12px 14px;
+  background:linear-gradient(120deg,color-mix(in srgb,var(--river) 16%,var(--card)),var(--card));border:1px solid color-mix(in srgb,var(--river) 35%,var(--line))}
+.cam .arbtn{background:var(--river);color:var(--paper);border-color:var(--river)}
+.cam p{margin:0;font-size:14px;min-width:0}
+@media (max-width:520px){.cam{grid-template-columns:1fr}}
 .foot{margin-top:40px;font-size:12.5px;color:var(--muted);max-width:62ch}
 a{color:var(--river)}
 button:focus-visible{outline:2px solid var(--river);outline-offset:2px}
@@ -152,6 +165,13 @@ button:focus-visible{outline:2px solid var(--river);outline-offset:2px}
   <h1>Экспедиция «Каникулы»</h1>
   <div class="ledrow" id="lede-row"><p class="lede">Пять дней, пять заданий. За каждый день — печать с буквой. Соберёшь все пять
     к пятнице — сложишь из них секретное слово. Вечером в пятницу узнаешь, зачем оно было нужно.</p></div>
+
+  <div class="phone">
+    <span>На телефоне:</span>
+    <code id="phone-url">https://crucian1812-a11y.github.io/MAP/holiday/</code>
+    <button id="copy-url">Скопировать</button>
+    <a class="arbtn" id="ar-all" href="https://crucian1812-a11y.github.io/MAP/holiday/ar.html" target="_blank" rel="noopener">Волшебная камера</a>
+  </div>
 
   <div class="board">
     <div class="stamps" id="stamps"></div>
@@ -417,6 +437,17 @@ const AQUA = {
 const WED_TAKE = ['плавки','шлёпанцы','полотенце','очки для плавания','шапочка для бассейна','бутылка воды','перекус на после','расчёска'];
 const WORD = 'ОРГАН';
 
+/* Сцены дополненной реальности: камера работает только на GitHub Pages,
+   поэтому из других мест ссылка ведёт туда */
+const AR_BASE = /github\.io$/.test(location.hostname) ? 'ar.html' : 'https://crucian1812-a11y.github.io/MAP/holiday/ar.html';
+const CAM = {
+  mon: { id:'most', title:'Миллионный мост', hint:'У акведука наведи камеру на арки: мост наполнится водой, а арки загорятся по одной.' },
+  tue: { id:'terem', title:'Сказочный терем', hint:'Перед входом наведи камеру на фасад: поскачут богатыри и приплывёт Царевна-Лебедь.' },
+  wed: { id:'voda', title:'Подводный мир', hint:'У бортика наведи камеру на воду: рыбы, медузы и кит. Телефон в воду не берём!' },
+  thu: { id:'dzhungli', title:'Живые динозавры', hint:'В оранжерее наведи камеру на пальмы: вырастут лианы и пройдёт брахиозавр.' },
+  fri: { id:'organ', title:'Орган поёт', hint:'До концерта наведи камеру на окна собора: из земли вырастет орган. На концерте камеру не включаем.' }
+};
+
 const KEY = 'kvest-week-2610';
 let S = { done:{}, aqua:'luzh', picked:[] };
 try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
@@ -483,6 +514,9 @@ function dayHTML(d) {
       <div class="pills"><span class="pill w">${d.weather}</span><span class="pill">${d.choice ? aqua.name : d.where}</span><span class="pill">${cost}${/₽/.test(cost) ? ' на двоих' : ''}</span></div>
     </div>
     <div class="introrow">${say(d.id + '-intro')}<p class="intro">${d.intro}</p></div>
+    <div class="block"><div class="cam">
+      <a class="arbtn" href="${AR_BASE}#${CAM[d.id].id}" target="_blank" rel="noopener">Волшебная камера ▸</a>
+      <p><b>${CAM[d.id].title}.</b> ${CAM[d.id].hint}</p></div></div>
     ${choice}
     <div class="block"><h3>Расписание</h3>
       <ol class="timeline">${plan.map(([t, x]) => `<li><time>${t}</time><div>${x}</div></li>`).join('')}</ol>
@@ -572,7 +606,15 @@ document.addEventListener('click', e => {
   if (l) { if (S.picked.length < 5) S.picked.push(+l.dataset.letter); save(); renderStamps();
     if (S.picked.map(i => DAYS[i].letter).join('') === WORD && TRACKS.has('finale')) { playing = ''; play('finale'); }
     return; }
-  if (e.target.id === 'reset-word') { S.picked = []; save(); renderStamps(); }
+  if (e.target.id === 'reset-word') { S.picked = []; save(); renderStamps(); return; }
+  if (e.target.id === 'copy-url') {
+    const btn = e.target, url = document.getElementById('phone-url').textContent;
+    const done = t => { btn.textContent = t; setTimeout(() => btn.textContent = 'Скопировать', 1800); };
+    const pick = () => { const r = document.createRange(); r.selectNodeContents(document.getElementById('phone-url'));
+      const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); done('Выделено'); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(() => done('Скопировано'), pick);
+    else pick();
+  }
 });
 document.getElementById('tabs').addEventListener('keydown', e => {
   if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
@@ -582,6 +624,7 @@ document.getElementById('tabs').addEventListener('keydown', e => {
   document.querySelector(`[data-day="${current}"]`).focus();
 });
 
+if (AR_BASE === 'ar.html') document.getElementById('ar-all').href = 'ar.html';
 renderAll();
 fetch('audio/kvest/manifest.json', { cache: 'no-cache' })
   .then(r => r.ok ? r.json() : null)

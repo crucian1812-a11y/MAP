@@ -74,7 +74,39 @@ const Stage = (() => {
         env(o, t, .4, 2.4, .09); o.start(t); o.stop(t + 3.2);
       },
       lift(t) { for (let i = 0; i < 8; i++) tone(330 + i * 40, t + i * .22, .2, 'square', .05); },
-      steam(t) { noise(t, 1.6, 1400, .09, .7); }
+      steam(t) { noise(t, 1.6, 1400, .09, .7); },
+      water(t) { for (let i = 0; i < 8; i++) noise(t + i * .55, 1.3, 700 + Math.random() * 900, .05, .6); },
+      bubbles(t) {
+        for (let i = 0; i < 12; i++) {
+          const o = ac().createOscillator(), t0 = t + i * .16 + Math.random() * .1;
+          o.type = 'sine'; o.frequency.setValueAtTime(300 + Math.random() * 300, t0);
+          o.frequency.exponentialRampToValueAtTime(900 + Math.random() * 500, t0 + .08);
+          env(o, t0, .005, .09, .07); o.start(t0); o.stop(t0 + .15);
+        }
+      },
+      whale(t) {
+        const o = ac().createOscillator(); o.type = 'sine';
+        o.frequency.setValueAtTime(220, t); o.frequency.exponentialRampToValueAtTime(140, t + 1.4);
+        o.frequency.exponentialRampToValueAtTime(260, t + 2.8);
+        env(o, t, .6, 2.4, .08); o.start(t); o.stop(t + 3.4);
+      },
+      birds(t) {
+        for (let i = 0; i < 9; i++) {
+          const o = ac().createOscillator(), t0 = t + i * .32 + Math.random() * .2;
+          o.type = 'sine'; o.frequency.setValueAtTime(2400 + Math.random() * 900, t0);
+          o.frequency.exponentialRampToValueAtTime(3600 + Math.random() * 800, t0 + .07);
+          env(o, t0, .005, .1, .05); o.start(t0); o.stop(t0 + .16);
+        }
+      },
+      /* орган: начало «Токкаты ре минор», трубы из сложенных синусов */
+      organ(t) {
+        const pipe = (f, t0, dur, peak) => [1, 2, 3, 4].forEach((m, i) =>
+          tone(f * m, t0, dur, 'sine', (peak || .1) / (i + 1.4)));
+        [[880, 0, .14], [784, .14, .12], [880, .26, .9],
+         [784, .9, .1], [698, 1.0, .1], [659, 1.1, .1], [587, 1.2, .1], [554, 1.3, .5], [587, 1.8, 1.4]]
+          .forEach(([f, dt, d]) => { pipe(f, t + dt, d, .1); pipe(f / 2, t + dt, d, .07); });
+        [147, 220, 294, 349].forEach(f => pipe(f, t + 1.8, 2.6, .06));
+      }
     };
 
     return {

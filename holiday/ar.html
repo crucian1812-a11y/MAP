@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0e1a22">
+<title>Экспедиция «Каникулы» · дополненная реальность</title>
+<link rel="icon" href="../icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../icons/icon-180.png">
+<link rel="stylesheet" href="../css/ar.css">
+<link rel="stylesheet" href="css/ar-holiday.css">
+</head>
+<body>
+
+<header class="hero hero--holiday">
+  <div class="hero__in">
+    <div class="hero__kicker">Экспедиция «Каникулы» · 26–30 октября</div>
+    <h1>Волшебная камера</h1>
+    <p>Пять сцен, по одной на каждый день. Приходишь на место, нажимаешь «Запустить», наводишь камеру
+      куда написано — и мост наполняется водой, по фасаду скачут богатыри, а из земли вырастает орган.</p>
+    <div class="hero__note">Нужен доступ к камере. Звук включён — можно выключить кнопкой в углу.</div>
+  </div>
+</header>
+
+<main class="cards" id="cards"></main>
+
+<footer class="foot">
+  <p>У каждой сцены своя ссылка: её можно вынести на домашний экран телефона отдельной кнопкой.</p>
+  <a class="foot__link" href="kvest.html">← К заданиям экспедиции</a>
+</footer>
+
+<!-- сцена -->
+<div class="stage" id="stage" hidden>
+  <video class="stage__cam" id="cam" playsinline muted autoplay></video>
+  <div class="stage__tint" id="tint"></div>
+  <canvas class="stage__fx" id="fx-back"></canvas>
+  <div class="stage__layers layers" id="layers"></div>
+  <canvas class="stage__fx stage__fx--front" id="fx-front"></canvas>
+  <div class="stage__flash" id="stage-flash"></div>
+  <div class="stage__vignette"></div>
+
+  <div class="stage__hud">
+    <div class="stage__top">
+      <div class="stage__name" id="stage-title"></div>
+      <button class="round" id="stage-close" aria-label="Закрыть">✕</button>
+    </div>
+    <div class="stage__aim" id="stage-aim"></div>
+    <div class="stage__caption" id="stage-caption"></div>
+    <div class="stage__bottom">
+      <button class="pill" id="stage-replay">↻ Ещё раз</button>
+      <button class="round round--sound" id="stage-sound" aria-label="Звук">🔊</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* Рассказчик для движка: тот же интерфейс, что у js/voice.js прогулки,
+   но дорожки — озвучка Silero из audio/kvest/ (ar-<сцена>.mp3). */
+const Voice = (() => {
+  let tracks = null, loading = null;
+  const audio = new Audio();
+  function load() {
+    if (tracks) return Promise.resolve();
+    return loading = loading || fetch('audio/kvest/manifest.json', { cache: 'no-cache' })
+      .then(r => r.ok ? r.json() : { tracks: [] })
+      .then(m => { tracks = new Set(m.tracks || []); })
+      .catch(() => { tracks = new Set(); });
+  }
+  const file = id => 'ar-' + id.replace(/^scene-/, '');
+  return {
+    load,
+    has: id => !!tracks && tracks.has(file(id)),
+    play(id) { audio.src = `audio/kvest/${file(id)}.mp3`; audio.play().catch(() => {}); },
+    stop() { audio.pause(); }
+  };
+})();
+</script>
+<script src="../js/ar-particles.js"></script>
+<script src="js/ar-scenes.js"></script>
+<script src="../js/ar-engine.js"></script>
+<script>
+/* Галерея: карточка со стоп-кадром сцены, днём экспедиции и прямой ссылкой. */
+(() => {
+  const BEATS = 'is-draw is-flow is-count is-old is-stamp is-lit is-ride is-swan is-in is-fish is-whale is-up is-grow is-fly is-dino is-roar is-pipes is-play is-word';
+
+  function card(s) {
+    const el = document.createElement('article');
+    el.className = 'card';
+    el.id = 'card-' + s.id;
+    el.innerHTML = `
+      <div class="card__thumb card__thumb--holiday">
+        <div class="layers thumb ${BEATS}">
+          ${s.layers.map(l => `<div class="layer ${l.cls || ''}" style="z-index:${l.z || 1}">${l.html}</div>`).join('')}
+        </div>
+      </div>
+      <div class="card__body">
+        <span class="card__day">${s.day}</span>
+        <h2>${s.title}</h2>
+        <div class="card__place">${s.place}</div>
+        <p class="card__lead">${s.lead}</p>
+        <div class="card__aim"><b>Куда наводить камеру</b>${s.aim}</div>
+        <div class="card__row">
+          <button class="btn btn--go" data-go="${s.id}">Запустить</button>
+          <button class="btn btn--copy" data-copy="${s.id}">Ссылка</button>
+        </div>
+      </div>`;
+    return el;
+  }
+
+  const wrap = document.getElementById('cards');
+  SCENES.forEach(s => wrap.appendChild(card(s)));
+
+  wrap.addEventListener('click', e => {
+    const go = e.target.closest('[data-go]');
+    if (go) { Stage.open(go.dataset.go); return; }
+    const cp = e.target.closest('[data-copy]');
+    if (cp) {
+      const url = location.origin + location.pathname + '#' + cp.dataset.copy;
+      const old = cp.textContent;
+      const done = t => { cp.textContent = t; setTimeout(() => cp.textContent = old, 1800); };
+      if (navigator.clipboard) navigator.clipboard.writeText(url).then(() => done('Скопировано'), () => done(url));
+      else done(url);
+    }
+  });
+
+  Stage.init();
+
+  // ar.html#most открывает сцену сразу
+  const openFromHash = () => {
+    const id = location.hash.replace('#', '');
+    if (id && SCENES.some(s => s.id === id)) Stage.open(id);
+  };
+  window.addEventListener('hashchange', openFromHash);
+  openFromHash();
+
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('../sw.js', { scope: '../' }).catch(() => {});
+})();
+</script>
+</body>
+</html>

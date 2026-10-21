@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* Тексты для озвучки квестов: берёт данные дней прямо из holiday/kvest.html,
    чтобы озвучка не расходилась со страницей. На каждый день — вступление,
-   на каждое задание — вопрос и ответ. Пишет .txt в holiday/audio/kvest-text/.
+   на каждое задание — вопрос и ответ, на каждую AR-сцену — рассказ. Пишет .txt в holiday/audio/kvest-text/.
 
      node holiday/scripts/build-kvest-voice.js
 */
@@ -43,4 +43,8 @@ for (const d of DAYS) {
     put(`${d.id}-a${i}`, `Ответ. ${t.a}`);
   });
 }
+// рассказ к сценам волшебной камеры (holiday/ar.html)
+const { SCENES } = require(path.join(ROOT, 'js', 'ar-scenes.js'));
+for (const sc of SCENES) if (sc.say) put(`ar-${sc.id}`, sc.say);
+
 console.log(`текстов для озвучки: ${fs.readdirSync(OUT).length} → ${path.relative(process.cwd(), OUT)}`);

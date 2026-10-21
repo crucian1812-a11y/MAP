@@ -8,6 +8,7 @@ on:
     branches: [claude/holiday-week-plan]
     paths:
       - holiday/kvest.html
+      - holiday/js/ar-scenes.js
       - holiday/voice/**
       - holiday/scripts/build-kvest-*.js
       - .github/workflows/kvest-voice.yml

@@ -1,4 +1,4 @@
-/* Частицы поверх камеры: пыль, снег, искры, салют, туман, пыльца.
+/* Частицы поверх камеры: пыль, снег, искры, салют, туман, пыльца, пузырьки, бабочки, брызги, монеты.
    Один общий цикл, у каждого типа свои правила рождения, движения и рисования. */
 
 const Particles = (() => {
@@ -216,6 +216,86 @@ const Particles = (() => {
         ctx.fillStyle = `rgba(255,226,150,${(k * .95).toFixed(3)})`;
         ctx.shadowColor = 'rgba(255,190,80,.8)'; ctx.shadowBlur = 14;
         ctx.fillText(p.g, 0, 0); ctx.restore();
+      }
+    },
+
+    /* пузырьки поднимаются со дна и покачиваются */
+    bubbles: {
+      blend: 'source-over', rate: 22,
+      spawn: (w, h) => ({
+        x: rnd(0, w), y: h + rnd(0, 40), vx: 0, vy: rnd(-90, -40),
+        r: rnd(3, 13), life: rnd(4, 8), age: 0, ph: rnd(0, 7)
+      }),
+      step: (p, dt) => { p.x += Math.sin(p.ph + p.age * 2.6) * 22 * dt; },
+      draw: (ctx, p) => {
+        const k = Math.min(1, (1 - p.age / p.life) * 2);
+        ctx.strokeStyle = `rgba(210,240,255,${(.7 * k).toFixed(3)})`; ctx.lineWidth = 1.4;
+        ctx.fillStyle = `rgba(160,220,255,${(.12 * k).toFixed(3)})`;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 7); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = `rgba(255,255,255,${(.8 * k).toFixed(3)})`;
+        ctx.beginPath(); ctx.arc(p.x - p.r * .35, p.y - p.r * .35, p.r * .22, 0, 7); ctx.fill();
+      }
+    },
+
+    /* бабочки: летят зигзагом и машут крыльями */
+    butterflies: {
+      blend: 'source-over', rate: 1.6,
+      spawn: (w, h) => {
+        const left = Math.random() < .5;
+        return {
+          x: left ? -30 : w + 30, y: rnd(h * .15, h * .7),
+          vx: (left ? 1 : -1) * rnd(40, 80), vy: rnd(-12, 12),
+          r: rnd(9, 16), life: rnd(8, 13), age: 0, ph: rnd(0, 7),
+          c: pick(['255,150,60', '120,200,255', '255,220,90', '230,120,230'])
+        };
+      },
+      step: (p, dt) => { p.y += Math.sin(p.ph + p.age * 3) * 50 * dt; },
+      draw: (ctx, p) => {
+        const flap = Math.abs(Math.sin(p.age * 14 + p.ph));
+        ctx.save(); ctx.translate(p.x, p.y);
+        ctx.fillStyle = `rgba(${p.c},.92)`;
+        [-1, 1].forEach(sd => {
+          ctx.beginPath();
+          ctx.ellipse(sd * p.r * .55 * flap, -p.r * .2, p.r * .6 * flap + 1, p.r * .75, sd * .5, 0, 7);
+          ctx.ellipse(sd * p.r * .4 * flap, p.r * .45, p.r * .4 * flap + 1, p.r * .45, -sd * .4, 0, 7);
+          ctx.fill();
+        });
+        ctx.fillStyle = 'rgba(40,30,30,.9)';
+        ctx.fillRect(-1.2, -p.r * .6, 2.4, p.r * 1.3);
+        ctx.restore();
+      }
+    },
+
+    /* брызги: капли срываются вниз, как с края водовода */
+    spray: {
+      blend: 'lighter', rate: 60, gravity: 520,
+      spawn: (w, h, o) => ({
+        x: rnd(w * (o.x0 || 0), w * (o.x1 || 1)), y: h * (o.y || .3) + rnd(-6, 6),
+        vx: rnd(-26, 26), vy: rnd(-40, 30), r: rnd(1, 2.6), life: rnd(.8, 1.6), age: 0
+      }),
+      draw: (ctx, p) => {
+        const k = 1 - p.age / p.life;
+        ctx.fillStyle = `rgba(150,215,255,${(.85 * k).toFixed(3)})`;
+        ctx.beginPath(); ctx.ellipse(p.x, p.y, p.r, p.r * 2.2, 0, 0, 7); ctx.fill();
+      }
+    },
+
+    /* золотые монеты: «миллион рублей» сыплется сверху */
+    coins: {
+      blend: 'source-over', rate: 16, gravity: 260,
+      spawn: (w, h) => ({
+        x: rnd(0, w), y: rnd(-60, -10), vx: rnd(-30, 30), vy: rnd(40, 140),
+        r: rnd(7, 13), life: rnd(2.4, 3.6), age: 0, ph: rnd(0, 7)
+      }),
+      draw: (ctx, p) => {
+        const sx = Math.abs(Math.cos(p.ph + p.age * 7));
+        ctx.save(); ctx.translate(p.x, p.y); ctx.scale(Math.max(.12, sx), 1);
+        const g = ctx.createRadialGradient(-p.r * .3, -p.r * .3, 1, 0, 0, p.r);
+        g.addColorStop(0, '#fff3b0'); g.addColorStop(.6, '#e8b93b'); g.addColorStop(1, '#a8741a');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, p.r, 0, 7); ctx.fill();
+        ctx.strokeStyle = 'rgba(120,80,20,.6)'; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.arc(0, 0, p.r * .7, 0, 7); ctx.stroke();
+        ctx.restore();
       }
     },
 
