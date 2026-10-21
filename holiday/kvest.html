@@ -111,7 +111,7 @@ h1{font-size:clamp(26px,6vw,40px);line-height:1.08;letter-spacing:-.01em}
 .opt.on button{background:var(--river);color:var(--paper)}
 
 .tasks{display:grid;gap:8px}
-.task{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:11px 13px;display:grid;grid-template-columns:30px 1fr;gap:10px;min-width:0}
+.task{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:11px 13px;display:grid;grid-template-columns:30px 1fr auto;gap:10px;min-width:0}
 .task.done{border-color:color-mix(in srgb,var(--moss) 55%,var(--line))}
 .task input{appearance:none;width:26px;height:26px;border-radius:8px;border:2px solid var(--line);margin:1px 0 0;cursor:pointer;display:grid;place-items:center;background:var(--paper)}
 .task input:checked{background:var(--moss);border-color:var(--moss)}
@@ -121,7 +121,17 @@ h1{font-size:clamp(26px,6vw,40px);line-height:1.08;letter-spacing:-.01em}
 .task strong{font-family:var(--display);font-weight:500;font-size:14.5px;display:block;line-height:1.3}
 .task p{margin:3px 0 0;font-size:14.5px}
 .task .where{font-size:12px;color:var(--muted);font-family:var(--mono);letter-spacing:.02em}
-.task details{grid-column:2;font-size:14px}
+.task details{grid-column:2 / -1;font-size:14px}
+.say{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--river);background:transparent;color:var(--river);
+  cursor:pointer;display:inline-grid;place-items:center;padding:0;font-size:13px;line-height:1}
+.say[aria-pressed="true"]{background:var(--river);color:var(--paper)}
+.say.sm{width:30px;height:30px;font-size:11px}
+.say svg{width:14px;height:14px;fill:currentColor}
+.ans{display:flex;gap:10px;align-items:flex-start;margin-top:4px}
+.ans p{margin:0!important}
+.introrow{display:flex;gap:12px;align-items:flex-start;margin-top:12px}
+.introrow .intro{margin:0}
+.ledrow{display:flex;gap:12px;align-items:flex-start}
 .task summary{cursor:pointer;color:var(--river);font-size:13px;width:max-content}
 .task details p{margin:4px 0 0;color:var(--muted)}
 .prize{margin-top:10px;font-size:14px;color:var(--muted)}
@@ -140,8 +150,8 @@ button:focus-visible{outline:2px solid var(--river);outline-offset:2px}
 <div class="wrap">
   <div class="eyebrow">26–30 октября · папа и сын</div>
   <h1>Экспедиция «Каникулы»</h1>
-  <p class="lede">Пять дней, пять заданий. За каждый день — печать с буквой. Соберёшь все пять
-    к пятнице — сложишь из них секретное слово. Вечером в пятницу узнаешь, зачем оно было нужно.</p>
+  <div class="ledrow" id="lede-row"><p class="lede">Пять дней, пять заданий. За каждый день — печать с буквой. Соберёшь все пять
+    к пятнице — сложишь из них секретное слово. Вечером в пятницу узнаешь, зачем оно было нужно.</p></div>
 
   <div class="board">
     <div class="stamps" id="stamps"></div>
@@ -416,6 +426,39 @@ const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const money = n => n.toLocaleString('ru-RU') + ' ₽';
 
+/* Озвучка: дорожки лежат в audio/kvest/, список — в manifest.json.
+   Пока дорожек нет, кнопки не рисуются. Играет одна дорожка за раз. */
+let TRACKS = new Set();
+const player = new Audio();
+let playing = '';
+const PLAY = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>';
+const STOP = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 3h3v10H4zM9 3h3v10H9z"/></svg>';
+function say(id, small) {
+  if (!TRACKS.has(id)) return '';
+  const on = playing === id;
+  return `<button class="say${small ? ' sm' : ''}" data-say="${id}" aria-pressed="${on}" aria-label="${on ? 'Остановить' : 'Слушать'}">${on ? STOP : PLAY}</button>`;
+}
+function markSay() {
+  document.querySelectorAll('[data-say]').forEach(b => {
+    const on = b.dataset.say === playing;
+    b.setAttribute('aria-pressed', on); b.setAttribute('aria-label', on ? 'Остановить' : 'Слушать');
+    b.innerHTML = on ? STOP : PLAY;
+  });
+}
+function play(id) {
+  if (playing === id) { player.pause(); playing = ''; markSay(); return; }
+  player.src = `audio/kvest/${id}.mp3`;
+  playing = id; markSay();
+  player.play().catch(() => { playing = ''; markSay(); });
+}
+const stopAudio = () => { if (playing) { player.pause(); playing = ''; markSay(); } };
+player.addEventListener('ended', () => { playing = ''; markSay(); });
+function renderLedeSay() {
+  const row = document.getElementById('lede-row');
+  const old = row.querySelector('[data-say]'); if (old) old.remove();
+  row.insertAdjacentHTML('afterbegin', say('start'));
+}
+
 const doneCount = d => d.tasks.filter((_, i) => S.done[d.id + i]).length;
 const earned = d => doneCount(d) >= d.need;
 
@@ -439,7 +482,7 @@ function dayHTML(d) {
       <h2>${d.title}</h2>
       <div class="pills"><span class="pill w">${d.weather}</span><span class="pill">${d.choice ? aqua.name : d.where}</span><span class="pill">${cost}${/₽/.test(cost) ? ' на двоих' : ''}</span></div>
     </div>
-    <p class="intro">${d.intro}</p>
+    <div class="introrow">${say(d.id + '-intro')}<p class="intro">${d.intro}</p></div>
     ${choice}
     <div class="block"><h3>Расписание</h3>
       <ol class="timeline">${plan.map(([t, x]) => `<li><time>${t}</time><div>${x}</div></li>`).join('')}</ol>
@@ -451,7 +494,8 @@ function dayHTML(d) {
         return `<div class="task ${on ? 'done' : ''}">
           <input type="checkbox" id="t-${id}" data-task="${id}" ${on ? 'checked' : ''}>
           <label for="t-${id}"><span class="where">${i + 1} · ${esc(k.w)}</span><strong>${esc(k.t)}</strong><p>${esc(k.q)}</p></label>
-          <details><summary>Ответ для папы</summary><p>${esc(k.a)}</p></details></div>`;
+          ${say(`${d.id}-t${i}`) || '<span></span>'}
+          <details><summary>Ответ для папы</summary><div class="ans">${say(`${d.id}-a${i}`, true)}<p>${esc(k.a)}</p></div></details></div>`;
       }).join('')}</div>
       <p class="prize" id="prize-${d.id}"></p></div>
     <div class="block"><h3>Папе-гиду</h3><div class="guide"><ul>${d.guide.map(x => `<li>${x}</li>`).join('')}</ul></div></div>
@@ -517,22 +561,30 @@ document.addEventListener('change', e => {
   document.querySelector('.dayhead .eyebrow').textContent = `${d.short} ${d.date} · печать «${earned(d) ? d.letter : '?'}»`;
 });
 document.addEventListener('click', e => {
+  const sb = e.target.closest('[data-say]');
+  if (sb) { play(sb.dataset.say); return; }
   const tab = e.target.closest('[data-day]');
-  if (tab) { current = tab.dataset.day; try { history.replaceState(null, '', '#' + current); } catch (x) {}
+  if (tab) { stopAudio(); current = tab.dataset.day; try { history.replaceState(null, '', '#' + current); } catch (x) {}
     renderTabs(); renderDay(); return; }
   const aq = e.target.closest('[data-aqua]');
   if (aq) { S.aqua = aq.dataset.aqua; save(); renderDay(); renderMoney(); return; }
   const l = e.target.closest('[data-letter]');
-  if (l) { if (S.picked.length < 5) S.picked.push(+l.dataset.letter); save(); renderStamps(); return; }
+  if (l) { if (S.picked.length < 5) S.picked.push(+l.dataset.letter); save(); renderStamps();
+    if (S.picked.map(i => DAYS[i].letter).join('') === WORD && TRACKS.has('finale')) { playing = ''; play('finale'); }
+    return; }
   if (e.target.id === 'reset-word') { S.picked = []; save(); renderStamps(); }
 });
 document.getElementById('tabs').addEventListener('keydown', e => {
   if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
   const i = DAYS.findIndex(d => d.id === current) + (e.key === 'ArrowRight' ? 1 : -1);
   if (i < 0 || i >= DAYS.length) return;
-  current = DAYS[i].id; renderTabs(); renderDay();
+  stopAudio(); current = DAYS[i].id; renderTabs(); renderDay();
   document.querySelector(`[data-day="${current}"]`).focus();
 });
 
 renderAll();
+fetch('audio/kvest/manifest.json', { cache: 'no-cache' })
+  .then(r => r.ok ? r.json() : null)
+  .then(m => { if (m && Array.isArray(m.tracks) && m.tracks.length) { TRACKS = new Set(m.tracks); renderDay(); renderLedeSay(); } })
+  .catch(() => {});
 </script>

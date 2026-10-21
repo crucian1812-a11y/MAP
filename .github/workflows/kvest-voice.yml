@@ -1,0 +1,81 @@
+name: Озвучить квесты каникул
+
+# Голос Silero, пакет из holiday/voice (копия инструмента из репозитория Book).
+# Модель качается с models.silero.ai, а torch весит под гигабайт, поэтому синтез
+# живёт в раннере. Запускается сам, когда меняются тексты квестов.
+on:
+  push:
+    branches: [claude/holiday-week-plan]
+    paths:
+      - holiday/kvest.html
+      - holiday/voice/**
+      - holiday/scripts/build-kvest-*.js
+      - .github/workflows/kvest-voice.yml
+  workflow_dispatch:
+    inputs:
+      speaker:
+        description: Голос — aidar, eugene (мужские), xenia, baya, kseniya (женские)
+        required: false
+        default: eugene
+      tempo:
+        description: Темп, 1.0 — как есть, меньше — медленнее
+        required: false
+        default: '0.92'
+
+concurrency:
+  group: kvest-voice
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+env:
+  SPEAKER: ${{ inputs.speaker || 'eugene' }}
+  TEMPO: ${{ inputs.tempo || '0.92' }}
+
+jobs:
+  speak:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+
+      - name: Кэш модели Silero
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/silero-voice
+          key: silero-v5_5_ru
+
+      - name: Поставить синтез и кодек
+        run: |
+          set -euo pipefail
+          pip install --quiet torch --index-url https://download.pytorch.org/whl/cpu
+          pip install --quiet numpy num2words
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+
+      - name: Собрать тексты со страницы
+        run: node holiday/scripts/build-kvest-voice.js
+
+      - name: Показать, что уйдёт в синтез
+        run: |
+          set -euo pipefail
+          python holiday/voice/voice.py holiday/audio/kvest-text --out /tmp/speech --dry-run > /dev/null
+          for f in /tmp/speech/*.speech.txt; do echo "── $(basename "$f")"; cat "$f"; done
+
+      - name: Синтез
+        run: |
+          set -euo pipefail
+          rm -rf holiday/audio/kvest
+          python holiday/voice/voice.py holiday/audio/kvest-text \
+            --out holiday/audio/kvest --speaker "$SPEAKER" --tempo "$TEMPO" --bitrate 48k
+          node holiday/scripts/build-kvest-manifest.js "$SPEAKER" "$TEMPO"
+          du -sh holiday/audio/kvest
+
+      - name: Закоммитить звук
+        run: |
+          scripts/commit-and-push.sh "Озвучка квестов: голос $SPEAKER, темп $TEMPO" holiday/audio/
