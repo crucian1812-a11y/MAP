@@ -1,0 +1,315 @@
+<title>Каникулы 26–30 октября</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Golos+Text:wght@400;500;600&display=swap">
+<style>
+/* Раскладка: шапка, недельная сетка слотов, под ней каталог карточек, снизу итог */
+:root{
+  --paper:#f6f1e7;        /* бумага, тёплая */
+  --ink:#241f1a;
+  --muted:#6f6355;
+  --rust:#b4502a;         /* акцент: осенний кирпич */
+  --moss:#4a6141;         /* второй акцент: трава/парк */
+  --line:#ddd2bf;
+  --card:#fffdf8;
+  --shadow:0 2px 10px rgba(36,31,26,.07);
+  --display:"Literata",Georgia,"Times New Roman",serif;
+  --text:"Golos Text","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#1a1715; --ink:#ece4d8; --muted:#a2968a; --rust:#e08a5f; --moss:#8fb07d;
+    --line:#352e28; --card:#231f1c; --shadow:0 2px 12px rgba(0,0,0,.4); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#1a1715; --ink:#ece4d8; --muted:#a2968a; --rust:#e08a5f; --moss:#8fb07d;
+  --line:#352e28; --card:#231f1c; --shadow:0 2px 12px rgba(0,0,0,.4); color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--text);line-height:1.5}
+.wrap{
+  max-width:1120px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:28px 60px;
+}
+h1{font-family:var(--display);font-size:clamp(28px,5vw,42px);line-height:1.1;margin:0 0 6px;text-wrap:balance}
+.lede{color:var(--muted);max-width:62ch;margin:0 0 4px}
+.note{font-size:13px;color:var(--muted);border-left:3px solid var(--rust);padding:6px 0 6px 12px;margin:18px 0 0;max-width:62ch}
+
+h2{font-family:var(--display);font-size:22px;margin:38px 0 14px;display:flex;align-items:baseline;gap:10px}
+h2 small{font-family:var(--text);font-size:13px;font-weight:400;color:var(--muted)}
+
+/* неделя */
+.week{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+@media (max-width:760px){.week{grid-template-columns:1fr}}
+.day{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0;min-height:120px}
+.day h3{margin:0 0 2px;font-family:var(--display);font-size:16px}
+.day .date{font-size:12px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.slot{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.chosen{
+  display:flex;align-items:flex-start;gap:8px;background:var(--paper);border:1px solid var(--line);
+  border-radius:9px;padding:7px 8px;font-size:13.5px;min-width:0
+}
+.chosen b{font-weight:600;min-width:0;overflow-wrap:anywhere}
+.chosen button{margin-left:auto;border:0;background:none;color:var(--muted);cursor:pointer;font-size:15px;line-height:1;padding:2px 4px}
+.chosen button:hover{color:var(--rust)}
+.empty{color:var(--muted);font-size:13px;font-style:italic}
+.warn{color:var(--rust);font-size:12.5px;margin-top:6px}
+
+/* фильтр */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.filters button{
+  font:inherit;font-size:13px;padding:6px 12px;border-radius:20px;cursor:pointer;
+  border:1px solid var(--line);background:var(--card);color:var(--muted)
+}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+/* карточки */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;min-width:0}
+.card.is-picked{border-color:var(--rust);box-shadow:0 0 0 1px var(--rust),var(--shadow)}
+.card h3{margin:0;font-family:var(--display);font-size:17px;line-height:1.25}
+.meta{display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--muted)}
+.meta span{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:2px 7px;white-space:nowrap}
+.card p{margin:0;font-size:14px}
+.kid{font-size:13.5px;color:var(--moss)}
+.pick{display:flex;gap:5px;margin-top:auto;padding-top:4px;flex-wrap:wrap}
+.pick button{
+  font:inherit;font-size:12.5px;font-weight:600;width:38px;padding:6px 0;border-radius:8px;cursor:pointer;
+  border:1px solid var(--line);background:var(--paper);color:var(--ink)
+}
+.pick button[aria-pressed="true"]{background:var(--rust);border-color:var(--rust);color:#fff}
+.pick button:disabled{opacity:.35;cursor:not-allowed}
+.pick button:focus-visible,.filters button:focus-visible,.chosen button:focus-visible{outline:2px solid var(--rust);outline-offset:2px}
+
+/* итог */
+.summary{margin-top:38px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.summary h2{margin-top:0}
+.total{font-variant-numeric:tabular-nums;font-size:15px;margin:10px 0 0}
+.copy{font:inherit;font-weight:600;margin-top:14px;padding:11px 18px;border-radius:10px;border:0;background:var(--ink);color:var(--paper);cursor:pointer}
+.copy:active{transform:translateY(1px)}
+pre.plan{white-space:pre-wrap;font-family:var(--text);font-size:13.5px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:12px;overflow-x:auto}
+</style>
+
+<div class="wrap">
+  <h1>Каникулы 26–30 октября</h1>
+  <p class="lede">Выберите, что в какой день. Нажмите на карточке день недели — дело встанет в расписание.
+    Можно по два дела в день: утро и вечер.</p>
+  <p class="note">Цены ориентировочные, на двоих — взрослый и ребёнок. Афишу концертов и точные цены
+    надо проверить на сайтах: в каникулы расписание плавает.</p>
+
+  <h2>Неделя <small id="week-note">пока пусто</small></h2>
+  <div class="week" id="week"></div>
+
+  <h2>Варианты <small>восемнадцать штук</small></h2>
+  <div class="filters" id="filters"></div>
+  <div class="cards" id="cards"></div>
+
+  <div class="summary">
+    <h2>Что получилось</h2>
+    <div id="plan-out"><p class="empty">Ничего не выбрано.</p></div>
+    <p class="total" id="total"></p>
+    <button class="copy" id="copy">Скопировать план</button>
+  </div>
+</div>
+
+<script>
+const DAYS = [
+  { id:'mon', name:'Понедельник', date:'26 октября' },
+  { id:'tue', name:'Вторник',     date:'27 октября' },
+  { id:'wed', name:'Среда',       date:'28 октября' },
+  { id:'thu', name:'Четверг',     date:'29 октября' },
+  { id:'fri', name:'Пятница',     date:'30 октября' }
+];
+
+const ITEMS = [
+  { id:'tretyakov', type:'Музей', name:'Третьяковка, главный корпус', place:'Лаврушинский, 10 · м. Третьяковская',
+    time:'2 часа', cost:[900,1600], closed:['mon'],
+    why:'Богатыри, Алёнушка, Царевна-Лебедь — половина зала знакома по сказкам',
+    text:'Идти к открытию, по списку из восьми картин, не по всем залам подряд.' },
+  { id:'organ', type:'Музыка', name:'Орган в соборе на Малой Грузинской', place:'М. Грузинская, 27 · м. Улица 1905 года',
+    time:'1 час', cost:[2000,4000],
+    why:'Звук слышно телом, а не ушами. Для первого концерта это важнее программы',
+    text:'Концерты почти каждый вечер, без антракта. Бах звучит убедительнее Моцарта.' },
+  { id:'zaryadye', type:'Музыка', name:'Зал «Зарядье», орган или оркестр', place:'Варварка, 6 · м. Китай-город',
+    time:'1–1,5 часа', cost:[2000,6000],
+    why:'Бывает цикл «Знакомство с органом» с ведущим, 50 минут, 6+',
+    text:'После концерта — парк Зарядье и парящий мост, если останутся силы.' },
+  { id:'philharmonia', type:'Музыка', name:'«Сказки с оркестром», зал Чайковского', place:'Триумфальная, 4 · м. Маяковская',
+    time:'1 час', cost:[1600,5000],
+    why:'Артист читает сказку, оркестр играет. Формат придуман ровно под этот возраст',
+    text:'Смотреть афишу филармонии: такие концерты бывают не каждую неделю.' },
+  { id:'mmdm', type:'Музыка', name:'Дом музыки, детский абонемент', place:'Космодамианская наб., 52 · м. Павелецкая',
+    time:'1 час', cost:[1600,4000],
+    why:'Зал поменьше и спокойнее, сцена близко',
+    text:'Есть органные программы и камерные вечера.' },
+  { id:'bike-aqueduct', type:'Улица', name:'Велосипед: Яуза и Ростокинский акведук', place:'От дома, 8 км',
+    time:'2 часа', cost:[0,0],
+    why:'Настоящий екатерининский водопровод, по нему можно проехать',
+    text:'Самый короткий и самый красивый осенью маршрут. Мокрые листья — тормозить заранее.' },
+  { id:'bike-vdnh', type:'Улица', name:'Велосипед: ВДНХ', place:'От дома, 12 км',
+    time:'3 часа', cost:[0,0],
+    why:'Ракета «Восток», фонтаны, идеальный асфальт',
+    text:'Утром пусто, днём в каникулы людно.' },
+  { id:'bike-ostankino', type:'Улица', name:'Велосипед: Останкино', place:'От дома, 10 км',
+    time:'2 часа', cost:[0,0],
+    why:'Пруд, усадьба Шереметевых и башня, которая растёт на глазах',
+    text:'Самый тихий из маршрутов, мало народу даже в каникулы.' },
+  { id:'aqua-moreon', type:'Вода', name:'Аквапарк «Мореон»', place:'Ясенево · оранжевая ветка без пересадок',
+    time:'4 часа', cost:[4000,6000],
+    why:'Горки, волны, термы. После — спит в метро',
+    text:'Дорога час в одну сторону, зато без пересадок. Будни дешевле.' },
+  { id:'aqua-kvakva', type:'Вода', name:'«Ква-Ква парк», Мытищи', place:'ТРЦ «Июнь» · автобус от ВДНХ',
+    time:'4 часа', cost:[4000,6000],
+    why:'Ближе всех по километрам',
+    text:'Метро нет: автобус от ВДНХ или электричка до Мытищ.' },
+  { id:'cosmos', type:'Музей', name:'Музей космонавтики', place:'ВДНХ · 15 минут от дома',
+    time:'2 часа', cost:[700,1200],
+    why:'Настоящий «Луноход», спускаемый аппарат, Белка и Стрелка',
+    text:'Лучший музей города для этого возраста. Можно доехать на велосипеде.' },
+  { id:'atom', type:'Музей', name:'Музей «Атом», ВДНХ', place:'ВДНХ · 15 минут от дома',
+    time:'2 часа', cost:[1400,2400],
+    why:'Всё интерактивное, трогать можно почти всё',
+    text:'Новый и дорогой, зато рядом с домом.' },
+  { id:'moskvarium', type:'Музей', name:'Москвариум', place:'ВДНХ · 15 минут от дома',
+    time:'2 часа', cost:[3000,5000],
+    why:'Акулы и скаты над головой в стеклянном тоннеле',
+    text:'Самое дорогое в списке. Шоу с косатками оплачивается отдельно.' },
+  { id:'tower', type:'Музей', name:'Останкинская башня, смотровая', place:'Академика Королёва, 15 · рядом с домом',
+    time:'1,5 часа', cost:[2500,4000],
+    why:'337 метров и стеклянный пол под ногами',
+    text:'Пускают с семи лет, строго по записи и с паспортом. Записываться заранее.' },
+  { id:'planetarium', type:'Музей', name:'Планетарий и «Лунариум»', place:'Садовая-Кудринская, 5 · м. Баррикадная',
+    time:'3 часа', cost:[1800,3000],
+    why:'Звёздный зал плюс два этажа, где всё крутится и нажимается',
+    text:'Брать звёздный зал и «Лунариум» вместе, иначе половина впечатления пропадёт.' },
+  { id:'experimentanium', type:'Музей', name:'Экспериментаниум', place:'Бутырская, 46 · м. Савёловская',
+    time:'3 часа', cost:[1600,2600],
+    why:'Музей, где трогать руками нужно, а не нельзя',
+    text:'Выматывает основательно: ставить на день, после которого ничего не планируется.' },
+  { id:'sats', type:'Музыка', name:'Театр Наталии Сац, опера для детей', place:'Проспект Вернадского, 5 · м. Университет',
+    time:'2 часа', cost:[1600,4000],
+    why:'Живой оркестр и сцена. Засчитывается и за музыку, и за театр',
+    text:'Утренние спектакли идут в 11 и 14 часов.' },
+  { id:'orangery', type:'Улица', name:'Оранжереи Ботанического сада', place:'10 минут пешком от дома',
+    time:'1,5 часа', cost:[600,1200],
+    why:'Пальмы и тропики, пока на улице плюс пять',
+    text:'Запасной вариант на случай дождя: близко, тепло и недолго.' }
+];
+
+const TYPES = ['Всё','Музей','Музыка','Улица','Вода'];
+const KEY = 'holiday-week-2610';
+let state = {};
+let filter = 'Всё';
+
+try { state = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { state = {}; }
+DAYS.forEach(d => { if (!Array.isArray(state[d.id])) state[d.id] = []; });
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+const item = id => ITEMS.find(i => i.id === id);
+const money = n => n.toLocaleString('ru-RU');
+
+function toggle(itemId, dayId) {
+  const list = state[dayId];
+  const at = list.indexOf(itemId);
+  if (at >= 0) list.splice(at, 1);
+  else if (list.length < 2) list.push(itemId);
+  save(); render();
+}
+
+function renderWeek() {
+  document.getElementById('week').innerHTML = DAYS.map(d => {
+    const list = state[d.id];
+    const rows = list.length
+      ? list.map(id => {
+          const it = item(id);
+          const bad = it.closed && it.closed.includes(d.id);
+          return `<div class="chosen"><b>${it.name}${bad ? ' ⚠' : ''}</b>
+            <button data-off="${id}" data-day="${d.id}" aria-label="Убрать">✕</button></div>
+            ${bad ? '<div class="warn">В понедельник закрыто</div>' : ''}`;
+        }).join('')
+      : '<div class="empty">пусто</div>';
+    return `<div class="day"><h3>${d.name}</h3><div class="date">${d.date}</div>
+      <div class="slot">${rows}</div></div>`;
+  }).join('');
+  const n = DAYS.reduce((a, d) => a + state[d.id].length, 0);
+  document.getElementById('week-note').textContent = n ? `выбрано дел: ${n}` : 'пока пусто';
+}
+
+function renderCards() {
+  document.getElementById('filters').innerHTML = TYPES.map(t =>
+    `<button data-filter="${t}" aria-pressed="${t === filter}">${t}</button>`).join('');
+
+  const shown = ITEMS.filter(i => filter === 'Всё' || i.type === filter);
+  document.getElementById('cards').innerHTML = shown.map(i => {
+    const picked = DAYS.filter(d => state[d.id].includes(i.id));
+    const cost = i.cost[1] === 0 ? 'бесплатно' : `${money(i.cost[0])}–${money(i.cost[1])} ₽`;
+    return `<article class="card ${picked.length ? 'is-picked' : ''}">
+      <h3>${i.name}</h3>
+      <div class="meta"><span>${i.type}</span><span>${i.time}</span><span>${cost}</span></div>
+      <p>${i.place}</p>
+      <p class="kid">${i.why}</p>
+      <p>${i.text}</p>
+      <div class="pick">${DAYS.map(d => {
+        const on = state[d.id].includes(i.id);
+        const full = state[d.id].length >= 2 && !on;
+        return `<button data-add="${i.id}" data-day="${d.id}" aria-pressed="${on}" ${full ? 'disabled' : ''}
+          title="${d.name}">${d.name.slice(0, 2)}</button>`;
+      }).join('')}</div>
+    </article>`;
+  }).join('');
+}
+
+function planText() {
+  const lines = [];
+  DAYS.forEach(d => {
+    const list = state[d.id];
+    if (!list.length) { lines.push(`${d.name} ${d.date}: свободно`); return; }
+    lines.push(`${d.name} ${d.date}: ` + list.map(id => item(id).name).join(' + '));
+  });
+  return lines.join('\n');
+}
+
+function renderSummary() {
+  const chosen = DAYS.flatMap(d => state[d.id]);
+  const out = document.getElementById('plan-out');
+  if (!chosen.length) {
+    out.innerHTML = '<p class="empty">Ничего не выбрано.</p>';
+    document.getElementById('total').textContent = '';
+    return;
+  }
+  out.innerHTML = `<pre class="plan">${planText()}</pre>`;
+  const lo = chosen.reduce((a, id) => a + item(id).cost[0], 0);
+  const hi = chosen.reduce((a, id) => a + item(id).cost[1], 0);
+  document.getElementById('total').textContent =
+    `Выходит примерно ${money(lo)}–${money(hi)} ₽ на двоих, без еды и дороги.`;
+}
+
+function render() { renderWeek(); renderCards(); renderSummary(); }
+
+document.addEventListener('click', e => {
+  const add = e.target.closest('[data-add]');
+  if (add) return toggle(add.dataset.add, add.dataset.day);
+  const off = e.target.closest('[data-off]');
+  if (off) return toggle(off.dataset.off, off.dataset.day);
+  const f = e.target.closest('[data-filter]');
+  if (f) { filter = f.dataset.filter; renderCards(); return; }
+  if (e.target.id === 'copy') {
+    const text = 'План каникул 26–30 октября\n\n' + planText();
+    const btn = e.target;
+    const done = () => { btn.textContent = 'Скопировано'; setTimeout(() => btn.textContent = 'Скопировать план', 1800); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(() => {
+        const pre = document.querySelector('pre.plan');
+        if (pre) { const r = document.createRange(); r.selectNodeContents(pre); 
+          const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+        btn.textContent = 'Выделено, скопируйте вручную';
+        setTimeout(() => btn.textContent = 'Скопировать план', 2500);
+      });
+    }
+  }
+});
+
+render();
+</script>
