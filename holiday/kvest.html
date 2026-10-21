@@ -1,0 +1,538 @@
+<title>Экспедиция «Каникулы»</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Маршрутный лист экспедиции: сверху печати дней и секретное слово, ниже вкладки дней,
+   в каждом дне расписание, квест-задания с отметками, подсказки папе-гиду */
+:root{
+  --paper:#f2f5f4;   /* холодная бумага */
+  --card:#ffffff;
+  --ink:#16232c;     /* тёмная вода */
+  --muted:#5b6b74;
+  --river:#1d5f7c;   /* Яуза: основной акцент */
+  --leaf:#c98f0e;    /* осенний лист: печати и награды */
+  --moss:#3f7244;    /* выполнено */
+  --line:#d3dcdd;
+  --soft:#e6eeee;
+  --display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --text:"Onest","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0e161c; --card:#15212a; --ink:#e4ecee; --muted:#93a4ad; --river:#6cb3d1;
+    --leaf:#efbd45; --moss:#86c487; --line:#25343d; --soft:#1b2a33; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0e161c; --card:#15212a; --ink:#e4ecee; --muted:#93a4ad; --river:#6cb3d1;
+  --leaf:#efbd45; --moss:#86c487; --line:#25343d; --soft:#1b2a33; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--text);font-size:15.5px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:26px 64px}
+h1,h2,h3{font-family:var(--display);font-weight:700;text-wrap:balance;margin:0}
+h1{font-size:clamp(26px,6vw,40px);line-height:1.08;letter-spacing:-.01em}
+.lede{color:var(--muted);max-width:60ch;margin:10px 0 0}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--river)}
+
+/* печати и слово */
+.board{margin-top:22px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;
+  background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+@media (max-width:620px){.board{grid-template-columns:1fr}}
+.stamps{display:flex;gap:10px;flex-wrap:wrap}
+.stamp{width:58px;height:58px;border-radius:50%;border:2px dashed var(--line);display:grid;place-items:center;
+  font-family:var(--display);font-size:22px;color:var(--line);position:relative;transition:transform .3s}
+.stamp small{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.04em}
+.stamp.got{border:2px solid var(--leaf);color:var(--leaf);transform:rotate(-8deg);background:color-mix(in srgb,var(--leaf) 10%,transparent)}
+.word{min-width:0}
+.word p{margin:0;font-size:13.5px;color:var(--muted);max-width:34ch}
+.tiles{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.tiles button{font-family:var(--display);font-size:18px;width:40px;height:44px;border-radius:9px;border:1px solid var(--line);
+  background:var(--soft);color:var(--ink);cursor:pointer}
+.tiles button:disabled{opacity:.3;cursor:default}
+.answer{font-family:var(--display);font-size:22px;letter-spacing:.18em;margin-top:8px;min-height:30px;color:var(--river)}
+.answer.win{color:var(--moss)}
+.linkbtn{font:inherit;font-size:13px;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0;margin-top:4px}
+
+/* сводка недели */
+.facts{margin-top:30px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:620px){.facts{grid-template-columns:1fr}}
+.facts section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;min-width:0}
+.facts h2{font-size:15px;margin-bottom:8px}
+.facts ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14px}
+.money{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.money td{padding:3px 0;border-bottom:1px solid var(--soft)}
+.money td:last-child{text-align:right;white-space:nowrap}
+.money tr:last-child td{border-bottom:0;font-weight:600}
+
+/* вкладки дней */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);margin-top:30px;padding-block:10px;
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;border-bottom:1px solid var(--line)}
+.tabs button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:11px;
+  padding:7px 4px;display:grid;gap:1px;justify-items:center;min-width:0}
+.tabs b{font-family:var(--display);font-size:14px;font-weight:500}
+.tabs span{font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.tabs button[aria-selected="true"]{background:var(--river);border-color:var(--river);color:var(--paper)}
+.tabs button[aria-selected="true"] span{color:var(--paper);opacity:.85}
+.tabs button.done b::after{content:" ✓";color:var(--leaf)}
+
+/* день */
+.day{padding-top:22px}
+.dayhead{display:grid;gap:8px}
+.dayhead h2{font-size:clamp(22px,5vw,30px);line-height:1.12}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{font-size:12.5px;border:1px solid var(--line);background:var(--card);border-radius:20px;padding:3px 10px;white-space:nowrap}
+.pill.w{border-color:color-mix(in srgb,var(--river) 40%,var(--line))}
+.intro{margin:12px 0 0;max-width:62ch}
+.block{margin-top:26px}
+.block > h3{font-size:16px;margin-bottom:10px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.block > h3 small{font-family:var(--text);font-weight:400;font-size:13px;color:var(--muted)}
+
+.timeline{list-style:none;margin:0;padding:0;display:grid;gap:0;border-left:2px solid var(--line);margin-left:6px}
+.timeline li{display:grid;grid-template-columns:62px 1fr;gap:10px;padding:5px 0 5px 14px;position:relative;min-width:0}
+.timeline li::before{content:"";position:absolute;left:-6px;top:12px;width:10px;height:10px;border-radius:50%;background:var(--paper);border:2px solid var(--river)}
+.timeline time{font-family:var(--mono);font-size:13.5px;color:var(--river);padding-top:1px}
+.timeline div{min-width:0}
+.road{margin-top:10px;font-size:14px;background:var(--soft);border-radius:10px;padding:9px 12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips span{font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:3px 9px}
+
+.choice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:620px){.choice{grid-template-columns:1fr}}
+.opt{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:6px;min-width:0}
+.opt.on{border-color:var(--river);box-shadow:0 0 0 1px var(--river)}
+.opt h4{margin:0;font-family:var(--display);font-size:14.5px;font-weight:500}
+.opt p{margin:0;font-size:13.5px}
+.opt .sum{font-variant-numeric:tabular-nums;font-weight:600}
+.opt button{justify-self:start;font:inherit;font-size:13px;font-weight:600;border-radius:9px;padding:6px 12px;cursor:pointer;
+  border:1px solid var(--river);background:transparent;color:var(--river)}
+.opt.on button{background:var(--river);color:var(--paper)}
+
+.tasks{display:grid;gap:8px}
+.task{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:11px 13px;display:grid;grid-template-columns:30px 1fr;gap:10px;min-width:0}
+.task.done{border-color:color-mix(in srgb,var(--moss) 55%,var(--line))}
+.task input{appearance:none;width:26px;height:26px;border-radius:8px;border:2px solid var(--line);margin:1px 0 0;cursor:pointer;display:grid;place-items:center;background:var(--paper)}
+.task input:checked{background:var(--moss);border-color:var(--moss)}
+.task input:checked::after{content:"✓";color:var(--card);font-weight:700;font-size:15px}
+.task input:focus-visible{outline:2px solid var(--river);outline-offset:2px}
+.task label{cursor:pointer;min-width:0}
+.task strong{font-family:var(--display);font-weight:500;font-size:14.5px;display:block;line-height:1.3}
+.task p{margin:3px 0 0;font-size:14.5px}
+.task .where{font-size:12px;color:var(--muted);font-family:var(--mono);letter-spacing:.02em}
+.task details{grid-column:2;font-size:14px}
+.task summary{cursor:pointer;color:var(--river);font-size:13px;width:max-content}
+.task details p{margin:4px 0 0;color:var(--muted)}
+.prize{margin-top:10px;font-size:14px;color:var(--muted)}
+.prize b{color:var(--leaf)}
+
+.guide{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+.guide ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14.5px}
+.eve{font-size:14.5px;border:1px dashed color-mix(in srgb,var(--leaf) 60%,var(--line));border-radius:12px;padding:10px 14px}
+
+.foot{margin-top:40px;font-size:12.5px;color:var(--muted);max-width:62ch}
+a{color:var(--river)}
+button:focus-visible{outline:2px solid var(--river);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">26–30 октября · папа и сын</div>
+  <h1>Экспедиция «Каникулы»</h1>
+  <p class="lede">Пять дней, пять заданий. За каждый день — печать с буквой. Соберёшь все пять
+    к пятнице — сложишь из них секретное слово. Вечером в пятницу узнаешь, зачем оно было нужно.</p>
+
+  <div class="board">
+    <div class="stamps" id="stamps"></div>
+    <div class="word">
+      <p id="word-note">Печать дня открывается, когда выполнено нужное число заданий.</p>
+      <div class="tiles" id="tiles"></div>
+      <div class="answer" id="answer"></div>
+      <button class="linkbtn" id="reset-word" hidden>Собрать заново</button>
+    </div>
+  </div>
+
+  <div class="facts">
+    <section>
+      <h2>Купить заранее</h2>
+      <ul>
+        <li><b>Сейчас:</b> концерт «Бах, Брамс, Мендельсон», пт 30, 18:00, два билета от 900 ₽ — <a href="https://msk.kassir.ru/koncert/anglikanskiy-sobor-svyatogo-andreya/bah-brams-mendelson-starinnyiy-organ-pri-svechah_2026-10-30" target="_blank" rel="noopener">kassir.ru</a></li>
+        <li><b>До вторника:</b> Третьяковка, сеанс на 10:00 — <a href="https://www.tretyakovgallery.ru/for-visitors/museums/istoricheskoe-zdanie/" target="_blank" rel="noopener">tretyakovgallery.ru</a></li>
+        <li><b>До среды:</b> аквапарк онлайн, будний тариф на 3 часа</li>
+        <li><b>В четверг на месте:</b> оранжерея, касса до 16:30</li>
+      </ul>
+    </section>
+    <section>
+      <h2>Сколько выходит</h2>
+      <table class="money" id="money"></table>
+    </section>
+  </div>
+
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <main id="days"></main>
+
+  <p class="foot">Цены и часы проверены 21 октября на сайтах Третьяковки, Ботанического сада, «Карибии»
+    и на kassir.ru. Тарифы Лужников взяты из обзора Т—Ж за апрель 2026: официальный сайт не открылся,
+    перед покупкой сверьте. Погода — прогноз meteoservice.ru от 21 октября, ближе к делу может сдвинуться.
+    Отметки сохраняются только на этом телефоне.</p>
+</div>
+
+<script>
+const DAYS = [
+  {
+    id:'mon', short:'Пн', date:'26 окт', title:'Тайна Миллионного моста', letter:'Г', need:5,
+    weather:'ясно, +1…+10', cost:'бесплатно', where:'Велосипед · Яуза, акведук, Свиблово',
+    intro:'Едем вдоль Яузы к мосту, по которому двести лет назад в Москву шла вода. Потом против течения до усадьбы Свиблово и домой. Петля около 8–9 км.',
+    plan:[
+      ['10:30','Завтрак, накачать колёса, термос с чаем.'],
+      ['11:00','Выезд. Через пять минут парк «Яуза» у дома.'],
+      ['11:20','Вниз по Яузе к Ростокинскому акведуку, около 1,7 км. Задания 1–5, перекус.'],
+      ['12:15','Обратно вверх по течению, мимо дома, к усадьбе Свиблово, около 3 км.'],
+      ['13:00','Усадьба Свиблово: задание 7, отдых.'],
+      ['13:45','Домой и обедать. Темнеет в 16:50, запас большой.']
+    ],
+    road:'Весь маршрут по паркам вдоль реки. Утром около нуля, на мостах и листьях скользко: тормозить заранее.',
+    take:['шлемы','перчатки','шапка под шлем','термос','бутерброды','насос','фонарь','телефон с картой'],
+    tasks:[
+      {t:'Где начинается вода', w:'у акведука', q:'Посмотри на мост. По нему не ездили машины и не ходили люди. Что по нему шло и откуда?',
+        a:'Вода. Из родников под Мытищами она сама текла по кирпичному каналу под уклон, без насосов, до самой Москвы.'},
+      {t:'Сосчитай арки', w:'у акведука', q:'Сколько арок у моста? Считай вслух, папа проверит.',
+        a:'По документам 21 арка. Если вышло меньше, часть арок спрятана в берегу.'},
+      {t:'Почему «Миллионный»', w:'у акведука', q:'Этот мост в народе зовут Миллионным. Угадай почему.',
+        a:'Его строительство стоило больше миллиона рублей. При Екатерине Второй это были огромные деньги.'},
+      {t:'Шаги великана', w:'вдоль акведука', q:'Пройди вдоль моста и посчитай шаги. Длина акведука 356 метров. Сколько твоих шагов уместилось?',
+        a:'Шаг семилетки около полуметра, значит, примерно 700 шагов. Сколько вышло у тебя?'},
+      {t:'Листик-разведчик', w:'на мосту через Яузу', q:'Брось листик в воду. Куда он поплывёт: к дому или от дома?',
+        a:'Вниз по течению, к Сокольникам, а потом в Москву-реку. А мы дальше поедем против течения.'},
+      {t:'Осеннее бинго', w:'по дороге', q:'Найди пять из восьми: утку, белку, ворону, красный лист, жёлтый лист, шишку, рыбака, второй мост.',
+        a:'Пять нашёл — задание выполнено.'},
+      {t:'Самое старое здание', w:'усадьба Свиблово', q:'Найди в усадьбе церковь. Угадай, сколько ей лет: 50, 150 или больше 300?',
+        a:'Больше трёхсот. Троицкую церковь построили в 1708 году, при Петре Первом.'},
+      {t:'Велопрофи', w:'на ровной дорожке', q:'По команде «Стоп!» остановись так, чтобы переднее колесо встало ровно у ветки или трещины.',
+        a:'Три точные остановки из пяти — зачёт.'}
+    ],
+    guide:[
+      'Акведук строили с 1780 по 1804 год по указу Екатерины Второй, начинал инженер Фридрих Вильгельм Бауэр. Это часть первого московского водопровода: вода шла из мытищинских ключей самотёком.',
+      'Длина 356 метров, 21 арка. Стоил больше миллиона рублей, отсюда «Миллионный мост».',
+      'Есть легенда: Екатерина по пути в Троице-Сергиеву лавру попила воды из мытищинского родника, вода ей понравилась, и она велела провести её в Москву.',
+      'Мостик в завтра: в Третьяковке будет картина «Тройка», где дети тащат бочку с водой. Так жили, пока воду не провели в дома.'
+    ],
+    eve:'Накануне вечером: посмотрите вместе на карте, где дом, где Яуза и куда она течёт. Пусть сам найдёт акведук.'
+  },
+  {
+    id:'tue', short:'Вт', date:'27 окт', title:'Охота за картинами', letter:'А', need:6,
+    weather:'ясно, 0…+9', cost:'700 ₽', where:'Третьяковская галерея, Лаврушинский, 10',
+    intro:'Идём не по всем залам подряд, а охотимся за восемью картинами. Нашёл картину — выполни задание. Два часа, потом обед.',
+    plan:[
+      ['09:20','Выход из дома.'],
+      ['09:30','Метро «Ботанический сад» → «Третьяковская», оранжевая ветка без пересадок, около 25 минут.'],
+      ['10:00','Открытие. Гардероб, карта залов, план охоты.'],
+      ['10:10','Охота за картинами, задания 1–9. Перерыв на скамейке в середине.'],
+      ['12:00','Выход. Обед поблизости, на Пятницкой или в Лаврушинском.'],
+      ['13:00','Домой. Вечером нарисовать любимую картину.']
+    ],
+    road:'Галерея закрыта по понедельникам, поэтому музей во вторник. Касса и вход до 20:00, но к открытию людей меньше всего.',
+    take:['электронные билеты','свидетельство о рождении или фото — для детского льготного билета','блокнот и карандаш','вода в маленькой бутылке'],
+    tasks:[
+      {t:'Три богатыря', w:'Васнецов, «Богатыри»', q:'Найди трёх всадников на границе. У кого из них лук и гусли?',
+        a:'У Алёши Поповича, он справа. В центре Илья Муромец на чёрном коне, слева Добрыня Никитич на белом.'},
+      {t:'Птички над сестрицей', w:'Васнецов, «Алёнушка»', q:'Алёнушка грустит у пруда. Найди птиц над её головой. Сколько их?',
+        a:'На ветке сидят ласточки. Посчитай сам, сколько их.'},
+      {t:'Медвежье утро', w:'Шишкин, «Утро в сосновом лесу»', q:'Сколько медведей на картине? Где ты видел их раньше?',
+        a:'Четыре: медведица и три медвежонка. Их рисуют на фантиках конфет «Мишка косолапый». Медведей нарисовал друг Шишкина, художник Савицкий.'},
+      {t:'Царевна из сказки', w:'Врубель, «Царевна-Лебедь»', q:'Из какой сказки Пушкина эта царевна? Что у неё на голове?',
+        a:'Из «Сказки о царе Салтане». На голове корона, похожая на кокошник, в камнях. По этой сказке есть опера Римского-Корсакова, и Лебедь там пела жена Врубеля.'},
+      {t:'Каменные цветы', w:'Врубель, «Демон сидящий»', q:'Посмотри на цветы вокруг. На что они больше похожи: на цветы или на камни? Тут нет правильного ответа.',
+        a:'Как скажешь, так и верно. Врубель часто писал так, будто картина собрана из цветных кусочков, как мозаика.'},
+      {t:'Самая большая картина', w:'Иванов, «Явление Христа народу»', q:'Пройди вдоль картины и посчитай шаги. И найди самую маленькую фигуру вдалеке.',
+        a:'Ширина картины 7,5 метра, примерно 15 твоих шагов. Иванов писал её 20 лет, и для неё в галерее отдельный зал.'},
+      {t:'Весна в октябре', w:'Саврасов, «Грачи прилетели»', q:'Какое время года на картине? Сколько гнёзд ты насчитал?',
+        a:'Ранняя весна: снег ещё лежит, а грачи уже прилетели и строят гнёзда.'},
+      {t:'Бочка с водой', w:'Перов, «Тройка»', q:'Сколько детей тащат бочку? Вспомни вчерашний мост: зачем им возить воду?',
+        a:'Трое. Водопровода в домах не было, воду брали из колодцев и водоразборных фонтанов и везли домой.'},
+      {t:'Бонус: девочка с персиками', w:'Серов, «Девочка с персиками»', q:'Как думаешь, сколько ей лет?',
+        a:'Двенадцать. Это Вера Мамонтова, дочь мецената Саввы Мамонтова.'}
+    ],
+    guide:[
+      'Галерею собрал купец Павел Третьяков. Покупать картины он начал в 1856 году, а в 1892-м подарил всю коллекцию Москве.',
+      'Сказочный фасад галереи нарисовал тот же Виктор Васнецов, автор «Богатырей». Покажи его на выходе.',
+      'Если устанет на середине, пропустите «Демона» и «Грачей», но «Тройку» оставьте: это мостик к вчерашнему дню.',
+      'Фотографировать можно без вспышки. Рюкзаки сдают в гардероб.'
+    ],
+    eve:'Накануне вечером: прочитайте конец «Сказки о царе Салтане» про Царевну-Лебедь. Завтра он узнает её сам.'
+  },
+  {
+    id:'wed', short:'Ср', date:'28 окт', title:'Водная лаборатория', letter:'Н', need:5,
+    weather:'пасмурно, +2…+9', cost:null, where:'Аквапарк',
+    intro:'Пасмурный день, значит, под крышу. Три часа горок и опытов с водой. Сначала выбери аквапарк.',
+    choice:true,
+    tasks:[
+      {t:'Точка встречи', w:'до входа в воду', q:'Договоритесь, где встречаетесь, если потерялись. Покажи это место папе пальцем.',
+        a:'Лучше всего у спасателя или у выхода к раздевалкам. Это самое важное задание дня.'},
+      {t:'Невесомость', w:'в бассейне', q:'Попробуй поднять папу в воде. Почему в воде получается, а на суше нет?',
+        a:'Вода выталкивает всё, что в неё погружено. Это закон Архимеда: в воде мы весим меньше.'},
+      {t:'Звезда', w:'в бассейне', q:'Ляг на спину звёздочкой и пролежи 10 секунд. Папа считает.',
+        a:'Воздух в груди работает как поплавок. Вдохни поглубже, и лежать легче.'},
+      {t:'Подводная лодка', w:'в бассейне', q:'Задержи дыхание под водой. Папа считает секунды. Запомни рекорд, побьём его в следующий раз.',
+        a:'Пять секунд — уже хорошо. Десять — отлично.'},
+      {t:'Три горки', w:'на горках', q:'Прокатись на трёх разных горках. Оцени каждую по смелости от 1 до 5.',
+        a:'Какая была самая страшная? А самая смешная?'},
+      {t:'Счётчик волн', w:'волновой бассейн', q:'Когда включат волны, посчитай их, пока не закончатся.',
+        a:'Волны делает машина: она толкает воду с одного края бассейна.'},
+      {t:'Термометр', w:'тёплые бассейны', q:'Где вода теплее: в большом бассейне или в маленьком тёплом? Угадай, потом проверь рукой.',
+        a:'В маленьком теплее. Большой бассейн трудно нагреть: в нём слишком много воды.'}
+    ],
+    guide:[
+      'Ребёнка до 14 лет одного не пускают, а за неплавающими надо смотреть постоянно: аквапарк целиком не просматривается.',
+      'Мокрые лестницы к горкам скользкие, особенно с ватрушкой в руках. Подниматься медленно.',
+      'Поставить будильник на 2 часа 45 минут: сверх оплаченного времени берут поминутно.',
+      'Измерьте дома его рост: от этого зависят и горки, и тариф.'
+    ],
+    eve:'Накануне вечером: собрать сумку вместе. Пусть сам проверит по списку.'
+  },
+  {
+    id:'thu', short:'Чт', date:'29 окт', title:'Экспедиция в тропики', letter:'Р', need:5,
+    weather:'ясно, +4…+11', cost:'1 600 ₽', where:'Фондовая оранжерея Ботанического сада',
+    intro:'Снаружи осень, внутри тропики. Идём пешком через Ботанический сад и попадаем на экскурсию в 15:30. По средам, четвергам и пятницам она проходит без записи.',
+    plan:[
+      ['13:00','Обед дома.'],
+      ['13:30','Выход пешком через Ботанический сад, около 4 км, час с остановками. Последний солнечный день недели.'],
+      ['15:10','Оранжерея, Ботаническая ул., 4, стр. 2. Касса.'],
+      ['15:30','Экскурсия по оранжерее. Задания 1–7.'],
+      ['16:30','Конец экскурсии. Касса закрыта, в 17:00 закрывается и оранжерея.'],
+      ['16:50','Темнеет. Домой на автобусе или такси, пешком уже темно.']
+    ],
+    road:'Экскурсия с входом: взрослый 1 000 ₽, школьник 600 ₽. Без экскурсии вход в будни 400 и 250 ₽. В понедельник оранжерея закрыта.',
+    take:['маленькая сумка: больше 10×20×30 см не пустят','салфетка протереть очки','фонарь на обратную дорогу','блокнот'],
+    tasks:[
+      {t:'Туман', w:'на входе', q:'Войди и посмотри на очки или экран телефона. Что случилось? Угадай, сколько тут градусов.',
+        a:'Тёплый влажный воздух оседает каплями на холодном стекле. Внутри намного теплее, чем снаружи.'},
+      {t:'Живые динозавры', w:'влажные субтропики', q:'Найди саговник: растение, похожее на пальму с жёсткими листьями.',
+        a:'Саговники росли на Земле ещё при динозаврах. Их можно было бы назвать живыми ископаемыми.'},
+      {t:'Колючий секрет', w:'кактусы и суккуленты', q:'У кактуса нет листьев. Подумай, куда они делись.',
+        a:'Колючки и есть листья. Они такие тонкие, чтобы растение не теряло воду в пустыне.'},
+      {t:'Корни из воздуха', w:'коллекция фикусов', q:'Найди фикус, у которого корни свисают с веток.',
+        a:'Это воздушные корни. Дорастая до земли, они становятся новыми стволами.'},
+      {t:'Жильцы на деревьях', w:'тропики', q:'Найди растение, которое растёт прямо на дереве, без земли.',
+        a:'Это эпифиты. Они не вредят дереву, просто живут на нём поближе к свету и пьют дождевую воду.'},
+      {t:'Тропический завтрак', w:'полезные растения', q:'Найди хоть одно растение, из которого делают знакомую еду: банан, кофе, какао, лимон или ананас.',
+        a:'Экскурсовод подскажет, где они растут. Что нашёл?'},
+      {t:'Учёный не трогает', w:'всю экскурсию', q:'Ни одного листика не потрогать и не сорвать. Смотреть можно сколько угодно.',
+        a:'Это научная коллекция, и некоторые растения тут в единственном экземпляре.'},
+      {t:'Осенний гербарий', w:'в саду по дороге', q:'Сфотографируй три разных осенних листа. Дома узнаем, с каких они деревьев.',
+        a:'Сад охраняется, поэтому ничего не рвём, только фотографируем.'}
+    ],
+    guide:[
+      'Старую Фондовую оранжерею строили с 1945 по 1953 год. В ней больше семи тысяч видов и сортов растений из тёплых стран.',
+      'Отделения: тропики Старого и Нового Света, сухие субтропики с кактусами, влажные субтропики с саговниками, рододендроны и камелии.',
+      'Внутри нельзя трогать растения, приносить свои цветы и ножницы и оставлять детей одних.',
+      'Сад им. Цицина — один из самых больших ботанических садов Европы, больше 300 гектаров.'
+    ],
+    eve:'Накануне вечером: найдите на глобусе экватор и пустыни. Завтра это будут отделения оранжереи.'
+  },
+  {
+    id:'fri', short:'Пт', date:'30 окт', title:'Тайный слушатель', letter:'О', need:5,
+    weather:'пасмурно, +4…+8', cost:'от 1 800 ₽', where:'Англиканский собор св. Андрея, Вознесенский пер., 8',
+    intro:'Первый настоящий концерт: орган при свечах, ровно час без антракта. Утром разминка для ушей дома, вечером Бах вживую.',
+    plan:[
+      ['утро','Выспаться. Спокойный день без беготни.'],
+      ['11:00','Музыкальная разминка дома, 20 минут: задания 1–3.'],
+      ['16:30','Полдник, переодеться во что-нибудь нарядное.'],
+      ['17:00','Выход. «Ботанический сад» → «Тургеневская», переход на «Чистые пруды», красная ветка до «Охотного ряда», 10 минут пешком.'],
+      ['17:45','У собора. Найти места, осмотреться: задания 4–5.'],
+      ['18:00','Концерт, 60 минут без антракта: задания 6–7.'],
+      ['19:00','После концерта задание 8. Дома около 19:50.']
+    ],
+    road:'Билеты лучше купить сейчас: концерт при свечах в пятницу вечером разбирают. Возраст 6+.',
+    take:['билеты','фонарик не нужен — там свечи','бутылка воды','блокнот и карандаш для задания 8'],
+    tasks:[
+      {t:'Разминка ушей', w:'дома', q:'Послушай первую минуту «Токкаты и фуги ре минор» Баха. На что похоже: на грозу, на сказку или на кино?',
+        a:'Это самая знаменитая органная пьеса. Сегодня вечером может прозвучать что-то похожее.'},
+      {t:'Колыбельная', w:'дома', q:'Послушай «Колыбельную» Брамса. Запомни мелодию: вдруг сыграют вечером.',
+        a:'Эту колыбельную знает весь мир. Брамс написал её в подарок знакомой, у которой родился сын.'},
+      {t:'Свадебный марш', w:'дома', q:'Послушай «Свадебный марш» Мендельсона. Слышал его раньше? Где?',
+        a:'Его играют на свадьбах уже больше ста пятидесяти лет. На органе он звучит очень торжественно.'},
+      {t:'Острые арки', w:'у собора', q:'Найди окна и арки с острым верхом. Чем они отличаются от арок акведука?',
+        a:'У акведука верх арок круглый, а тут острый, как кончик карандаша. Такой стиль называется готикой.'},
+      {t:'Где трубы', w:'в соборе', q:'Найди трубы органа. Какая самая большая? А самая маленькая?',
+        a:'Каждая труба поёт одну ноту. Большие трубы гудят низко, маленькие свистят высоко.'},
+      {t:'Тайный сигнал', w:'во время концерта', q:'Узнал мелодию — сожми папину руку. Вслух не говорить!',
+        a:'Слушатель-детектив работает молча.'},
+      {t:'Ноги-музыканты', w:'во время концерта', q:'Если видно органиста, посмотри на его ноги. Что они делают?',
+        a:'Органист играет и ногами: внизу клавиатура-педаль для самых низких нот.'},
+      {t:'Нарисуй музыку', w:'после концерта', q:'Нарисуй линию концерта: где было тихо — пониже, где громко — повыше.',
+        a:'Получится твоя собственная запись концерта. Её можно сравнить с папиной.'}
+    ],
+    guide:[
+      'Бах (1685–1750) был органистом. В двадцать лет он прошёл пешком около 400 километров, чтобы послушать знаменитого органиста Букстехуде.',
+      'После смерти Баха его почти забыли. В 1829 году молодой Мендельсон исполнил его «Страсти по Матфею», и Баха снова стали играть. Поэтому их так часто ставят в одну программу.',
+      'Собор святого Андрея построил в 1880-х британский архитектор Ричард Фриман. Это единственная англиканская церковь в Москве. В советское время в здании была студия звукозаписи «Мелодия»: здесь записывали пластинки.',
+      'Хлопают в конце, когда органист встанет и поклонится. Если между пьесами все молчат, молчим и мы.'
+    ],
+    eve:'Накануне вечером: разложите на столе четыре полученные печати. Пятая будет утром в пятницу.'
+  }
+];
+
+const AQUA = {
+  luzh: {
+    name:'Лужники', sum:5180, rec:true,
+    text:'9 горок, волновой бассейн, тёплые бассейны с балконом. Есть горки на ватрушках. Можно доехать без пересадок.',
+    price:'3 часа в будни: 3 390 ₽ взрослый + 1 790 ₽ детский (7–13 лет)',
+    plan:[
+      ['10:15','Выход из дома.'],
+      ['10:25','МЦК «Ботанический сад» → «Лужники», без пересадок, около 40 минут.'],
+      ['11:15','Аквакомплекс, Лужники, 24, стр. 4. Переодеться, договориться о точке встречи.'],
+      ['11:30','Три часа: горки, волны, задания 2–7.'],
+      ['14:30','Выход, обед.'],
+      ['15:30','Домой по МЦК.']
+    ],
+    road:'Ежедневно 10:00–22:00. Цены по обзору Т—Ж за апрель 2026, перед покупкой сверить на сайте аквапарка.'
+  },
+  karib: {
+    name:'Карибия', sum:4280,
+    text:'4 горки, все от 120 см. Спокойнее и меньше людей. Дети ростом 120–150 см идут по детскому тарифу.',
+    price:'3 часа в будни: 2 690 ₽ взрослый + 1 590 ₽ детский',
+    plan:[
+      ['10:15','Выход из дома.'],
+      ['10:25','МЦК «Ботанический сад» → «Шоссе Энтузиастов», пересадка на метро до «Перово», около 50 минут.'],
+      ['11:20','Зелёный проспект, 10Б. Переодеться, договориться о точке встречи.'],
+      ['11:30','Три часа: горки, волны, задания 2–7.'],
+      ['14:30','Выход, обед.'],
+      ['15:30','Домой.']
+    ],
+    road:'Ежедневно 10:00–22:00. Сверх оплаченного времени 20 ₽ в минуту. Цены с сайта karibiya.ru на 21 октября.'
+  }
+};
+const WED_TAKE = ['плавки','шлёпанцы','полотенце','очки для плавания','шапочка для бассейна','бутылка воды','перекус на после','расчёска'];
+const WORD = 'ОРГАН';
+
+const KEY = 'kvest-week-2610';
+let S = { done:{}, aqua:'luzh', picked:[] };
+try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
+if (!AQUA[S.aqua]) S.aqua = 'luzh';
+if (!Array.isArray(S.picked)) S.picked = [];
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money = n => n.toLocaleString('ru-RU') + ' ₽';
+
+const doneCount = d => d.tasks.filter((_, i) => S.done[d.id + i]).length;
+const earned = d => doneCount(d) >= d.need;
+
+let current = DAYS.some(d => d.id === location.hash.slice(1)) ? location.hash.slice(1) : 'mon';
+
+function dayHTML(d) {
+  const aqua = AQUA[S.aqua];
+  const plan = d.choice ? aqua.plan : d.plan;
+  const road = d.choice ? aqua.road : d.road;
+  const take = d.choice ? WED_TAKE : d.take;
+  const cost = d.choice ? money(aqua.sum) : d.cost;
+  const choice = d.choice ? `<div class="block"><h3>Куда едем <small>сравнение</small></h3><div class="choice">${
+    Object.entries(AQUA).map(([k, o]) => `<div class="opt ${S.aqua === k ? 'on' : ''}">
+      <h4>${o.name}${o.rec ? ' · советую' : ''}</h4><p>${o.text}</p><p>${o.price}</p>
+      <p class="sum">На двоих ${money(o.sum)}</p>
+      <button data-aqua="${k}" aria-pressed="${S.aqua === k}">${S.aqua === k ? 'Выбрано' : 'Выбрать'}</button></div>`).join('')
+  }</div></div>` : '';
+  return `<section class="day" id="${d.id}-panel" role="tabpanel">
+    <div class="dayhead">
+      <div class="eyebrow">${d.short} ${d.date} · печать «${earned(d) ? d.letter : '?'}»</div>
+      <h2>${d.title}</h2>
+      <div class="pills"><span class="pill w">${d.weather}</span><span class="pill">${d.choice ? aqua.name : d.where}</span><span class="pill">${cost}${/₽/.test(cost) ? ' на двоих' : ''}</span></div>
+    </div>
+    <p class="intro">${d.intro}</p>
+    ${choice}
+    <div class="block"><h3>Расписание</h3>
+      <ol class="timeline">${plan.map(([t, x]) => `<li><time>${t}</time><div>${x}</div></li>`).join('')}</ol>
+      <div class="road">${road}</div></div>
+    <div class="block"><h3>Взять с собой</h3><div class="chips">${take.map(x => `<span>${x}</span>`).join('')}</div></div>
+    <div class="block"><h3>Задания <small id="cnt-${d.id}"></small></h3>
+      <div class="tasks">${d.tasks.map((k, i) => {
+        const id = d.id + i, on = !!S.done[id];
+        return `<div class="task ${on ? 'done' : ''}">
+          <input type="checkbox" id="t-${id}" data-task="${id}" ${on ? 'checked' : ''}>
+          <label for="t-${id}"><span class="where">${i + 1} · ${esc(k.w)}</span><strong>${esc(k.t)}</strong><p>${esc(k.q)}</p></label>
+          <details><summary>Ответ для папы</summary><p>${esc(k.a)}</p></details></div>`;
+      }).join('')}</div>
+      <p class="prize" id="prize-${d.id}"></p></div>
+    <div class="block"><h3>Папе-гиду</h3><div class="guide"><ul>${d.guide.map(x => `<li>${x}</li>`).join('')}</ul></div></div>
+    <div class="block"><div class="eve">${d.eve}</div></div>
+  </section>`;
+}
+
+function renderTabs() {
+  document.getElementById('tabs').innerHTML = DAYS.map(d =>
+    `<button role="tab" data-day="${d.id}" aria-selected="${d.id === current}" class="${earned(d) ? 'done' : ''}">
+      <b>${d.short}</b><span>${d.date}</span></button>`).join('');
+}
+function renderDay() {
+  const d = DAYS.find(x => x.id === current);
+  document.getElementById('days').innerHTML = dayHTML(d);
+  renderProgress(d);
+}
+function renderProgress(d) {
+  const n = doneCount(d);
+  document.getElementById('cnt-' + d.id).textContent = `выполнено ${n} из ${d.tasks.length}`;
+  document.getElementById('prize-' + d.id).innerHTML = earned(d)
+    ? `Печать дня получена: буква <b>${d.letter}</b>.`
+    : `Для печати дня нужно ${d.need}. Осталось ${d.need - n}.`;
+}
+function renderStamps() {
+  document.getElementById('stamps').innerHTML = DAYS.map(d =>
+    `<div class="stamp ${earned(d) ? 'got' : ''}" aria-label="${d.short}: ${earned(d) ? 'печать ' + d.letter : 'нет печати'}">${earned(d) ? d.letter : '?'}<small>${d.short}</small></div>`).join('');
+  const all = DAYS.every(earned);
+  const tiles = document.getElementById('tiles'), ans = document.getElementById('answer'), note = document.getElementById('word-note');
+  const reset = document.getElementById('reset-word');
+  if (!all) {
+    tiles.innerHTML = ''; ans.textContent = ''; reset.hidden = true; S.picked = [];
+    const got = DAYS.filter(earned).length;
+    note.textContent = got ? `Печатей: ${got} из 5. Когда соберёшь все, сложи из букв слово.` : 'Печать дня открывается, когда выполнено нужное число заданий.';
+    return;
+  }
+  const word = S.picked.map(i => DAYS[i].letter).join('');
+  const win = word === WORD;
+  note.textContent = win ? 'Сегодня вечером ты услышишь его вживую.' : 'Все печати собраны! Нажимай буквы по порядку и сложи слово.';
+  tiles.innerHTML = DAYS.map((d, i) => `<button data-letter="${i}" ${S.picked.includes(i) || win ? 'disabled' : ''} aria-label="Буква ${d.letter}">${d.letter}</button>`).join('');
+  ans.textContent = word || '·····'.slice(0, 5);
+  ans.className = 'answer' + (win ? ' win' : '');
+  if (word.length === 5 && !win) note.textContent = 'Не то слово. Попробуй переставить буквы.';
+  reset.hidden = !word.length || win;
+}
+function renderMoney() {
+  const rows = [['Пн, велосипед', 0], ['Вт, Третьяковка', 700], ['Ср, ' + AQUA[S.aqua].name, AQUA[S.aqua].sum],
+    ['Чт, оранжерея с экскурсией', 1600], ['Пт, концерт, от', 1800]];
+  const total = rows.reduce((a, r) => a + r[1], 0);
+  document.getElementById('money').innerHTML = rows.map(([n, v]) => `<tr><td>${n}</td><td>${v ? money(v) : 'бесплатно'}</td></tr>`).join('')
+    + `<tr><td>Итого без еды и дороги</td><td>≈ ${money(total)}</td></tr>`;
+}
+function renderAll() { renderTabs(); renderDay(); renderStamps(); renderMoney(); }
+
+document.addEventListener('change', e => {
+  const id = e.target.dataset && e.target.dataset.task;
+  if (!id) return;
+  if (e.target.checked) S.done[id] = true; else delete S.done[id];
+  save();
+  e.target.closest('.task').classList.toggle('done', e.target.checked);
+  const d = DAYS.find(x => x.id === current);
+  renderProgress(d); renderTabs(); renderStamps();
+  document.querySelector('.dayhead .eyebrow').textContent = `${d.short} ${d.date} · печать «${earned(d) ? d.letter : '?'}»`;
+});
+document.addEventListener('click', e => {
+  const tab = e.target.closest('[data-day]');
+  if (tab) { current = tab.dataset.day; try { history.replaceState(null, '', '#' + current); } catch (x) {}
+    renderTabs(); renderDay(); return; }
+  const aq = e.target.closest('[data-aqua]');
+  if (aq) { S.aqua = aq.dataset.aqua; save(); renderDay(); renderMoney(); return; }
+  const l = e.target.closest('[data-letter]');
+  if (l) { if (S.picked.length < 5) S.picked.push(+l.dataset.letter); save(); renderStamps(); return; }
+  if (e.target.id === 'reset-word') { S.picked = []; save(); renderStamps(); }
+});
+document.getElementById('tabs').addEventListener('keydown', e => {
+  if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+  const i = DAYS.findIndex(d => d.id === current) + (e.key === 'ArrowRight' ? 1 : -1);
+  if (i < 0 || i >= DAYS.length) return;
+  current = DAYS[i].id; renderTabs(); renderDay();
+  document.querySelector(`[data-day="${current}"]`).focus();
+});
+
+renderAll();
+</script>
