@@ -23,11 +23,87 @@ const rider = (fill, spear = true) => `
 const SCENES = [];
 
 /* ============================================================
+   ПН. БОТИК ПЕТРА — Серебряно-Виноградный пруд в Измайлове
+   ============================================================ */
+const ship = (x, y, k) => `
+  <g class="hb-ship" transform="translate(${x} ${y}) scale(${k})">
+    <path d="M0 40 H120 L104 62 H14 Z" fill="#1d2633"/>
+    ${[24, 60, 96].map(m => `<rect x="${m}" y="-40" width="3" height="80" fill="#1d2633"/>
+      <rect x="${m - 14}" y="-30" width="31" height="20" fill="#2c3a4c"/><rect x="${m - 12}" y="-4" width="27" height="18" fill="#2c3a4c"/>`).join('')}
+  </g>`;
+
+SCENES.push({
+  id: 'botik',
+  day: 'Пн 26',
+  title: 'Ботик Петра',
+  place: 'Измайлово, пруд у Мостовой башни',
+  aim: 'Встань у моста к Мостовой башне и наведи камеру на воду пруда. Вода должна занять нижнюю половину экрана.',
+  lead: 'По пруду плывёт маленький ботик, на горизонте вырастает флот, а небо загорается потешными огнями.',
+  say: 'Смотри на воду. В тысяча шестьсот восемьдесят восьмом году юный Пётр нашёл здесь, в Измайлове, в старом амбаре маленькую английскую лодку с парусом. Мастер Тиммерман починил её и научил Петра ходить под парусом, даже против ветра. Пётр так увлёкся, что потом построил целый флот. А этот ботик теперь называют дедушкой русского флота. Пётр очень любил потешные огни. Вот такой праздник он мог устроить в честь новой победы!',
+  tint: 'linear-gradient(180deg, rgba(20,40,70,.18), rgba(8,22,40,.5))',
+  fxBack: { type: 'dust', rate: 10 },
+  layers: [
+    { depth: .55, z: 1, cls: 'wide', html: `
+      <svg class="fit hb-far" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        <g class="hb-fleet">${ship(-10, 500, .55)}${ship(150, 488, .45)}${ship(290, 505, .6)}</g>
+        <g fill="none" stroke="rgba(205,236,255,.75)" stroke-width="2.5" stroke-linecap="round">
+          ${rep(8, i => `<path class="hb-ripple" style="animation-delay:${(-i * .3).toFixed(1)}s"
+            d="M-30 ${590 + i * 38} q25 -${6 + i} 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0"/>`)}
+        </g>
+      </svg>` },
+    { depth: 1.25, z: 2, cls: 'wide', html: `
+      <svg class="fit hb-near" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        <g class="hb-boat"><g class="hb-bob">
+          <ellipse cx="75" cy="104" rx="86" ry="10" fill="rgba(0,0,0,.25)"/>
+          <path d="M0 60 L150 60 L130 92 Q75 104 20 92 Z" fill="#6b4524"/>
+          <path d="M6 70 H144" stroke="#e8b93b" stroke-width="4"/>
+          <rect x="72" y="-84" width="5" height="146" fill="#3a2410"/>
+          <path class="hb-sail" d="M78 -72 L78 52 L142 52 Q124 -8 78 -72 Z" fill="#f6edd8"/>
+          <path class="hb-sail" d="M70 -62 L70 48 L12 52 Q32 0 70 -62 Z" fill="#efe2c2"/>
+          <rect x="77" y="-98" width="28" height="5" fill="#ffffff"/>
+          <rect x="77" y="-93" width="28" height="5" fill="#2a5db0"/>
+          <rect x="77" y="-88" width="28" height="5" fill="#d6312b"/>
+        </g></g>
+      </svg>` },
+    { depth: 1.7, z: 3, html: `
+      <svg class="fit hb-top" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
+        <defs>
+          <radialGradient id="hbMedal" cx=".4" cy=".35"><stop offset="0" stop-color="#fff2b0"/><stop offset=".55" stop-color="#e8b93b"/><stop offset="1" stop-color="#9b6a17"/></radialGradient>
+        </defs>
+        <g class="hb-medal">
+          <circle cx="400" cy="96" r="84" fill="url(#hbMedal)" stroke="#fff4c4" stroke-width="4"/>
+          <circle cx="400" cy="96" r="69" fill="none" stroke="#8a5d12" stroke-width="2" stroke-dasharray="4 6"/>
+          <text x="400" y="114" text-anchor="middle" class="hm-medal-year">1688</text>
+          <text x="400" y="142" text-anchor="middle" class="hm-medal-sub">ДЕДУШКА ФЛОТА</text>
+        </g>
+      </svg>` }
+  ],
+  beats: [
+    { t: 300, cls: 'is-in' },
+    { t: 2600, cls: 'is-sail' },
+    { t: 9000, cls: 'is-wind', fxFront: { type: 'leaves', rate: 8 } },
+    { t: 13000, cls: 'is-fleet' },
+    { t: 17200, cls: 'is-fire', fxBack: { type: 'fireworks' }, tint: 'linear-gradient(180deg, rgba(8,10,30,.55), rgba(4,8,22,.7))' }
+  ],
+  captions: [
+    { t: 500, text: 'Ботик Петра', big: true, hold: 2600 },
+    { t: 2900, text: 'В 1688 году юный Пётр нашёл в измайловском амбаре старую английскую лодку', hold: 4600 },
+    { t: 9200, text: 'Мастер Тиммерман научил его ходить под парусом — даже против ветра', hold: 3600 },
+    { t: 13200, text: 'С маленького ботика начался большой русский флот', hold: 3600 },
+    { t: 17400, text: 'Дедушка русского флота', big: true, hold: 4200 }
+  ],
+  sound: [
+    { t: 400, s: 'water' }, { t: 2700, s: 'wind' }, { t: 9100, s: 'wind' },
+    { t: 13200, s: 'fanfare' }, { t: 17300, s: 'salute' }
+  ]
+});
+
+/* ============================================================
    ПН. МИЛЛИОННЫЙ МОСТ — Ростокинский акведук
    ============================================================ */
 SCENES.push({
   id: 'most',
-  day: 'Пн 26',
+  day: 'Бонус · у дома',
   title: 'Миллионный мост',
   place: 'Ростокинский акведук над Яузой',
   aim: 'Встань на берегу Яузы так, чтобы акведук был виден сбоку, и наведи камеру на арки. Мост должен занять нижнюю половину экрана.',
@@ -402,5 +478,8 @@ SCENES.push({
     { t: 10600, s: 'organ' }, { t: 17600, s: 'bells' }
   ]
 });
+
+// мост у дома — бонусная сцена, в галерее последней
+SCENES.push(SCENES.splice(SCENES.findIndex(sc => sc.id === 'most'), 1)[0]);
 
 if (typeof module !== 'undefined') module.exports = { SCENES };

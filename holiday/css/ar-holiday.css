@@ -17,7 +17,26 @@
 .layers.is-draw .hm-arches path,.layers.is-draw .ht-line,.layers.is-draw .ho-gothic{animation:draw 2.6s ease forwards}
 .layers.is-grow .hd-vine{animation:draw 3.2s ease forwards}
 
-/* ===== Пн: мост ===== */
+/* ===== Пн: ботик ===== */
+.hb-ripple{stroke-dasharray:16 12;opacity:0;animation:hb-ripple 2.6s linear infinite}
+.layers.is-in .hb-ripple{opacity:.7;transition:opacity 2s ease}
+@keyframes hb-ripple{to{stroke-dashoffset:-56}}
+.hb-boat{transform:translate(-230px,620px)}
+.layers.is-sail .hb-boat{animation:hb-sail 6s cubic-bezier(.3,.7,.3,1) forwards}
+@keyframes hb-sail{from{transform:translate(-230px,620px)}to{transform:translate(110px,610px)}}
+.layers.is-wind .hb-boat{animation:hb-tack 8s ease-in-out forwards}
+@keyframes hb-tack{from{transform:translate(110px,610px)}45%{transform:translate(40px,590px)}to{transform:translate(170px,585px)}}
+.hb-bob{transform-box:fill-box;transform-origin:center bottom;animation:hb-bob 2.2s ease-in-out infinite alternate}
+@keyframes hb-bob{from{transform:rotate(-3deg)}to{transform:rotate(3deg) translateY(-5px)}}
+.hb-sail{transform-box:fill-box;transform-origin:left bottom;animation:hb-flutter 1.6s ease-in-out infinite alternate}
+.layers.is-wind .hb-sail{animation-duration:.7s}
+@keyframes hb-flutter{from{transform:scaleX(.93)}to{transform:scaleX(1.05)}}
+.hb-fleet{opacity:0}
+.layers.is-fleet .hb-fleet{animation:fade-in 3s both}
+.hb-medal{opacity:0;transform-origin:400px 96px}
+.layers.is-fire .hb-medal{animation:hm-stamp 1s cubic-bezier(.2,.9,.3,1.3) both}
+
+/* ===== Бонус: мост ===== */
 .layer svg.fit.hm-most,.layer svg.fit.hm-stamp{margin-bottom:31%}
 .layers.is-stamp .hm-measure,.layers.is-stamp .hm-badge{opacity:.25;transition:opacity 1s}
 .hm-label{font:700 26px Georgia,serif;fill:#ffe7a8}
@@ -127,5 +146,5 @@
 @keyframes ho-flicker{0%,100%{transform:scale(1,1);opacity:1}40%{transform:scale(.88,1.16);opacity:.85}70%{transform:scale(1.06,.94);opacity:.95}}
 
 @media (prefers-reduced-motion:reduce){
-  .hm-flow,.hm-trot,.ht-bob,.hv-fish,.hv-caustic,.hd-step,.hd-leg,.ho-window,.ho-flame{animation:none!important}
+  .hb-ripple,.hb-bob,.hb-sail,.hm-flow,.hm-trot,.ht-bob,.hv-fish,.hv-caustic,.hd-step,.hd-leg,.ho-window,.ho-flame{animation:none!important}
 }
