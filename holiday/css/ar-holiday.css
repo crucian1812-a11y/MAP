@@ -36,6 +36,31 @@
 .hb-medal{opacity:0;transform-origin:400px 96px}
 .layers.is-fire .hb-medal{animation:hm-stamp 1s cubic-bezier(.2,.9,.3,1.3) both}
 
+/* ===== Вт: погружение ===== */
+.hg-water{transform:translateY(900px);transition:transform 5s cubic-bezier(.4,0,.2,1)}
+.layers.is-dive .hg-water{transform:translateY(0)}
+.layers.is-up .hg-water{transform:translateY(900px);transition-duration:3s}
+.hg-sonar circle{fill:none;stroke:#9effc4;stroke-width:3;opacity:0;transform-origin:200px 430px}
+.layers.is-sonar .hg-sonar circle{animation:hg-ping 2.4s ease-out calc(var(--i) * .8s) infinite}
+@keyframes hg-ping{from{opacity:.9;transform:scale(1)}to{opacity:0;transform:scale(7.5)}}
+.layers.is-up .hg-sonar{opacity:0;transition:opacity 1s}
+.hg-fish{opacity:0;transform:translate(-160px,520px)}
+.layers.is-dive .hg-fish{animation:hg-fish 9s ease-in-out 1s forwards}
+@keyframes hg-fish{0%{opacity:0;transform:translate(-160px,520px)}10%{opacity:.9}100%{opacity:.9;transform:translate(470px,470px)}}
+.hg-torpedo{opacity:0;transform:translate(-220px,600px)}
+.layers.is-torpedo .hg-torpedo{animation:hg-torp 2.6s cubic-bezier(.5,0,.6,1) forwards}
+@keyframes hg-torp{0%{opacity:1;transform:translate(-220px,600px)}100%{opacity:1;transform:translate(560px,540px)}}
+.hg-lens,.hg-gauge{transform:translateY(-1000px);transition:transform 2.2s cubic-bezier(.3,.9,.3,1)}
+.layers.is-scope .hg-lens,.layers.is-scope .hg-gauge{transform:none}
+.layers.is-up .hg-lens{transform:translateY(-1000px);transition-delay:2.6s}
+.hg-hud{font:700 30px "JetBrains Mono",ui-monospace,monospace;fill:#9effc4}
+.hg-small{font-size:13px;letter-spacing:.12em}
+.hg-d{opacity:0;transition:opacity .3s}
+.hg-d0{opacity:1}
+.layers.is-d1 .hg-d0{opacity:0}
+.layers.is-d1:not(.is-d2) .hg-d1,.layers.is-d2:not(.is-d3) .hg-d2,.layers.is-d3:not(.is-d4) .hg-d3,
+.layers.is-d4:not(.is-up) .hg-d4,.layers.is-up .hg-d5{opacity:1}
+
 /* ===== Бонус: мост ===== */
 .layer svg.fit.hm-most,.layer svg.fit.hm-stamp{margin-bottom:31%}
 .layers.is-stamp .hm-measure,.layers.is-stamp .hm-badge{opacity:.25;transition:opacity 1s}
@@ -146,5 +171,5 @@
 @keyframes ho-flicker{0%,100%{transform:scale(1,1);opacity:1}40%{transform:scale(.88,1.16);opacity:.85}70%{transform:scale(1.06,.94);opacity:.95}}
 
 @media (prefers-reduced-motion:reduce){
-  .hb-ripple,.hb-bob,.hb-sail,.hm-flow,.hm-trot,.ht-bob,.hv-fish,.hv-caustic,.hd-step,.hd-leg,.ho-window,.ho-flame{animation:none!important}
+  .hg-sonar circle,.hb-ripple,.hb-bob,.hb-sail,.hm-flow,.hm-trot,.ht-bob,.hv-fish,.hv-caustic,.hd-step,.hd-leg,.ho-window,.ho-flame{animation:none!important}
 }

@@ -1,0 +1,334 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Подлодка Б-396</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Экскурсия по лодке: сверху практическое, ниже профиль лодки с отсеками-кнопками,
+   под ним карточка текущей остановки, в конце викторина и удостоверение */
+:root{
+  --paper:#eef3f4;
+  --card:#ffffff;
+  --ink:#122029;
+  --muted:#566a74;
+  --steel:#2c4655;    /* корпус лодки */
+  --sea:#1d5f7c;      /* основной акцент */
+  --signal:#d9631e;   /* сигнальный оранжевый: текущий отсек, награды */
+  --moss:#3f7244;
+  --line:#cfdadc;
+  --soft:#e2ebed;
+  --display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --text:"Onest","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0c151b; --card:#13202a; --ink:#e3ecef; --muted:#93a6b0; --steel:#7f9fb2; --sea:#6cb3d1;
+    --signal:#f08a4b; --moss:#86c487; --line:#24343e; --soft:#192a35; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0c151b; --card:#13202a; --ink:#e3ecef; --muted:#93a6b0; --steel:#7f9fb2; --sea:#6cb3d1;
+  --signal:#f08a4b; --moss:#86c487; --line:#24343e; --soft:#192a35; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--text);font-size:15.5px;line-height:1.55;margin:0}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 64px}
+h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance}
+h1{font-size:clamp(28px,7vw,44px);line-height:1.05}
+h2{font-size:18px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--sea)}
+.lede{color:var(--muted);max-width:60ch;margin:10px 0 0}
+a{color:var(--sea)}
+.top-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.btn{font:inherit;font-size:13.5px;font-weight:600;border-radius:10px;padding:8px 13px;cursor:pointer;text-decoration:none;
+  border:1px solid var(--sea);background:transparent;color:var(--sea);display:inline-flex;align-items:center;gap:8px}
+.btn.fill{background:var(--sea);color:var(--paper)}
+.btn:focus-visible,button:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+
+/* практическое */
+.facts{margin-top:22px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:640px){.facts{grid-template-columns:1fr}}
+.facts section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;min-width:0}
+.facts h2{font-size:15px;margin-bottom:8px}
+.facts ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14px}
+.price{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.price td{padding:4px 0;border-bottom:1px solid var(--soft);vertical-align:top}
+.price td+td{text-align:right;white-space:nowrap;padding-left:10px}
+.note{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+
+/* профиль лодки */
+.hull{margin-top:28px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 12px 10px}
+.hull h2{margin:0 4px 6px}
+.hull .hint{font-size:13px;color:var(--muted);margin:0 4px 6px}
+.hull svg{width:100%;height:auto;display:block}
+.comp{cursor:pointer}
+.comp rect{fill:color-mix(in srgb,var(--steel) 14%,var(--card));stroke:var(--steel);stroke-width:1.5;transition:fill .25s}
+.comp text{font:700 15px var(--mono);fill:var(--steel);pointer-events:none}
+.comp:hover rect{fill:color-mix(in srgb,var(--sea) 22%,var(--card))}
+.comp.done rect{fill:color-mix(in srgb,var(--moss) 22%,var(--card))}
+.comp.on rect{fill:var(--signal)}
+.comp.on text{fill:#fff}
+.comp:focus-visible rect{stroke:var(--signal);stroke-width:3}
+.shell{fill:none;stroke:var(--steel);stroke-width:3}
+.sail{fill:color-mix(in srgb,var(--steel) 30%,var(--card));stroke:var(--steel);stroke-width:2}
+.water{stroke:var(--sea);stroke-width:2;stroke-dasharray:10 8;fill:none;opacity:.6}
+.lbl{font:500 11px var(--mono);fill:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 4px 2px}
+.chips button{font:inherit;font-size:12.5px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:20px;padding:4px 11px;cursor:pointer}
+.chips button[aria-current="true"]{background:var(--signal);border-color:var(--signal);color:#fff}
+.chips button.done::after{content:" ✓";color:var(--moss)}
+.chips button[aria-current="true"].done::after{color:#fff}
+
+/* остановка */
+.stop{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.stop-head{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+.num{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font:700 22px var(--display);
+  color:#fff;background:var(--steel)}
+.stop-head h2{font-size:clamp(18px,4.6vw,23px);line-height:1.2}
+.where{font-size:13px;color:var(--muted);font-family:var(--mono)}
+.player{margin-top:14px;display:flex;gap:12px;align-items:center;background:var(--soft);border-radius:12px;padding:10px 12px}
+.play{flex:none;width:46px;height:46px;border-radius:50%;border:0;background:var(--sea);color:var(--paper);cursor:pointer;display:grid;place-items:center}
+.play svg{width:18px;height:18px;fill:currentColor}
+.bar{flex:1;height:6px;border-radius:3px;background:color-mix(in srgb,var(--sea) 20%,transparent);overflow:hidden;min-width:0}
+.bar i{display:block;height:100%;width:0;background:var(--sea);transition:width .25s linear}
+.player small{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+.say{margin:14px 0 0;font-size:16px;line-height:1.6;max-width:62ch}
+.look{margin-top:16px}
+.look h3,.task h3,.word h3{font-size:14px;margin-bottom:6px}
+.look ul{margin:0;padding-left:20px;display:grid;gap:4px;font-size:14.5px}
+.task{margin-top:16px;border:1px dashed color-mix(in srgb,var(--signal) 55%,var(--line));border-radius:12px;padding:12px 14px}
+.task label{display:grid;grid-template-columns:28px 1fr;gap:10px;cursor:pointer;font-size:15px}
+.task input{appearance:none;width:26px;height:26px;border-radius:8px;border:2px solid var(--line);margin:0;cursor:pointer;display:grid;place-items:center;background:var(--paper)}
+.task input:checked{background:var(--moss);border-color:var(--moss)}
+.task input:checked::after{content:"✓";color:#fff;font-weight:700}
+.task details{margin:8px 0 0 38px;font-size:14px;color:var(--muted)}
+.task summary{cursor:pointer;color:var(--sea)}
+.word{margin-top:14px;font-size:14.5px;background:var(--soft);border-radius:12px;padding:10px 14px}
+.word b{font-family:var(--display);font-weight:500}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:18px}
+.nav .btn{min-width:0}
+
+/* викторина и удостоверение */
+.quiz{margin-top:30px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.q{margin-top:14px}
+.q p{margin:0 0 6px;font-weight:600}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opts button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;padding:7px 12px;cursor:pointer}
+.opts button.ok{background:var(--moss);border-color:var(--moss);color:#fff}
+.opts button.no{border-color:var(--signal);color:var(--signal)}
+.cert{margin-top:20px;border:3px double var(--steel);border-radius:14px;padding:20px;text-align:center;position:relative;
+  background:linear-gradient(160deg,color-mix(in srgb,var(--sea) 10%,var(--card)),var(--card))}
+.cert[hidden]{display:none}
+.cert .t{font:700 clamp(18px,5vw,24px) var(--display)}
+.cert .nm{font:500 22px var(--display);color:var(--signal);margin:10px 0}
+.cert p{margin:4px 0;font-size:14px}
+.cert .seal{position:absolute;right:14px;top:12px;width:58px;height:58px;border-radius:50%;border:2px solid var(--signal);
+  color:var(--signal);display:grid;place-items:center;font:700 11px/1.1 var(--mono);transform:rotate(-12deg);text-align:center}
+.namefield{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:14px}
+.namefield input{font:inherit;border:1px solid var(--line);border-radius:10px;padding:7px 10px;background:var(--paper);color:var(--ink);min-width:0;flex:1 1 160px}
+.foot{margin-top:34px;font-size:12.5px;color:var(--muted);max-width:62ch}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Вторник · 27 октября · Северное Тушино</div>
+  <h1>Подлодка Б-396</h1>
+  <p class="lede">«Новосибирский комсомолец» — настоящая дизель-электрическая подводная лодка Северного флота.
+    Проходим её от носа до кормы: на каждой остановке рассказ, что найти глазами, задание и морское слово.
+    В конце — экзамен и удостоверение юного подводника.</p>
+  <div class="top-links">
+    <a class="btn fill" id="cam-link" href="https://crucian1812-a11y.github.io/MAP/holiday/ar.html#glubina" target="_blank" rel="noopener">Волшебная камера: погружение</a>
+    <a class="btn" id="kvest-link" href="https://crucian1812-a11y.github.io/MAP/holiday/kvest.html#tue" target="_blank" rel="noopener">← Квесты недели</a>
+  </div>
+
+  <div class="facts">
+    <section>
+      <h2>Когда и как</h2>
+      <ul>
+        <li><b>Часы:</b> вт–вс 10:00–18:00, касса до 17:30. Понедельник выходной.</li>
+        <li><b>Экскурсии с гидом:</b> в 15:00 и 17:00, часто ведёт бывший подводник.</li>
+        <li><b>Дорога:</b> «Ботанический сад» → «Китай-город», пересадка на фиолетовую до «Сходненской», около 45 минут. От метро 1,2 км через парк «Северное Тушино», минут двадцать.</li>
+        <li><b>Адрес:</b> ул. Свободы, 52, берег Химкинского водохранилища.</li>
+      </ul>
+    </section>
+    <section>
+      <h2>Билеты</h2>
+      <table class="price">
+        <tr><td>Лодка, сами</td><td>550 / 275 ₽</td></tr>
+        <tr><td>Лодка + выставка «Величие и глубина»</td><td>800 / 400 ₽</td></tr>
+        <tr><td>Экскурсия по лодке с гидом</td><td>700 / 350 ₽</td></tr>
+      </table>
+      <p class="note">Взрослый / льготный (школьник). По карте школьника или «Москвёнка» в программе «Музеи — детям» ребёнку бесплатно. Цены с mosparks.ru, проверены 27 октября.</p>
+    </section>
+  </div>
+
+  <div class="hull">
+    <h2>Маршрут по лодке</h2>
+    <p class="hint">Нажми на отсек или остановку. Нос слева — с него и начинаем.</p>
+    <svg viewBox="0 0 760 210" role="group" aria-label="Схема лодки: семь отсеков">
+      <path class="water" d="M0 74 H760"/>
+      <path class="sail" d="M300 70 V36 Q300 22 318 22 H392 Q412 22 420 40 L430 70 Z"/>
+      <path d="M346 22 V6 M364 22 V2" stroke="var(--steel)" stroke-width="3"/>
+      <path class="shell" d="M14 128 Q14 76 100 72 H660 Q720 74 748 118 Q720 176 660 180 H100 Q14 178 14 128 Z"/>
+      <g id="comps"></g>
+      <text class="lbl" x="18" y="204">НОС</text>
+      <text class="lbl" x="706" y="204">КОРМА</text>
+    </svg>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <article class="stop" id="stop" aria-live="polite"></article>
+
+  <section class="quiz" id="quiz">
+    <h2>Экзамен юного подводника</h2>
+    <p class="note">Ответь на пять вопросов. Все ответы были в рассказах.</p>
+    <div id="qs"></div>
+    <div class="namefield"><label for="kid-name">Имя для удостоверения:</label><input id="kid-name" maxlength="28" placeholder="например, Миша"></div>
+    <div class="cert" id="cert" hidden>
+      <div class="seal">Б-396<br>ВМФ</div>
+      <div class="eyebrow">Удостоверение</div>
+      <div class="t">Юный подводник</div>
+      <div class="nm" id="cert-name">Юнга</div>
+      <p>прошёл подводную лодку Б-396 «Новосибирский комсомолец» от носа до кормы</p>
+      <p>и сдал экзамен на пять из пяти</p>
+      <p class="note">Москва, Северное Тушино · 27 октября 2026</p>
+    </div>
+  </section>
+
+  <p class="foot">Факты: Википедия (Б-396 и проект 641Б «Сом»), сайт парка «Северное Тушино» (mosparks.ru).
+    В музее лодку переоборудовали: часть переборок заменили проёмами, дизельный отсек отдали под выставку,
+    а центральный пост — под рассказ о жизни экипажа. Поэтому что-то из рассказа может выглядеть иначе.
+    Отметки сохраняются только на этом телефоне.</p>
+</div>
+
+<script src="js/b396.js"></script>
+<script>
+/* Ссылки: на GitHub Pages относительные, в других местах — на Pages */
+const ON_PAGES = /github\.io$/.test(location.hostname);
+if (ON_PAGES) {
+  document.getElementById('cam-link').href = 'ar.html#glubina';
+  document.getElementById('kvest-link').href = 'kvest.html';
+}
+
+const KEY = 'b396-2710';
+let S = { at: 0, done: {}, quiz: {}, name: '' };
+try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+if (!B396_STOPS[S.at]) S.at = 0;
+
+/* озвучка: дорожки b396-<id> из audio/kvest/ */
+let TRACKS = new Set();
+const audio = new Audio();
+const PLAY = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>';
+const STOP = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 3h3v10H4zM9 3h3v10H9z"/></svg>';
+const fmt = s => isFinite(s) ? `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}` : '';
+
+/* схема: семь отсеков между носом и кормой */
+const COMP_X = [[40, 120], [120, 200], [200, 300], [300, 430], [430, 520], [520, 610], [610, 720]];
+function drawHull() {
+  document.getElementById('comps').innerHTML = COMP_X.map(([x0, x1], i) => {
+    const stop = B396_STOPS.find(s => s.comp === i + 1);
+    return `<g class="comp" data-go="${stop.n}" tabindex="0" role="button" aria-label="Отсек ${i + 1}: ${esc(stop.title)}">
+      <rect x="${x0 + 3}" y="92" width="${x1 - x0 - 6}" height="70" rx="8"/>
+      <text x="${(x0 + x1) / 2}" y="133" text-anchor="middle">${i + 1}</text></g>`;
+  }).join('');
+}
+function paintHull() {
+  document.querySelectorAll('.comp').forEach(g => {
+    const n = +g.dataset.go;
+    g.classList.toggle('on', n === S.at);
+    g.classList.toggle('done', !!S.done[B396_STOPS[n].id]);
+  });
+  document.getElementById('chips').innerHTML = B396_STOPS.map(s =>
+    `<button data-go="${s.n}" aria-current="${s.n === S.at}" class="${S.done[s.id] ? 'done' : ''}">${s.n}. ${esc(s.title.split(' — ')[0])}</button>`).join('');
+}
+
+function renderStop() {
+  const s = B396_STOPS[S.at];
+  const has = TRACKS.has('b396-' + s.id);
+  document.getElementById('stop').innerHTML = `
+    <div class="stop-head"><div class="num">${s.n}</div>
+      <div><h2>${esc(s.title)}</h2><div class="where">${esc(s.where)}</div></div></div>
+    ${has ? `<div class="player"><button class="play" id="play" aria-label="Слушать рассказ">${PLAY}</button>
+      <div class="bar"><i id="bar"></i></div><small id="time">слушать</small></div>` : ''}
+    <p class="say">${esc(s.say)}</p>
+    <div class="look"><h3>Найди глазами</h3><ul>${s.look.map(l => `<li>${esc(l)}</li>`).join('')}</ul></div>
+    <div class="task"><h3>Задание</h3>
+      <label for="task-${s.id}"><input type="checkbox" id="task-${s.id}" data-task="${s.id}" ${S.done[s.id] ? 'checked' : ''}>
+        <span>${esc(s.task.q)}</span></label>
+      <details><summary>Ответ для папы</summary>${esc(s.task.a)}</details></div>
+    <div class="word"><b>${esc(s.word[0])}</b> — ${esc(s.word[1])}</div>
+    <div class="nav">
+      <button class="btn" data-go="${Math.max(0, s.n - 1)}" ${s.n === 0 ? 'disabled' : ''}>← Назад</button>
+      ${s.n < B396_STOPS.length - 1
+        ? `<button class="btn fill" data-go="${s.n + 1}">Дальше: ${esc(B396_STOPS[s.n + 1].title.split(' — ')[0])} →</button>`
+        : `<a class="btn fill" href="#quiz">К экзамену →</a>`}
+    </div>`;
+  paintHull();
+}
+
+function go(n) {
+  audio.pause();
+  S.at = n; save(); renderStop();
+  document.getElementById('stop').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function togglePlay() {
+  const s = B396_STOPS[S.at], btn = document.getElementById('play');
+  if (!audio.paused && audio.dataset.id === s.id) { audio.pause(); return; }
+  if (audio.dataset.id !== s.id) { audio.src = `audio/kvest/b396-${s.id}.mp3`; audio.dataset.id = s.id; }
+  audio.play().catch(() => {});
+}
+const paintPlayer = () => {
+  const btn = document.getElementById('play'); if (!btn) return;
+  const mine = audio.dataset.id === B396_STOPS[S.at].id;
+  const on = mine && !audio.paused;
+  btn.innerHTML = on ? STOP : PLAY; btn.setAttribute('aria-label', on ? 'Пауза' : 'Слушать рассказ');
+  const bar = document.getElementById('bar'), t = document.getElementById('time');
+  if (mine && audio.duration) { bar.style.width = (100 * audio.currentTime / audio.duration) + '%'; t.textContent = `${fmt(audio.currentTime)} / ${fmt(audio.duration)}`; }
+};
+['play', 'pause', 'timeupdate', 'ended', 'loadedmetadata'].forEach(ev => audio.addEventListener(ev, paintPlayer));
+
+/* экзамен */
+function renderQuiz() {
+  document.getElementById('qs').innerHTML = B396_QUIZ.map((q, i) => `
+    <div class="q"><p>${i + 1}. ${esc(q.q)}</p><div class="opts">${q.o.map((o, k) => {
+      const picked = S.quiz[i] === k;
+      const cls = picked ? (k === q.a ? 'ok' : 'no') : '';
+      return `<button data-q="${i}" data-o="${k}" class="${cls}">${esc(o)}</button>`;
+    }).join('')}</div></div>`).join('');
+  const all = B396_QUIZ.every((q, i) => S.quiz[i] === q.a);
+  document.getElementById('cert').hidden = !all;
+  document.getElementById('cert-name').textContent = S.name || 'Юнга';
+}
+
+document.addEventListener('click', e => {
+  const g = e.target.closest('[data-go]');
+  if (g && !g.disabled) { go(+g.dataset.go); return; }
+  if (e.target.closest('#play')) { togglePlay(); return; }
+  const o = e.target.closest('[data-o]');
+  if (o) { S.quiz[o.dataset.q] = +o.dataset.o; save(); renderQuiz(); }
+});
+document.addEventListener('keydown', e => {
+  const g = e.target.closest && e.target.closest('.comp');
+  if (g && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); go(+g.dataset.go); }
+});
+document.addEventListener('change', e => {
+  const id = e.target.dataset && e.target.dataset.task;
+  if (!id) return;
+  if (e.target.checked) S.done[id] = true; else delete S.done[id];
+  save(); paintHull();
+});
+const nameInput = document.getElementById('kid-name');
+nameInput.value = S.name || '';
+nameInput.addEventListener('input', () => { S.name = nameInput.value.trim(); save(); document.getElementById('cert-name').textContent = S.name || 'Юнга'; });
+
+drawHull(); renderStop(); renderQuiz();
+fetch('audio/kvest/manifest.json', { cache: 'no-cache' })
+  .then(r => r.ok ? r.json() : null)
+  .then(m => { if (m && Array.isArray(m.tracks)) { TRACKS = new Set(m.tracks); renderStop(); } })
+  .catch(() => {});
+</script>

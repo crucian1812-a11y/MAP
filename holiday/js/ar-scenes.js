@@ -197,11 +197,86 @@ SCENES.push({
 });
 
 /* ============================================================
+   ВТ. ПОГРУЖЕНИЕ — подводная лодка Б-396 в Северном Тушине
+   ============================================================ */
+SCENES.push({
+  id: 'glubina',
+  day: 'Вт 27',
+  title: 'Погружение',
+  place: 'Подлодка Б-396, Химкинское водохранилище',
+  aim: 'Встань на набережной напротив лодки и наведи камеру на её рубку. Можно и внутри, в центральном посту.',
+  lead: 'Опускается перископ, пищит сонар, глубиномер считает метры до 246, вылетает торпеда, а потом — «Продуть балласт!»',
+  say: 'Внимание, юнга! Поднимаем перископ и осматриваем горизонт. Слышишь писк? Это сонар: он посылает звук в воду и слушает эхо. Так лодка видит в темноте. Срочное погружение! Цистерны заполняются водой, и мы уходим вниз: шестьдесят метров, сто двадцать, сто восемьдесят. Рабочая глубина этой лодки двести сорок шесть метров. Торпедный аппарат номер один — пуск! А теперь продуть балласт: воду выдуваем сжатым воздухом, и лодка всплывает.',
+  tint: 'linear-gradient(180deg, rgba(10,30,50,.2), rgba(4,14,26,.45))',
+  layers: [
+    { depth: .4, z: 1, cls: 'wide', html: `
+      <svg class="fit hg-sea" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        <defs><linearGradient id="hgWater" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2a8fb8" stop-opacity=".55"/><stop offset="1" stop-color="#03162a" stop-opacity=".92"/>
+        </linearGradient></defs>
+        <rect class="hg-water" x="-60" y="0" width="520" height="900" fill="url(#hgWater)"/>
+      </svg>` },
+    { depth: .9, z: 2, cls: 'wide', html: `
+      <svg class="fit hg-mid" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        <g class="hg-sonar">${rep(3, i => `<circle cx="200" cy="430" r="22" style="--i:${i}"/>`)}</g>
+        <g class="hg-fish">
+          ${rep(6, i => `<g transform="translate(${(i % 3) * 40} ${Math.floor(i / 3) * 30 + (i % 2) * 8})">
+            <ellipse rx="14" ry="6" fill="#9fd6e8"/><path d="M-12 0 l-10 -7 v14 z" fill="#9fd6e8"/></g>`)}
+        </g>
+        <g class="hg-torpedo">
+          <path d="M0 0 h110 q22 0 22 9 q0 9 -22 9 h-110 z" fill="#c9d3d8"/>
+          <path d="M0 -6 v30 M-8 9 h10" stroke="#8a979d" stroke-width="4"/>
+          ${rep(6, k => `<circle cx="${-18 - k * 22}" cy="${9 + (k % 2 ? 6 : -6)}" r="${7 - k}" fill="none" stroke="rgba(220,245,255,.8)" stroke-width="2"/>`)}
+        </g>
+      </svg>` },
+    { depth: .15, z: 3, cls: 'wide', html: `
+      <svg class="fit hg-scope" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        <g class="hg-lens">
+          <path fill="rgba(3,8,14,.93)" fill-rule="evenodd" d="M-80 -80 H480 V980 H-80 Z M30 430 a170 170 0 1 0 340 0 a170 170 0 1 0 -340 0 Z"/>
+          <circle cx="200" cy="430" r="170" fill="none" stroke="#3a5566" stroke-width="10"/>
+          <path d="M40 430 H175 M225 430 H360 M200 270 V405 M200 455 V590" stroke="#9effc4" stroke-width="2" opacity=".85"/>
+          ${rep(9, k => `<path d="M${80 + k * 30} 424 v12" stroke="#9effc4" stroke-width="2" opacity=".7"/>`)}
+          <text x="200" y="250" text-anchor="middle" class="hg-hud">000°</text>
+          <text x="60" y="250" class="hg-hud hg-small">ПЕРИСКОП</text>
+        </g>
+        <g class="hg-gauge">
+          <rect x="268" y="120" width="112" height="70" rx="10" fill="rgba(3,10,18,.85)" stroke="#9effc4" stroke-width="2"/>
+          <text x="324" y="142" text-anchor="middle" class="hg-hud hg-small">ГЛУБИНА</text>
+          ${['0', '60', '120', '180', '246', '0'].map((v, k) => `<text x="324" y="178" text-anchor="middle" class="hg-hud hg-d hg-d${k}">${v} м</text>`).join('')}
+        </g>
+      </svg>` }
+  ],
+  beats: [
+    { t: 300, cls: 'is-scope' },
+    { t: 3400, cls: 'is-sonar' },
+    { t: 6600, cls: 'is-dive', tint: 'linear-gradient(180deg, rgba(4,30,56,.45), rgba(2,10,22,.7))' },
+    { t: 7400, cls: 'is-d1' }, { t: 9200, cls: 'is-d2' }, { t: 11000, cls: 'is-d3' },
+    { t: 12600, cls: 'is-d4', fxFront: { type: 'bubbles', rate: 16 } },
+    { t: 14800, cls: 'is-torpedo' },
+    { t: 18200, cls: 'is-up', fxFront: { type: 'bubbles', rate: 90 }, tint: 'linear-gradient(180deg, rgba(10,30,50,.15), rgba(4,14,26,.35))' }
+  ],
+  captions: [
+    { t: 500, text: 'Погружение', big: true, hold: 2600 },
+    { t: 3500, text: 'Сонар посылает звук в воду и слушает эхо' },
+    { t: 6800, text: 'Срочное погружение! Цистерны заполняются водой', hold: 3400 },
+    { t: 12700, text: 'Рабочая глубина — 246 метров, как дом в 80 этажей', hold: 3400 },
+    { t: 14900, text: 'Торпедный аппарат номер один — пуск!', hold: 3000 },
+    { t: 18400, text: 'Продуть балласт! Всплываем', big: true, hold: 4000 }
+  ],
+  sound: [
+    { t: 3500, s: 'sonar' }, { t: 5000, s: 'sonar' }, { t: 6700, s: 'water' },
+    { t: 9300, s: 'sonar' }, { t: 12700, s: 'bubbles' },
+    { t: 14900, s: 'steam' }, { t: 15100, s: 'boom' },
+    { t: 18300, s: 'bubbles' }, { t: 18600, s: 'water' }, { t: 19400, s: 'fanfare' }
+  ]
+});
+
+/* ============================================================
    ВТ. СКАЗОЧНЫЙ ТЕРЕМ — фасад Третьяковки
    ============================================================ */
 SCENES.push({
   id: 'terem',
-  day: 'Вт 27',
+  day: 'Бонус · Третьяковка',
   title: 'Сказочный терем',
   place: 'Третьяковская галерея, Лаврушинский переулок',
   aim: 'Встань в Лаврушинском переулке напротив входа и наведи камеру на фасад с острым кокошником над дверью.',
@@ -479,7 +554,7 @@ SCENES.push({
   ]
 });
 
-// мост у дома — бонусная сцена, в галерее последней
-SCENES.push(SCENES.splice(SCENES.findIndex(sc => sc.id === 'most'), 1)[0]);
+// бонусные сцены — в конце галереи
+['terem', 'most'].forEach(id => SCENES.push(SCENES.splice(SCENES.findIndex(sc => sc.id === id), 1)[0]));
 
 if (typeof module !== 'undefined') module.exports = { SCENES };

@@ -9,6 +9,7 @@ on:
     paths:
       - holiday/kvest.html
       - holiday/js/ar-scenes.js
+      - holiday/js/b396.js
       - holiday/voice/**
       - holiday/scripts/build-kvest-*.js
       - .github/workflows/kvest-voice.yml

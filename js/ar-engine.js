@@ -75,6 +75,7 @@ const Stage = (() => {
       },
       lift(t) { for (let i = 0; i < 8; i++) tone(330 + i * 40, t + i * .22, .2, 'square', .05); },
       steam(t) { noise(t, 1.6, 1400, .09, .7); },
+      sonar(t) { tone(1480, t, 1.1, 'sine', .14); tone(1480, t + .55, .8, 'sine', .04); },
       water(t) { for (let i = 0; i < 8; i++) noise(t + i * .55, 1.3, 700 + Math.random() * 900, .05, .6); },
       bubbles(t) {
         for (let i = 0; i < 12; i++) {

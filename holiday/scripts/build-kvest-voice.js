@@ -25,6 +25,7 @@ const EAR = [
   [/7,5 метра/g, 'семь с половиной метров'],
   [/в 15:30/g, 'в пятнадцать тридцать'],
   [/ · /g, '. '],
+  [/Б-396/g, 'Бэ триста девяносто шесть'],
 ];
 const ear = s => EAR.reduce((t, [re, to]) => t.replace(re, to), s);
 
@@ -46,5 +47,9 @@ for (const d of DAYS) {
 // рассказ к сценам волшебной камеры (holiday/ar.html)
 const { SCENES } = require(path.join(ROOT, 'js', 'ar-scenes.js'));
 for (const sc of SCENES) if (sc.say) put(`ar-${sc.id}`, sc.say);
+
+// аудиоэкскурсия по подлодке Б-396 (holiday/b396.html)
+const { B396_STOPS } = require(path.join(ROOT, 'js', 'b396.js'));
+for (const st of B396_STOPS) put(`b396-${st.id}`, st.say);
 
 console.log(`текстов для озвучки: ${fs.readdirSync(OUT).length} → ${path.relative(process.cwd(), OUT)}`);
