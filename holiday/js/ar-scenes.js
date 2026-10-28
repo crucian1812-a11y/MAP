@@ -276,7 +276,7 @@ SCENES.push({
    ============================================================ */
 SCENES.push({
   id: 'terem',
-  day: 'Бонус · Третьяковка',
+  day: 'Ср 28',
   title: 'Сказочный терем',
   place: 'Третьяковская галерея, Лаврушинский переулок',
   aim: 'Встань в Лаврушинском переулке напротив входа и наведи камеру на фасад с острым кокошником над дверью.',
@@ -347,7 +347,7 @@ SCENES.push({
    ============================================================ */
 SCENES.push({
   id: 'voda',
-  day: 'Ср 28',
+  day: 'Бонус · аквапарк',
   title: 'Подводный мир',
   place: 'Аквапарк или ванна дома',
   aim: 'Стоя у бортика, наведи камеру на воду бассейна. Телефон в воду не берём! Дома так же можно навести камеру на ванну.',
@@ -555,6 +555,8 @@ SCENES.push({
 });
 
 // бонусные сцены — в конце галереи
-['terem', 'most'].forEach(id => SCENES.push(SCENES.splice(SCENES.findIndex(sc => sc.id === id), 1)[0]));
+['voda', 'most'].forEach(id => SCENES.push(SCENES.splice(SCENES.findIndex(sc => sc.id === id), 1)[0]));
+// терем — третьим, на среду
+SCENES.splice(2, 0, SCENES.splice(SCENES.findIndex(sc => sc.id === 'terem'), 1)[0]);
 
 if (typeof module !== 'undefined') module.exports = { SCENES };

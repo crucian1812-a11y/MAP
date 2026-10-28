@@ -1,0 +1,48 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Восемь картин Третьяковки</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="css/tour.css">
+
+<div class="wrap">
+  <div class="eyebrow">Среда · 28 октября · Лаврушинский переулок, 10</div>
+  <h1>Восемь картин Третьяковки</h1>
+  <p class="lede">Разбор картин, которые выбрал папа. У каждой: сначала минуту смотрим молча, потом слушаем рассказ,
+    ищем детали, узнаём, как это сделано, и разговариваем. В конце выбираем любимую картину.</p>
+  <div class="links">
+    <a class="btn" href="kitay.html">← Тихий Китай-город</a>
+    <a class="btn" href="kvest.html">Квесты недели</a>
+  </div>
+  <div class="offline" id="offline" hidden></div>
+  <div class="facts"><ul>
+    <li><b>Часы:</b> вт–вс 10:00–21:00, касса и вход до 20:00. Понедельник выходной.</li>
+    <li><b>Билеты:</b> взрослый 700 ₽, льготные 0, 350 и 400 ₽ — детскую категорию уточни на кассе.</li>
+    <li><b>Дорога:</b> «Китай-город» → «Третьяковская», одна остановка по оранжевой ветке.</li>
+    <li><b>Порядок</b> — по залам, от середины XIX века к 1900 году. Если не найдёшь картину, спроси смотрителя: картины иногда переносят.</li>
+  </ul></div>
+  <div class="chips" id="chips"></div>
+  <article class="stop" id="stop" aria-live="polite"></article>
+  <section class="summary" id="summary"></section>
+  <p class="foot">Факты о картинах — по сайту Третьяковской галереи и Википедии. «Апофеоз войны» — серьёзная картина,
+    её можно пропустить. Отметки сохраняются только на этом телефоне.</p>
+</div>
+
+<script src="js/offline.js"></script>
+<script src="js/gtg.js"></script>
+<script src="js/tour.js"></script>
+<script>
+Offline.widget(document.getElementById('offline'));
+Tour({
+  key: 'gtg-2810', items: GTG_PAINTINGS, prefix: 'gtg', kind: 'art',
+  summary(S, items) {
+    const n = items.filter(i => S.done[i.id]).length;
+    const fav = items.find(i => i.id === S.fav);
+    document.getElementById('summary').innerHTML = `<h2>Итог</h2>
+      <p>Разобрано картин: <b>${n} из ${items.length}</b>.</p>
+      <p>${fav ? `Любимая картина: <b>«${fav.title}»</b>, ${fav.artist}. Дома нарисуй её по памяти и сравни с открыткой.`
+        : 'Выбери любимую картину кнопкой «Сделать любимой» — дома нарисуешь её по памяти.'}</p>`;
+  }
+});
+</script>

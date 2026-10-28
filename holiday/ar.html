@@ -53,6 +53,7 @@
   </div>
 </div>
 
+<script src="js/offline.js"></script>
 <script>
 /* Рассказчик для движка: тот же интерфейс, что у js/voice.js прогулки,
    но дорожки — озвучка Silero из audio/kvest/ (ar-<сцена>.mp3). */
@@ -70,7 +71,11 @@ const Voice = (() => {
   return {
     load,
     has: id => !!tracks && tracks.has(file(id)),
-    play(id) { audio.src = `audio/kvest/${file(id)}.mp3`; audio.play().catch(() => {}); },
+    play(id) {
+      const path = `audio/kvest/${file(id)}.mp3`;
+      audio.src = typeof Offline !== 'undefined' ? Offline.srcSync(path) : path;
+      audio.play().catch(() => {});
+    },
     stop() { audio.pause(); }
   };
 })();

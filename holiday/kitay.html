@@ -1,0 +1,48 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Тихий Китай-город</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="css/tour.css">
+
+<div class="wrap">
+  <div class="eyebrow">Среда · 28 октября · Ивановская горка</div>
+  <h1>Тихий Китай-город</h1>
+  <p class="lede">Мини-экскурсия по самым тихим местам: скверы, кривые переулки, старая стена и три детские площадки.
+    Петля от метро «Китай-город», около 3,4 км. С остановками и площадками — часа два.</p>
+  <div class="links">
+    <a class="btn fill" id="route" target="_blank" rel="noopener">Весь маршрут в Яндекс Картах</a>
+    <a class="btn" href="gtg.html">Потом: восемь картин →</a>
+    <a class="btn" href="kvest.html">← Квесты недели</a>
+  </div>
+  <div class="offline" id="offline" hidden></div>
+  <div class="facts"><ul>
+    <li><b>Старт:</b> метро «Китай-город», выход к Ильинскому скверу. От «Ботанического сада» по оранжевой ветке без пересадок, около 15 минут.</li>
+    <li><b>Площадки:</b> у сквера на улице Забелина, внизу Хохловского переулка и у Хитровской площади, ещё одна на Покровском бульваре.</li>
+    <li><b>Финиш:</b> снова «Китай-город», одна остановка до «Третьяковской».</li>
+  </ul></div>
+  <div class="chips" id="chips"></div>
+  <article class="stop" id="stop" aria-live="polite"></article>
+  <section class="summary" id="summary"></section>
+  <p class="foot">Точки и площадки — по данным OpenStreetMap, история — по Википедии и сайту Москвы.
+    Морозовский сад открыт не всегда. Если калитка закрыта, смотрим через ограду. Отметки сохраняются только на этом телефоне.</p>
+</div>
+
+<script src="js/offline.js"></script>
+<script src="js/kitay.js"></script>
+<script src="js/tour.js"></script>
+<script>
+document.getElementById('route').href = 'https://yandex.ru/maps/?rtt=pd&rtext=' +
+  KITAY_STOPS.map(s => `${s.lat},${s.lon}`).join('~');
+Offline.widget(document.getElementById('offline'));
+Tour({
+  key: 'kitay-2810', items: KITAY_STOPS, prefix: 'kit', kind: 'walk',
+  summary(S, items) {
+    const n = items.filter(i => S.done[i.id]).length;
+    document.getElementById('summary').innerHTML = `<h2>Итог прогулки</h2>
+      <p>Выполнено заданий: <b>${n} из ${items.length}</b>.</p>
+      <p>${n >= 5 ? 'Отлично! Китай-город пройден, теперь — в Третьяковку.' : 'Ещё немного — и можно ехать в Третьяковку.'}</p>`;
+  }
+});
+</script>

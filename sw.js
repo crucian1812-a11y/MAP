@@ -1,6 +1,7 @@
 /* Кэш приложения: после первого захода сайт открывается и без сети.
    Тайлы карты не кэшируются — их слишком много, интернет на прогулке всё же нужен. */
-const CACHE = 'walk-bauman-v10';
+const CACHE = 'walk-bauman-v11';
+const KEEP = /^holiday-offline/;   // кэш, который пользователь скачал кнопкой, не трогаем
 const FILES = [
   './', './index.html', './ar.html',
   './css/style.css', './css/ar.css',
@@ -39,19 +40,30 @@ self.addEventListener('install', e => {
 
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(keys =>
-    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+    Promise.all(keys.filter(k => k !== CACHE && !KEEP.test(k)).map(k => caches.delete(k)))).then(() => self.clients.claim()));
 });
 
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
   if (e.request.method !== 'GET') return;
   if (url.hostname.indexOf('tile.openstreetmap') >= 0) return;   // тайлы — мимо кэша
-  // каникулы обновляются часто: сначала сеть, кэш — только когда сети нет
+  // каникулы обновляются часто: сначала сеть, а если её нет или она медленная
+  // (дольше 4 секунд) — то, что скачано заранее или сохранено раньше
   if (url.origin === location.origin && url.pathname.indexOf('/holiday/') >= 0) {
-    e.respondWith(fetch(e.request).then(res => {
-      if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); }
+    const fromCache = () => caches.match(e.request, { ignoreSearch: true });
+    const net = fetch(e.request).then(res => {
+      if (res.ok && res.status === 200 && !e.request.headers.has('range')) {
+        const copy = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copy));
+      }
       return res;
-    }).catch(() => caches.match(e.request)));
+    });
+    e.respondWith(new Promise(resolve => {
+      let done = false;
+      const finish = r => { if (!done && r) { done = true; resolve(r); } };
+      const timer = setTimeout(() => fromCache().then(finish), 4000);
+      net.then(r => { clearTimeout(timer); finish(r); })
+         .catch(() => { clearTimeout(timer); fromCache().then(r => { finish(r || Response.error()); }); });
+    }));
     return;
   }
   e.respondWith(

@@ -48,6 +48,12 @@ for (const d of DAYS) {
 const { SCENES } = require(path.join(ROOT, 'js', 'ar-scenes.js'));
 for (const sc of SCENES) if (sc.say) put(`ar-${sc.id}`, sc.say);
 
+// тихий Китай-город и восемь картин Третьяковки (kitay.html, gtg.html)
+const { KITAY_STOPS } = require(path.join(ROOT, 'js', 'kitay.js'));
+for (const st of KITAY_STOPS) put(`kit-${st.id}`, st.say);
+const { GTG_PAINTINGS } = require(path.join(ROOT, 'js', 'gtg.js'));
+for (const pt of GTG_PAINTINGS) put(`gtg-${pt.id}`, `${pt.title}. ${pt.artist}. ${pt.say}`);
+
 // аудиоэкскурсия по подлодке Б-396 (holiday/b396.html)
 const { B396_STOPS } = require(path.join(ROOT, 'js', 'b396.js'));
 for (const st of B396_STOPS) put(`b396-${st.id}`, st.say);
