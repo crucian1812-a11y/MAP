@@ -5,8 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#0e1a22">
 <title>Экспедиция «Каникулы» · дополненная реальность</title>
-<link rel="icon" href="../icons/icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Каникулы">
 <link rel="apple-touch-icon" href="../icons/icon-180.png">
+<link rel="icon" href="../icons/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../css/ar.css">
 <link rel="stylesheet" href="css/ar-holiday.css">
 </head>
@@ -19,6 +24,7 @@
     <p>Сцена на каждый день плюс бонус у дома. Приходишь на место, нажимаешь «Запустить», наводишь камеру
       куда написано — и по пруду плывёт ботик Петра, подлодка уходит на глубину, а из земли вырастает орган.</p>
     <div class="hero__note">Нужен доступ к камере. Звук включён — можно выключить кнопкой в углу.</div>
+    <div class="hero__note hero__note--full" id="full-hint" hidden></div>
   </div>
 </header>
 
@@ -42,6 +48,7 @@
   <div class="stage__hud">
     <div class="stage__top">
       <div class="stage__name" id="stage-title"></div>
+      <button class="round" id="stage-full" aria-label="Во весь экран" hidden>⛶</button>
       <button class="round" id="stage-close" aria-label="Закрыть">✕</button>
     </div>
     <div class="stage__aim" id="stage-aim"></div>
@@ -129,6 +136,18 @@ const Voice = (() => {
   });
 
   Stage.init();
+
+  // как спрятать рамку браузера: подсказка под устройство
+  const hint = document.getElementById('full-hint');
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if (Stage.standalone()) {
+    hint.textContent = 'Открыто как приложение — рамки браузера нет.';
+  } else if (ios && !Stage.fullscreen.can) {
+    hint.innerHTML = 'Чтобы камера была на весь экран без рамки Safari: <b>Поделиться → «На экран Домой»</b>, потом открывай экспедицию с этой иконки.';
+  } else if (Stage.fullscreen.can) {
+    hint.textContent = 'Сцена сама откроется на весь экран. Выйти — кнопкой ⤡ или жестом «назад».';
+  }
+  hint.hidden = !hint.textContent;
 
   // ar.html#most открывает сцену сразу
   const openFromHash = () => {

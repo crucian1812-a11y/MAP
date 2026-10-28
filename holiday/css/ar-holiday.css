@@ -8,6 +8,7 @@
     radial-gradient(100% 100% at 95% 25%, #c98f0e55 0%, transparent 60%),
     linear-gradient(180deg,#0e1a22,#16303c);
 }
+.hero__note--full{display:block;margin-top:8px;width:fit-content;max-width:100%}
 .card__day{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
   color:#1d5f7c;background:#e6f0f2;border-radius:8px;padding:2px 8px;margin-bottom:6px}
 .card__thumb--holiday{background:radial-gradient(120% 100% at 50% 20%,#1e4456,#0b1820)}

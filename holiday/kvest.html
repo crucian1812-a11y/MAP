@@ -2,6 +2,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Экспедиция «Каникулы»</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Каникулы">
+<link rel="apple-touch-icon" href="../icons/icon-180.png">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
 <style>
@@ -480,6 +486,7 @@ const WORD = 'ОРГАН';
    поэтому из других мест ссылка ведёт туда */
 const PAGES_BASE = /github\.io$/.test(location.hostname) ? '' : 'https://crucian1812-a11y.github.io/MAP/holiday/';
 const AR_BASE = PAGES_BASE + 'ar.html';
+const NEWTAB = PAGES_BASE ? 'target="_blank" rel="noopener"' : '';   // на Pages — в том же окне
 const CAM = {
   mon: { id:'botik', title:'Ботик Петра', hint:'У Мостовой башни наведи камеру на пруд: по воде поплывёт ботик, за ним вырастет целый флот, а небо загорится потешными огнями.' },
   tue: { id:'glubina', title:'Погружение', hint:'На набережной наведи камеру на лодку: опустится перископ, запищит сонар, глубиномер покажет 246 метров, а потом — «Продуть балласт!»' },
@@ -556,10 +563,10 @@ function dayHTML(d) {
     </div>
     <div class="introrow">${say(d.id + '-intro')}<p class="intro">${d.intro}</p></div>
     <div class="block"><div class="cam">
-      <a class="arbtn" href="${AR_BASE}#${CAM[d.id].id}" target="_blank" rel="noopener">Волшебная камера ▸</a>
+      <a class="arbtn" href="${AR_BASE}#${CAM[d.id].id}" ${NEWTAB}>Волшебная камера ▸</a>
       <p><b>${CAM[d.id].title}.</b> ${CAM[d.id].hint}</p></div></div>
     ${(d.tours || []).map(t => `<div class="block"><div class="cam">
-      <a class="arbtn" href="${PAGES_BASE}${t.href}" target="_blank" rel="noopener">${t.btn}</a>
+      <a class="arbtn" href="${PAGES_BASE}${t.href}" ${NEWTAB}>${t.btn}</a>
       <p><b>${t.title}</b> ${t.text}</p></div></div>`).join('')}
     ${choice}
     <div class="block"><h3>Расписание</h3>
@@ -668,7 +675,7 @@ document.getElementById('tabs').addEventListener('keydown', e => {
   document.querySelector(`[data-day="${current}"]`).focus();
 });
 
-if (AR_BASE === 'ar.html') document.getElementById('ar-all').href = 'ar.html';
+if (AR_BASE === 'ar.html') { const l = document.getElementById('ar-all'); l.href = 'ar.html'; l.removeAttribute('target'); }
 if (typeof Offline !== 'undefined') Offline.widget(document.getElementById('offline'));
 renderAll();
 fetch('audio/kvest/manifest.json', { cache: 'no-cache' })

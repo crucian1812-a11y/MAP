@@ -180,6 +180,40 @@ const Stage = (() => {
     }
   }
 
+  /* ---------------- весь экран и неспящий экран ---------------- */
+  // Android и компьютеры умеют прятать браузер целиком. iPhone не умеет:
+  // там полный экран даёт только установка на «Домой» (страница ведёт себя как приложение).
+  const Full = (() => {
+    const root = document.documentElement;
+    const can = !!(root.requestFullscreen || root.webkitRequestFullscreen);
+    const on = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
+    function enter() {
+      if (!can || on()) return;
+      try {
+        const p = root.requestFullscreen ? root.requestFullscreen({ navigationUI: 'hide' }) : root.webkitRequestFullscreen();
+        if (p && p.then) p.then(lockPortrait).catch(() => {});
+      } catch (e) {}
+    }
+    function exit() {
+      if (!on()) return;
+      try { (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (e) {}
+    }
+    function lockPortrait() {
+      try { screen.orientation && screen.orientation.lock && screen.orientation.lock('portrait').catch(() => {}); } catch (e) {}
+    }
+    return { can, on, enter, exit, toggle: () => (on() ? exit() : enter()) };
+  })();
+  const standalone = () => (window.matchMedia && matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches) || navigator.standalone === true;
+
+  let wake = null;
+  async function keepAwake() {
+    try { if ('wakeLock' in navigator && !wake) { wake = await navigator.wakeLock.request('screen'); wake.addEventListener('release', () => { wake = null; }); } } catch (e) {}
+  }
+  function letSleep() { try { if (wake) wake.release(); } catch (e) {} wake = null; }
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && el.stage && !el.stage.hidden) keepAwake();
+  });
+
   /* ---------------- сцена ---------------- */
   function clearTimers() { timers.forEach(clearTimeout); timers = []; }
   function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
@@ -242,8 +276,11 @@ const Stage = (() => {
     scene = SCENES.find(s => s.id === id);
     if (!scene) return;
     if (typeof Voice !== 'undefined') Voice.load();
-    location.hash = id;
     el.stage.hidden = false;
+    // до первого await: браузер пускает в полный экран только прямо по нажатию
+    if (!standalone()) Full.enter();
+    keepAwake();
+    location.hash = id;
     document.body.classList.add('stage-open');
     el.title.textContent = scene.title;
     el.aim.innerHTML = `<b>Куда наводить камеру</b>${scene.aim}`;
@@ -260,6 +297,8 @@ const Stage = (() => {
 
   function close() {
     clearTimers();
+    Full.exit();
+    letSleep();
     if (typeof Voice !== 'undefined') Voice.stop();
     if (stopBack) { stopBack(); stopBack = null; }
     if (stopFront) { stopFront(); stopFront = null; }
@@ -289,6 +328,16 @@ const Stage = (() => {
     document.getElementById('stage-replay').addEventListener('click', () => { Sound.resume(); render(); });
     document.getElementById('stage-aim').addEventListener('click', e => e.currentTarget.classList.add('is-hidden'));
 
+    const fb = document.getElementById('stage-full');
+    if (fb) {
+      const paintFull = () => { fb.textContent = Full.on() ? '⤡' : '⛶'; fb.setAttribute('aria-label', Full.on() ? 'Выйти из полного экрана' : 'Во весь экран'); };
+      fb.hidden = !Full.can || standalone();
+      fb.addEventListener('click', () => Full.toggle());
+      document.addEventListener('fullscreenchange', paintFull);
+      document.addEventListener('webkitfullscreenchange', paintFull);
+      paintFull();
+    }
+
     const sb = document.getElementById('stage-sound');
     const paint = () => { sb.textContent = soundOn ? '🔊' : '🔇'; sb.classList.toggle('is-off', !soundOn); };
     sb.addEventListener('click', () => {
@@ -302,5 +351,5 @@ const Stage = (() => {
     window.addEventListener('keydown', e => { if (e.key === 'Escape' && !el.stage.hidden) close(); });
   }
 
-  return { init, open, close, isOpen: () => !el.stage.hidden };
+  return { init, open, close, isOpen: () => !el.stage.hidden, fullscreen: Full, standalone };
 })();

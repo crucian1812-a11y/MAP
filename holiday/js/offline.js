@@ -13,7 +13,7 @@ const Offline = (() => {
     'css/ar-holiday.css', 'css/tour.css',
     'js/offline.js', 'js/tour.js', 'js/ar-scenes.js', 'js/b396.js', 'js/kitay.js', 'js/gtg.js',
     '../css/ar.css', '../js/ar-engine.js', '../js/ar-particles.js', '../icons/icon.svg', '../sw.js',
-    'audio/kvest/manifest.json'
+    'audio/kvest/manifest.json', 'manifest.webmanifest', '../icons/icon-180.png', 'index.html'
   ];
   const abs = u => new URL(u, location.href).href;
   const blobs = new Map();

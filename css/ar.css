@@ -118,6 +118,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   background:rgba(0,0,0,.5);color:#fff;font-size:19px;backdrop-filter:blur(6px)
 }
 .round--sound.is-off{opacity:.55}
+.round[hidden]{display:none}
 .pill{
   pointer-events:auto;border:0;border-radius:26px;padding:13px 22px;font-weight:700;
   background:rgba(255,255,255,.92);color:var(--ink);box-shadow:0 8px 22px rgba(0,0,0,.4)
