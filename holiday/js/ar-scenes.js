@@ -554,9 +554,262 @@ SCENES.push({
   ]
 });
 
-// бонусные сцены — в конце галереи
-['voda', 'most'].forEach(id => SCENES.push(SCENES.splice(SCENES.findIndex(sc => sc.id === id), 1)[0]));
-// терем — третьим, на среду
-SCENES.splice(2, 0, SCENES.splice(SCENES.findIndex(sc => sc.id === 'terem'), 1)[0]);
+/* ============================================================
+   СР. ТИХИЙ КИТАЙ-ГОРОД — четыре сцены по остановкам экскурсии
+   ============================================================ */
+const KG = 'Ср 28 · Китай-город';
+
+/* 1. Ильинский сквер: откуда имя */
+SCENES.push({
+  id: 'kita',
+  day: KG,
+  title: 'Откуда имя',
+  place: 'Ильинский сквер, часовня героям Плевны',
+  aim: 'Встань в начале Ильинского сквера и наведи камеру на аллею, чтобы часовня была в середине экрана.',
+  lead: 'С неба падают плетёные корзины-«кита» и складываются в вал, вырастает каменная стена с башней, а потом часовня загорается золотом.',
+  say: 'Откуда имя «Китай-город»? Есть версия, что от старинного слова «кита». Так называли плетёные корзины, которые набивали землёй и ставили друг на друга. Получался вал — первая защита города. А потом, почти пятьсот лет назад, здесь поставили каменную стену с башнями и бойницами. Стена окружала торговый город рядом с Кремлём. А часовня перед тобой — памятник героям, погибшим в бою за болгарский город Плевну. Её построили на деньги их товарищей.',
+  tint: 'linear-gradient(180deg, rgba(40,30,20,.18), rgba(20,14,8,.45))',
+  fxBack: { type: 'dust', rate: 14 },
+  layers: [
+    { depth: .6, z: 1, cls: 'wide', html: `
+      <svg class="fit hk-wall" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        <g class="hk-stone">
+          <rect x="-20" y="560" width="440" height="200" fill="#b9865a" stroke="#6b4a2c" stroke-width="3"/>
+          ${rep(12, i => `<path d="M${-20 + i * 38} 560 v-30 h12 l7 10 l7 -10 h12 v30 z" fill="#b9865a" stroke="#6b4a2c" stroke-width="2"/>`)}
+          ${rep(9, i => `<rect x="${i * 46 - 6}" y="${600 + (i % 2) * 70}" width="34" height="14" rx="2" fill="#2c1d10" opacity=".6"/>`)}
+          <rect x="150" y="430" width="100" height="330" fill="#a87447" stroke="#6b4a2c" stroke-width="3"/>
+          <path d="M140 432 L200 330 L260 432 Z" fill="#2f6a4a" stroke="#1c3f2b" stroke-width="3"/>
+          <rect x="182" y="480" width="36" height="52" rx="18" fill="#2c1d10" opacity=".7"/>
+        </g>
+        <g class="hk-baskets">
+          ${rep(18, i => {
+            const x = (i % 6) * 70 - 10, y = 700 - Math.floor(i / 6) * 70;
+            return `<g transform="translate(${x} ${y})"><g class="hk-basket" style="--i:${i}">
+              <rect x="0" y="0" width="64" height="64" rx="10" fill="#c9a46a" stroke="#7a5a2c" stroke-width="3"/>
+              ${rep(4, k => `<path d="M${8 + k * 15} 2 v60" stroke="#7a5a2c" stroke-width="2"/>`)}
+              ${rep(3, k => `<path d="M2 ${14 + k * 18} h60" stroke="#8d6a36" stroke-width="2" stroke-dasharray="6 5"/>`)}
+            </g></g>`;
+          })}
+        </g>
+      </svg>` },
+    { depth: 1.3, z: 2, html: `
+      <svg class="fit hk-chapel" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
+        <defs>${glow('hkGold', 6, '#ffcf5a')}</defs>
+        <g fill="none" stroke="#ffd36a" stroke-width="5" filter="url(#hkGold)" stroke-linejoin="round">
+          <path class="hk-line" style="--len:1200" d="M330 820 V560 L360 520 H440 L470 560 V820 Z"/>
+          <path class="hk-line" style="--len:700;animation-delay:.4s" d="M360 520 L400 330 L440 520"/>
+          <path class="hk-line" style="--len:200;animation-delay:.8s" d="M400 330 V280 M384 296 H416"/>
+          <path class="hk-line" style="--len:600;animation-delay:1s" d="M360 560 V820 M400 560 V820 M440 560 V820"/>
+        </g>
+      </svg>` }
+  ],
+  beats: [
+    { t: 400, cls: 'is-drop' },
+    { t: 7600, cls: 'is-stone', tint: 'linear-gradient(180deg, rgba(30,24,16,.25), rgba(14,10,6,.5))' },
+    { t: 13600, cls: 'is-draw', fxFront: { type: 'sparks', rate: 26 } },
+    { t: 17000, cls: 'is-lit' }
+  ],
+  captions: [
+    { t: 500, text: 'Откуда имя «Китай-город»?', big: true, hold: 2800 },
+    { t: 3400, text: 'Есть версия: «кита» — плетёные корзины с землёй', hold: 3800 },
+    { t: 7800, text: 'Потом здесь встала каменная стена с башнями', hold: 3800 },
+    { t: 13800, text: 'А это часовня героям Плевны', hold: 3200 },
+    { t: 17300, text: 'Китай-город', big: true, hold: 3800 }
+  ],
+  sound: [
+    ...[600, 1400, 2200, 3000, 3800, 4600, 5400].map(t => ({ t, s: 'crack' })),
+    { t: 7600, s: 'rumble' }, { t: 13600, s: 'chime' }, { t: 17000, s: 'bells' }
+  ]
+});
+
+/* 2. Хохловская площадь: стена Белого города встаёт и превращается в бульвар */
+SCENES.push({
+  id: 'stena',
+  day: KG,
+  title: 'Стена Белого города',
+  place: 'Хохловская площадь, амфитеатр у старой стены',
+  aim: 'Встань у ограды над раскопом и наведи камеру на старые белые камни внизу.',
+  lead: 'Из камней фундамента вырастает белая стена с зубцами и башней, по ней ходит дозорный, а потом стена тает и на её месте вырастает бульвар.',
+  say: 'Видишь белые камни внизу? Это фундамент стены Белого города. Её построил мастер Фёдор Конь в конце шестнадцатого века. Стена была из белого камня, с зубцами, башнями и воротами, и окружала половину Москвы. По ней ходили дозорные. Прошло двести лет, город вырос, и стена стала не нужна. Её разобрали, а на её месте посадили деревья. Так появилось Бульварное кольцо. Покровский бульвар рядом с нами — это след той самой стены.',
+  tint: 'linear-gradient(180deg, rgba(30,40,60,.15), rgba(10,14,24,.45))',
+  fxBack: { type: 'dust', rate: 10 },
+  layers: [
+    { depth: .7, z: 1, cls: 'wide', html: `
+      <svg class="fit hs-wall" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        <defs><linearGradient id="hsStone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3efe4"/><stop offset="1" stop-color="#cfc6b2"/></linearGradient></defs>
+        <g class="hs-rise">
+          <rect x="-20" y="470" width="440" height="330" fill="url(#hsStone)" stroke="#8f8670" stroke-width="3"/>
+          ${rep(11, i => `<path d="M${-20 + i * 42} 470 v-34 h14 l7 12 l7 -12 h14 v34 z" fill="#efe9db" stroke="#8f8670" stroke-width="2"/>`)}
+          ${rep(16, i => `<rect x="${(i % 8) * 54 - 10 + (Math.floor(i / 8) % 2) * 27}" y="${520 + Math.floor(i / 8) * 70}" width="44" height="22" fill="none" stroke="#b4ab95" stroke-width="2"/>`)}
+          <rect x="250" y="330" width="120" height="470" fill="url(#hsStone)" stroke="#8f8670" stroke-width="3"/>
+          <path d="M240 334 L310 210 L380 334 Z" fill="#7a3b2a" stroke="#4a2218" stroke-width="3"/>
+          ${rep(3, i => `<rect x="${268 + i * 34}" y="390" width="14" height="30" rx="7" fill="#3b352a"/>`)}
+          <rect x="40" y="600" width="80" height="200" rx="40" fill="#3b352a" opacity=".75"/>
+        </g>
+        <g class="hs-guard"><circle cx="0" cy="-28" r="9" fill="#2a2620"/><path d="M-9 -18 h18 l4 40 h-26 z" fill="#2a2620"/><path d="M12 -50 V22" stroke="#2a2620" stroke-width="3"/><path d="M6 -56 l6 -10 l6 10 z" fill="#2a2620"/></g>
+        <g class="hs-ruin">
+          ${rep(9, i => `<rect x="${i * 46 - 6}" y="${770 + (i % 3) * 6}" width="${40 - (i % 2) * 8}" height="${30 - (i % 3) * 4}" rx="4" fill="#e8e2d2" stroke="#8f8670" stroke-width="2"/>`)}
+        </g>
+      </svg>` },
+    { depth: 1.2, z: 2, cls: 'wide', html: `
+      <svg class="fit hs-trees" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        ${rep(5, i => `<g transform="translate(${20 + i * 90} 780)"><g class="hs-tree" style="--i:${i}">
+          <rect x="-6" y="-120" width="12" height="120" fill="#5a3d25"/>
+          <circle cx="0" cy="-150" r="52" fill="${['#d8a13a', '#c46a2a', '#e0b957', '#8fae43', '#d8a13a'][i]}"/>
+          <circle cx="-30" cy="-120" r="30" fill="${['#c46a2a', '#e0b957', '#8fae43', '#d8a13a', '#c46a2a'][i]}"/>
+          <circle cx="32" cy="-124" r="32" fill="${['#e0b957', '#d8a13a', '#c46a2a', '#e0b957', '#8fae43'][i]}"/>
+        </g></g>`)}
+        <path class="hs-path" d="M-20 820 H420" stroke="#c9b896" stroke-width="26"/>
+      </svg>` }
+  ],
+  beats: [
+    { t: 300, cls: 'is-in' },
+    { t: 3600, cls: 'is-rise', fxBack: { type: 'dust', rate: 50 } },
+    { t: 8600, cls: 'is-guard' },
+    { t: 13200, cls: 'is-gone', fxFront: { type: 'leaves', rate: 16 } },
+    { t: 16600, cls: 'is-trees' }
+  ],
+  captions: [
+    { t: 500, text: 'Стена Белого города', big: true, hold: 2800 },
+    { t: 3800, text: '1585–1593 годы: мастер Фёдор Конь строит стену из белого камня', hold: 4200 },
+    { t: 8800, text: 'По стене ходили дозорные', hold: 3400 },
+    { t: 13400, text: 'Через двести лет стену разобрали…', hold: 3000 },
+    { t: 16800, text: '…и посадили деревья. Так появилось Бульварное кольцо', big: true, hold: 4400 }
+  ],
+  sound: [
+    { t: 3600, s: 'rumble' }, { t: 5200, s: 'rumble' }, { t: 8800, s: 'bells' },
+    { t: 13300, s: 'wind' }, { t: 16700, s: 'birds' }, { t: 17600, s: 'grow' }
+  ]
+});
+
+/* 3. Палаты Украинцева: посол плывёт к султану */
+SCENES.push({
+  id: 'posol',
+  day: KG,
+  title: 'Посол на корабле',
+  place: 'Хохловский переулок, Палаты Украинцева',
+  aim: 'Встань напротив старинного дома с узорными окнами и наведи камеру на него.',
+  lead: 'По морю идёт 46-пушечный корабль «Крепость», на горизонте вырастают купола и минареты, а в конце — свиток с печатью «1700 · мир».',
+  say: 'В этом доме жил дьяк Емельян Украинцев, посол Петра Первого. В тысяча шестьсот девяносто девятом году он поплыл к турецкому султану на большом корабле «Крепость» с сорока шестью пушками. Это был первый русский корабль, который пришёл в Константинополь. Помнишь ботик Петра? Прошло всего одиннадцать лет, и у России уже были такие корабли. Переговоры шли почти год, и в тысяча семисотом году Украинцев заключил с Турцией мир.',
+  tint: 'linear-gradient(180deg, rgba(20,40,70,.2), rgba(6,16,34,.5))',
+  layers: [
+    { depth: .5, z: 1, cls: 'wide', html: `
+      <svg class="fit hp-far" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        <g class="hp-city" fill="#26324a">
+          <path d="M60 560 q30 -70 60 0 z"/><rect x="60" y="560" width="60" height="40"/>
+          <rect x="128" y="470" width="8" height="130"/><path d="M126 470 l6 -20 l6 20 z"/>
+          <path d="M170 560 q45 -95 90 0 z"/><rect x="170" y="560" width="90" height="40"/>
+          <rect x="272" y="450" width="8" height="150"/><path d="M270 450 l6 -22 l6 22 z"/>
+          <path d="M300 570 q25 -55 50 0 z"/><rect x="300" y="570" width="50" height="30"/>
+          <rect x="-20" y="598" width="440" height="10"/>
+        </g>
+        <g fill="none" stroke="rgba(205,236,255,.7)" stroke-width="2.5" stroke-linecap="round">
+          ${rep(7, i => `<path class="hb-ripple" style="animation-delay:${(-i * .35).toFixed(2)}s" d="M-30 ${625 + i * 40} q25 -${5 + i} 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0"/>`)}
+        </g>
+      </svg>` },
+    { depth: 1.2, z: 2, cls: 'wide', html: `
+      <svg class="fit hp-near" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        <g class="hp-ship"><g class="hb-bob">
+          <path d="M0 120 H240 L214 164 Q120 178 30 164 Z" fill="#5a3a1e"/>
+          <path d="M8 132 H232" stroke="#e8b93b" stroke-width="5"/>
+          ${rep(7, k => `<rect x="${30 + k * 26}" y="140" width="12" height="9" rx="2" fill="#1b120a"/>`)}
+          ${[60, 120, 180].map((m, k) => `<rect x="${m}" y="${-70 + k * 10}" width="6" height="${190 - k * 10}" fill="#3a2410"/>
+            <path class="hb-sail" d="M${m - 34} ${-50 + k * 10} h74 v54 h-74 z" fill="#f2e8d2"/>
+            <path class="hb-sail" d="M${m - 30} ${12 + k * 10} h66 v44 h-66 z" fill="#ece0c4"/>`).join('')}
+          <rect x="183" y="-86" width="30" height="6" fill="#ffffff"/><rect x="183" y="-80" width="30" height="6" fill="#2a5db0"/><rect x="183" y="-74" width="30" height="6" fill="#d6312b"/>
+          <g class="hp-smoke">${rep(4, k => `<circle cx="${236 + k * 8}" cy="${142 - k * 6}" r="${10 + k * 5}" fill="rgba(230,230,230,.75)" style="--i:${k}"/>`)}</g>
+        </g></g>
+      </svg>` },
+    { depth: 1.7, z: 3, cls: 'wide', html: `
+      <svg class="fit hp-top" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        <g class="hp-scroll">
+          <rect x="70" y="160" width="260" height="170" rx="12" fill="#f4e7c6" stroke="#9b7a3a" stroke-width="4"/>
+          <rect x="56" y="150" width="28" height="190" rx="14" fill="#c9a46a" stroke="#9b7a3a" stroke-width="3"/>
+          <rect x="316" y="150" width="28" height="190" rx="14" fill="#c9a46a" stroke="#9b7a3a" stroke-width="3"/>
+          <text x="200" y="230" text-anchor="middle" class="hp-t1">МИР</text>
+          <text x="200" y="272" text-anchor="middle" class="hp-t2">с Турцией · 1700</text>
+          <circle cx="262" cy="304" r="22" fill="#b3261e"/><text x="262" y="312" text-anchor="middle" class="hp-seal">П</text>
+        </g>
+      </svg>` }
+  ],
+  beats: [
+    { t: 300, cls: 'is-in' },
+    { t: 2600, cls: 'is-sail' },
+    { t: 9200, cls: 'is-city' },
+    { t: 11600, cls: 'is-boom' },
+    { t: 17200, cls: 'is-peace', fxFront: { type: 'sparks', rate: 24 } }
+  ],
+  captions: [
+    { t: 500, text: 'Посол на корабле', big: true, hold: 2600 },
+    { t: 2900, text: '1699 год: дьяк Украинцев плывёт к турецкому султану', hold: 4200 },
+    { t: 7400, text: 'Корабль «Крепость» — 46 пушек', hold: 3200 },
+    { t: 11800, text: 'Первый русский корабль в Константинополе!', hold: 3800 },
+    { t: 17400, text: '1700 год · мир с Турцией', big: true, hold: 4200 }
+  ],
+  sound: [
+    { t: 400, s: 'water' }, { t: 2700, s: 'wind' }, { t: 9300, s: 'bells' },
+    { t: 11600, s: 'boom' }, { t: 12300, s: 'boom' }, { t: 17300, s: 'fanfare' }
+  ]
+});
+
+/* 4. Хитровская площадь: шумный рынок сто лет назад */
+SCENES.push({
+  id: 'khitrov',
+  day: KG,
+  title: 'Хитров рынок',
+  place: 'Хитровская площадь, сквер',
+  aim: 'Встань у сквера на Хитровской площади и наведи камеру на середину площади.',
+  lead: 'Всё становится старой фотографией: прилавки, пар от котлов, фонари и журналист Гиляровский с блокнотом. А потом снова тихий сквер.',
+  say: 'Закрой на секунду глаза и представь: сто лет назад здесь шумел Хитров рынок. Торговки продавали горячую еду прямо из котлов, над ними шёл пар, вечером зажигали фонари. Место было шумное и опасное, но журналист Владимир Гиляровский не боялся сюда приходить. Он записывал истории здешних людей и написал о них книгу «Москва и москвичи». А теперь открой глаза: вместо рынка тихий сквер и детская площадка.',
+  tint: 'linear-gradient(180deg, rgba(110,80,40,.42), rgba(60,40,20,.55))',
+  fxBack: { type: 'steam', rate: 8 },
+  layers: [
+    { depth: .6, z: 1, cls: 'wide', html: `
+      <svg class="fit hx-market" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        ${rep(3, i => `<g transform="translate(${i * 140 - 10} 600)"><g class="hx-stall" style="--i:${i}">
+          <path d="M0 0 L120 0 L110 -40 L10 -40 Z" fill="${['#8a4a2a', '#6b5a2a', '#7a3b2a'][i]}"/>
+          ${rep(4, k => `<path d="M${10 + k * 28} 0 l14 -40" stroke="#e8d8b8" stroke-width="6" opacity=".5"/>`)}
+          <rect x="10" y="0" width="100" height="70" fill="#5a3d25"/>
+          <ellipse cx="60" cy="0" rx="30" ry="10" fill="#3a2a1a"/>
+          <rect x="34" y="-14" width="52" height="16" rx="6" fill="#4a3826"/>
+        </g></g>`)}
+        ${[40, 200, 360].map((x, i) => `<g class="hx-lamp" style="--i:${i}"><rect x="${x - 3}" y="380" width="6" height="220" fill="#2a2016"/>
+          <path d="M${x - 16} 380 h32 l-6 -28 h-20 z" fill="#2a2016"/><circle class="hx-flame" cx="${x}" cy="368" r="8" fill="#ffcf5a"/></g>`).join('')}
+      </svg>` },
+    { depth: 1.2, z: 2, cls: 'wide', html: `
+      <svg class="fit hx-people" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        ${rep(4, i => `<g class="hx-walker" style="--i:${i}"><g transform="translate(0 ${720 + (i % 2) * 30}) scale(${1 - (i % 2) * .15})">
+          <circle cx="0" cy="-92" r="12" fill="#2a2016"/><path d="M-14 -78 h28 l8 70 h-44 z" fill="#2a2016"/>
+          <path d="M-8 -8 v40 M8 -8 v40" stroke="#2a2016" stroke-width="7"/></g></g>`)}
+        <g class="hx-gil" transform="translate(300 730)">
+          <path d="M-22 -112 h44 l-6 -14 h-32 z" fill="#1a140e"/><rect x="-26" y="-114" width="52" height="6" rx="3" fill="#1a140e"/>
+          <circle cx="0" cy="-96" r="13" fill="#1a140e"/><path d="M-8 -86 q8 10 16 0 v8 h-16 z" fill="#1a140e"/>
+          <path d="M-18 -80 h36 l10 82 h-56 z" fill="#1a140e"/><rect x="18" y="-60" width="18" height="24" fill="#e8d8b8"/>
+          <path d="M-10 2 v40 M10 2 v40" stroke="#1a140e" stroke-width="8"/>
+        </g>
+      </svg>` }
+  ],
+  beats: [
+    { t: 300, cls: 'is-old' },
+    { t: 3200, cls: 'is-walk' },
+    { t: 8600, cls: 'is-gil' },
+    { t: 15200, cls: 'is-now', fxBack: { type: 'pollen', rate: 18 }, tint: 'linear-gradient(180deg, rgba(20,40,30,.08), rgba(10,20,14,.25))' }
+  ],
+  captions: [
+    { t: 500, text: 'Хитров рынок', big: true, hold: 2600 },
+    { t: 3400, text: 'Сто лет назад здесь шумел рынок: пар от котлов, фонари, толпа', hold: 4200 },
+    { t: 8800, text: 'Журналист Гиляровский не боялся приходить сюда', hold: 3600 },
+    { t: 12400, text: 'Он написал книгу «Москва и москвичи»', hold: 2600 },
+    { t: 15400, text: 'А теперь здесь тихий сквер', big: true, hold: 4200 }
+  ],
+  sound: [
+    { t: 400, s: 'steam' }, { t: 3300, s: 'hooves' }, { t: 6000, s: 'steam' },
+    { t: 8800, s: 'chime' }, { t: 15300, s: 'birds' }, { t: 16200, s: 'sparkle' }
+  ]
+});
+
+// порядок галереи: по дням, четыре сцены Китай-города — среди среды, бонусы в конце
+const ORDER = ['botik', 'glubina', 'kita', 'stena', 'posol', 'khitrov', 'terem', 'dzhungli', 'organ', 'voda', 'most'];
+SCENES.sort((a, b) => ORDER.indexOf(a.id) - ORDER.indexOf(b.id));
 
 if (typeof module !== 'undefined') module.exports = { SCENES };

@@ -62,6 +62,60 @@
 .layers.is-d1:not(.is-d2) .hg-d1,.layers.is-d2:not(.is-d3) .hg-d2,.layers.is-d3:not(.is-d4) .hg-d3,
 .layers.is-d4:not(.is-up) .hg-d4,.layers.is-up .hg-d5{opacity:1}
 
+/* ===== Ср: Китай-город — откуда имя ===== */
+.hk-basket{opacity:0;transform:translateY(-900px)}
+.layers.is-drop .hk-basket{animation:hk-drop .7s cubic-bezier(.5,0,.7,1.3) calc(var(--i) * .36s) forwards}
+@keyframes hk-drop{from{opacity:1;transform:translateY(-900px)}to{opacity:1;transform:none}}
+.hk-stone{opacity:0}
+.layers.is-stone .hk-stone{opacity:1;transition:opacity 2.5s ease}
+.layers.is-stone .hk-baskets{opacity:0;transition:opacity 2.5s ease 1s}
+.layers.is-draw .hk-wall{opacity:.4;transition:opacity 2s ease}
+.hk-line{stroke-dasharray:var(--len,1000);stroke-dashoffset:var(--len,1000)}
+.layers.is-draw .hk-line{animation:draw 2.4s ease forwards}
+.layers.is-lit .hk-chapel g{animation:glow-pulse 2.6s ease-in-out infinite}
+
+/* ===== Ср: стена Белого города ===== */
+.hs-rise{transform:scaleY(0);transform-origin:0 800px}
+.layers.is-rise .hs-rise{transform:scaleY(1);transition:transform 4.5s cubic-bezier(.3,.7,.3,1)}
+.hs-guard{opacity:0;transform:translate(-40px,448px)}
+.layers.is-guard .hs-guard{animation:hs-patrol 8s linear forwards}
+@keyframes hs-patrol{from{opacity:1;transform:translate(-40px,448px)}to{opacity:1;transform:translate(230px,448px)}}
+.layers.is-gone .hs-wall{opacity:.12;transition:opacity 3s ease}
+.hs-tree{transform:scale(0);transform-box:fill-box;transform-origin:center bottom}
+.layers.is-trees .hs-tree{animation:pop-in .9s calc(var(--i) * .25s) cubic-bezier(.2,.9,.3,1.2) both}
+.hs-path{opacity:0}
+.layers.is-trees .hs-path{opacity:1;transition:opacity 1.5s ease}
+
+/* ===== Ср: посол на корабле ===== */
+.hp-ship{transform:translate(-290px,560px)}
+.layers.is-sail .hp-ship{animation:hp-sail 9s cubic-bezier(.3,.6,.3,1) forwards}
+@keyframes hp-sail{from{transform:translate(-290px,560px)}to{transform:translate(70px,540px)}}
+.hp-city{opacity:0;transform:translateY(40px)}
+.layers.is-city .hp-city{opacity:1;transform:none;transition:opacity 2.4s ease,transform 2.4s ease}
+.hp-smoke circle{opacity:0;transform-box:fill-box;transform-origin:center}
+.layers.is-boom .hp-smoke circle{animation:hp-puff 1.6s ease-out calc(var(--i) * .12s) 2}
+@keyframes hp-puff{0%{opacity:.9;transform:translate(0,0) scale(.4)}100%{opacity:0;transform:translate(40px,-30px) scale(1.6)}}
+.hp-scroll{opacity:0;transform-origin:200px 245px}
+.layers.is-peace .hp-scroll{animation:hm-stamp 1s cubic-bezier(.2,.9,.3,1.3) both}
+.hp-t1{font:800 54px Georgia,serif;fill:#5a3a0c;letter-spacing:.1em}
+.hp-t2{font:700 22px Georgia,serif;fill:#6b4510}
+.hp-seal{font:700 26px Georgia,serif;fill:#fff}
+
+/* ===== Ср: Хитров рынок ===== */
+.hx-stall{opacity:0;transform:translateY(30px)}
+.layers.is-old .hx-stall{animation:hx-in 1s ease calc(.3s + var(--i) * .4s) forwards}
+@keyframes hx-in{to{opacity:1;transform:none}}
+.hx-lamp{opacity:0}
+.layers.is-old .hx-lamp{opacity:1;transition:opacity 1.5s ease 1.2s}
+.hx-flame{transform-box:fill-box;transform-origin:center;animation:ho-flicker 1.2s ease-in-out infinite}
+.hx-walker{opacity:0}
+.layers.is-walk .hx-walker{animation:hx-walk 10s linear calc(var(--i) * 1.6s) infinite}
+.layers.is-walk .hx-walker:nth-child(even){animation-direction:reverse}
+@keyframes hx-walk{0%{opacity:0;transform:translateX(-60px)}8%,92%{opacity:1}100%{opacity:0;transform:translateX(460px)}}
+.hx-gil{opacity:0}
+.layers.is-gil .hx-gil{opacity:1;transition:opacity 1.6s ease}
+.layers.is-now .hx-market,.layers.is-now .hx-people{opacity:0;transition:opacity 3s ease}
+
 /* ===== Бонус: мост ===== */
 .layer svg.fit.hm-most,.layer svg.fit.hm-stamp{margin-bottom:31%}
 .layers.is-stamp .hm-measure,.layers.is-stamp .hm-badge{opacity:.25;transition:opacity 1s}
@@ -172,5 +226,5 @@
 @keyframes ho-flicker{0%,100%{transform:scale(1,1);opacity:1}40%{transform:scale(.88,1.16);opacity:.85}70%{transform:scale(1.06,.94);opacity:.95}}
 
 @media (prefers-reduced-motion:reduce){
-  .hg-sonar circle,.hb-ripple,.hb-bob,.hb-sail,.hm-flow,.hm-trot,.ht-bob,.hv-fish,.hv-caustic,.hd-step,.hd-leg,.ho-window,.ho-flame{animation:none!important}
+  .hk-basket,.hx-walker,.hx-flame,.hg-sonar circle,.hb-ripple,.hb-bob,.hb-sail,.hm-flow,.hm-trot,.ht-bob,.hv-fish,.hv-caustic,.hd-step,.hd-leg,.ho-window,.ho-flame{animation:none!important}
 }

@@ -9,6 +9,8 @@ function Tour(cfg) {
   const STOP = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 3h3v10H4zM9 3h3v10H9z"/></svg>';
   const fmt = s => isFinite(s) ? `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}` : '';
   const items = cfg.items;
+  // камера работает только на GitHub Pages
+  const AR = /github\.io$/.test(location.hostname) ? 'ar.html' : 'https://crucian1812-a11y.github.io/MAP/holiday/ar.html';
 
   let S = { at: 0, done: {}, fav: null };
   try { Object.assign(S, JSON.parse(localStorage.getItem(cfg.key) || '{}')); } catch (e) {}
@@ -32,8 +34,9 @@ function Tour(cfg) {
     const it = items[S.at], i = S.at;
     const has = TRACKS.has(track(it));
     const meta = cfg.kind === 'art' ? `${esc(it.artist)} · ${esc(it.year)}` : esc(it.where);
+    const cam = it.cam ? `<a class="btn fill" href="${AR}#${it.cam}"${AR === 'ar.html' ? '' : ' target="_blank" rel="noopener"'}>Волшебная камера ▸</a>` : '';
     const map = cfg.kind === 'walk'
-      ? `<div class="links"><a class="btn" href="https://yandex.ru/maps/?pt=${it.lon},${it.lat}&z=17&l=map" target="_blank" rel="noopener">Точка на карте</a></div>` : '';
+      ? `<div class="links">${cam}<a class="btn" href="https://yandex.ru/maps/?pt=${it.lon},${it.lat}&z=17&l=map" target="_blank" rel="noopener">Точка на карте</a></div>` : '';
     const tags = it.tags ? `<div class="tags">${it.tags.map(t => `<span class="${/площадк/.test(t) ? 'kid' : ''}">${esc(t)}</span>`).join('')}</div>` : '';
     const look = it.look || it.see;
     document.getElementById('stop').innerHTML = `
