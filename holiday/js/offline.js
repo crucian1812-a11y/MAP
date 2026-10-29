@@ -77,7 +77,7 @@ const Offline = (() => {
     if (!ok) { el.hidden = true; return; }
     el.hidden = false;
     el.innerHTML = `<button type="button" class="off-btn">Скачать звук и страницы на телефон</button>
-      <span class="off-note">Около 9 МБ. Нужно сделать один раз, пока есть интернет.</span>`;
+      <span class="off-note">Около 14 МБ. Нужно сделать один раз, пока есть интернет.</span>`;
     const btn = el.querySelector('.off-btn'), note = el.querySelector('.off-note');
     const paint = async () => {
       const n = await count();

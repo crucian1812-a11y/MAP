@@ -1,6 +1,6 @@
 /* Кэш приложения: после первого захода сайт открывается и без сети.
    Тайлы карты не кэшируются — их слишком много, интернет на прогулке всё же нужен. */
-const CACHE = 'walk-bauman-v11';
+const CACHE = 'walk-bauman-v12';
 const KEEP = /^holiday-offline/;   // кэш, который пользователь скачал кнопкой, не трогаем
 const FILES = [
   './', './index.html', './ar.html',
@@ -15,7 +15,6 @@ const FILES = [
   './assets/sakharov-haze.webp', './assets/sakharov-thumb.webp', './assets/sakharov.webp',
   './assets/sheremetev-haze.webp', './assets/sheremetev-thumb.webp', './assets/sheremetev.webp',
   './assets/suharev-haze.webp', './assets/suharev-thumb.webp', './assets/suharev.webp',
-  './assets/suharev2-haze.webp', './assets/suharev2-thumb.webp', './assets/suharev2.webp',
   './assets/ulan-haze.webp', './assets/ulan-thumb.webp', './assets/ulan.webp',
   './assets/vorota2-haze.webp', './assets/vorota2-thumb.webp', './assets/vorota2.webp',
   './assets/vysotka2-haze.webp', './assets/vysotka2-thumb.webp', './assets/vysotka2.webp',
