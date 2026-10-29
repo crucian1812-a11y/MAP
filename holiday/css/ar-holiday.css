@@ -116,6 +116,59 @@
 .layers.is-gil .hx-gil{opacity:1;transition:opacity 1.6s ease}
 .layers.is-now .hx-market,.layers.is-now .hx-people{opacity:0;transition:opacity 3s ease}
 
+/* ===== Чт: бобры ===== */
+.hy-beaver{opacity:0;transform:translate(-220px,630px) scale(1.4)}
+.layers.is-swim .hy-beaver{animation:hy-swim 7s ease-in-out forwards}
+@keyframes hy-swim{0%{opacity:1;transform:translate(-220px,640px) scale(1.4)}100%{opacity:1;transform:translate(120px,600px) scale(1.4)}}
+.layers.is-build .hy-beaver{animation:hy-dive 1.6s ease-in forwards}
+@keyframes hy-dive{from{opacity:1;transform:translate(120px,600px) scale(1.4)}to{opacity:0;transform:translate(140px,660px) scale(1.4)}}
+.hy-stick{opacity:0;transform:translateY(-60px)}
+.layers.is-build .hy-stick{animation:hk-drop .5s ease-out calc(var(--i) * .3s) forwards}
+.hy-dome{opacity:0;transform:scaleY(0);transform-origin:200px 650px}
+.layers.is-dome .hy-dome{opacity:1;transform:scaleY(1);transition:transform 1.6s cubic-bezier(.3,.9,.3,1.1),opacity .4s}
+.hy-kit{opacity:0;transform:translateY(20px)}
+.layers.is-kit .hy-kit{opacity:1;transform:none;transition:opacity .6s,transform .8s cubic-bezier(.3,.9,.3,1.4)}
+
+/* ===== Чт: терем Жеребцовых ===== */
+.hz-line{stroke-dasharray:var(--len,1000);stroke-dashoffset:var(--len,1000)}
+.layers.is-draw .hz-line{animation:draw 2.6s ease forwards}
+.layers.is-lit .hz-win{fill:rgba(255,211,106,.28);animation:glow-pulse 2.4s ease-in-out infinite}
+.hz-col{transform:scaleY(0);transform-box:fill-box;transform-origin:center bottom}
+.layers.is-cols .hz-col{animation:ho-rise 1s cubic-bezier(.2,.9,.3,1.1) calc(var(--i) * .2s) both}
+.hz-crest{opacity:0;transform-origin:400px 400px}
+.layers.is-crest .hz-crest{animation:hm-stamp 1s cubic-bezier(.2,.9,.3,1.3) both}
+.hz-year{font:800 44px Georgia,serif;fill:#ffe39a;paint-order:stroke;stroke:#5a3e12;stroke-width:3}
+
+/* ===== Чт: ворона и лисица ===== */
+.hr-crow{opacity:0;transform:translateY(-40px)}
+.layers.is-crow .hr-crow{opacity:1;transform:none;transition:opacity 1s,transform 1.2s cubic-bezier(.3,.9,.3,1.2)}
+.hr-beak{transform-box:fill-box;transform-origin:left center}
+.layers.is-caw .hr-beak{animation:hr-caw .25s ease-in-out 4 alternate}
+@keyframes hr-caw{to{transform:rotate(-24deg)}}
+.layers.is-drop .hr-cheese{animation:hr-fall 1.1s cubic-bezier(.5,0,.8,.6) forwards}
+@keyframes hr-fall{to{transform:translate(-20px,410px) rotate(200deg)}}
+.hr-fox{opacity:0;transform:translate(480px,640px) scale(1.2)}
+.layers.is-fox .hr-fox{animation:hr-fox 4s ease-out forwards}
+@keyframes hr-fox{from{opacity:1;transform:translate(480px,640px) scale(1.2)}to{opacity:1;transform:translate(170px,620px) scale(1.2)}}
+.layers.is-run .hr-fox{animation:hr-run 2.2s ease-in forwards}
+@keyframes hr-run{from{opacity:1;transform:translate(170px,620px) scale(1.2)}to{opacity:1;transform:translate(-280px,630px) scale(-1.2,1.2)}}
+.hr-sign{opacity:0;transform:translateY(20px)}
+.layers.is-sign .hr-sign{opacity:1;transform:none;transition:opacity 1.2s,transform 1.2s}
+.hr-name{font:italic 700 46px Georgia,serif;fill:#ffe39a}
+
+/* ===== Чт: клён ===== */
+.hl-line{stroke-dasharray:var(--len,800);stroke-dashoffset:var(--len,800)}
+.layers.is-draw .hl-line{animation:draw 3s ease forwards}
+.hl-leaf{opacity:0;transform:scale(0);transform-box:fill-box;transform-origin:center}
+.layers.is-leaves .hl-leaf{animation:pop-in .7s calc(var(--i) * .14s) both}
+.layers.is-silver .hl-leaf path{fill:#dfe8ee;transition:fill .6s ease}
+.layers.is-silver .hl-leaf{animation:hl-flip 1.4s ease-in-out calc(var(--i) * .1s) infinite alternate;opacity:1}
+@keyframes hl-flip{from{transform:rotate(-14deg) scale(1)}to{transform:rotate(14deg) scale(1.08)}}
+.hl-cut{opacity:0}
+.layers.is-rings .hl-cut{opacity:1;transition:opacity 1s}
+.hl-ring{opacity:0}
+.layers.is-rings .hl-ring{animation:fade-in .4s calc(.6s + var(--i) * .35s) both}
+
 /* ===== Бонус: мост ===== */
 .layer svg.fit.hm-most,.layer svg.fit.hm-stamp{margin-bottom:31%}
 .layers.is-stamp .hm-measure,.layers.is-stamp .hm-badge{opacity:.25;transition:opacity 1s}

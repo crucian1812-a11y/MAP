@@ -54,6 +54,10 @@ for (const st of KITAY_STOPS) put(`kit-${st.id}`, st.say);
 const { GTG_PAINTINGS } = require(path.join(ROOT, 'js', 'gtg.js'));
 for (const pt of GTG_PAINTINGS) put(`gtg-${pt.id}`, `${pt.title}. ${pt.artist}. ${pt.say}`);
 
+// велопоход в Алтуфьево (altufyevo.html)
+const { ALT_STOPS } = require(path.join(ROOT, 'js', 'altufyevo.js'));
+for (const st of ALT_STOPS) put(`alt-${st.id}`, st.say);
+
 // аудиоэкскурсия по подлодке Б-396 (holiday/b396.html)
 const { B396_STOPS } = require(path.join(ROOT, 'js', 'b396.js'));
 for (const st of B396_STOPS) put(`b396-${st.id}`, st.say);

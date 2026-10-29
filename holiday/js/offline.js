@@ -9,9 +9,9 @@ const Offline = (() => {
   const ok = 'caches' in window && (/github\.io$/.test(host) || host === 'localhost' || host === '127.0.0.1');
 
   const FILES = [
-    './', 'kvest.html', 'b396.html', 'kitay.html', 'gtg.html', 'ar.html',
+    './', 'kvest.html', 'b396.html', 'kitay.html', 'gtg.html', 'altufyevo.html', 'ar.html',
     'css/ar-holiday.css', 'css/tour.css',
-    'js/offline.js', 'js/tour.js', 'js/ar-scenes.js', 'js/b396.js', 'js/kitay.js', 'js/gtg.js',
+    'js/offline.js', 'js/tour.js', 'js/ar-scenes.js', 'js/b396.js', 'js/kitay.js', 'js/gtg.js', 'js/altufyevo.js',
     '../css/ar.css', '../js/ar-engine.js', '../js/ar-particles.js', '../icons/icon.svg', '../sw.js',
     'audio/kvest/manifest.json', 'manifest.webmanifest', '../icons/icon-180.png', 'index.html'
   ];

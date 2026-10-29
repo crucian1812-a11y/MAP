@@ -410,7 +410,7 @@ SCENES.push({
    ============================================================ */
 SCENES.push({
   id: 'dzhungli',
-  day: 'Чт 29',
+  day: 'Бонус · оранжерея',
   title: 'Живые динозавры',
   place: 'Фондовая оранжерея Ботанического сада',
   aim: 'В оранжерее наведи камеру на пальмы и саговники, чтобы листья были по краям экрана. Дома подойдёт любой большой цветок.',
@@ -808,8 +808,235 @@ SCENES.push({
   ]
 });
 
+/* ============================================================
+   ЧТ. ВЕЛОПОХОД В АЛТУФЬЕВО — четыре сцены по пути и в усадьбе
+   ============================================================ */
+const AL = 'Чт 29 · Алтуфьево';
+
+/* 1. Свиблово: бобры на Яузе */
+SCENES.push({
+  id: 'bobry',
+  day: AL,
+  title: 'Свибловские бобры',
+  place: 'Берег Яузы у усадьбы Свиблово',
+  aim: 'Встань у воды и наведи камеру на реку так, чтобы противоположный берег был в середине экрана.',
+  lead: 'По Яузе плывёт бобр с веткой, складывает плотину и хатку, а из хатки выглядывает бобрёнок.',
+  say: 'Тихо, смотри на воду. По Яузе плывёт бобр и тащит ветку. Бобры — настоящие строители: из веток, ила и камней они строят плотины и хатки. Вход в хатку всегда под водой, чтобы враги не пробрались. Бобры живут на Яузе прямо в городе, а у здешних, свибловских, недавно родился бобрёнок. Вот он!',
+  tint: 'linear-gradient(180deg, rgba(30,50,40,.15), rgba(10,24,18,.45))',
+  fxBack: { type: 'leaves', rate: 6 },
+  layers: [
+    { depth: .55, z: 1, cls: 'wide', html: `
+      <svg class="fit hy-water" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        <g fill="none" stroke="rgba(205,236,255,.7)" stroke-width="2.5" stroke-linecap="round">
+          ${rep(8, i => `<path class="hb-ripple" style="animation-delay:${(-i * .3).toFixed(1)}s" d="M-30 ${590 + i * 38} q25 -${5 + i} 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0"/>`)}
+        </g>
+        <g class="hy-lodge">
+          ${rep(16, i => `<path class="hy-stick" style="--i:${i}" d="M${70 + (i % 8) * 34} ${640 - Math.floor(i / 8) * 26} l${i % 2 ? 60 : -60} ${i % 3 ? -14 : 10}" stroke="${['#6b4524', '#5a3a1e', '#7a5530'][i % 3]}" stroke-width="9" stroke-linecap="round"/>`)}
+          <path class="hy-dome" d="M80 650 Q200 470 330 650 Z" fill="#5a3d25" stroke="#3a2614" stroke-width="4"/>
+          <g class="hy-kit"><ellipse cx="200" cy="640" rx="22" ry="16" fill="#7a5530"/><circle cx="190" cy="634" r="3" fill="#111"/><circle cx="210" cy="634" r="3" fill="#111"/><ellipse cx="200" cy="644" rx="6" ry="4" fill="#2a1a0e"/></g>
+        </g>
+      </svg>` },
+    { depth: 1.2, z: 2, cls: 'wide', html: `
+      <svg class="fit hy-near" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        <g class="hy-beaver">
+          <path d="M-60 40 q30 -20 80 -8" stroke="rgba(220,240,255,.7)" stroke-width="3" fill="none"/>
+          <ellipse cx="40" cy="30" rx="46" ry="22" fill="#6b4524"/>
+          <ellipse cx="-14" cy="34" rx="26" ry="10" fill="#3a2614"/>
+          <circle cx="82" cy="20" r="16" fill="#6b4524"/><circle cx="90" cy="14" r="3" fill="#111"/>
+          <rect x="88" y="26" width="8" height="8" fill="#f2e6c8"/>
+          <path d="M70 10 L150 -24" stroke="#5a3a1e" stroke-width="7" stroke-linecap="round"/>
+          <path d="M120 -12 l16 -16 M134 -18 l8 -18" stroke="#6f8f3a" stroke-width="5" stroke-linecap="round"/>
+        </g>
+      </svg>` }
+  ],
+  beats: [
+    { t: 300, cls: 'is-in' },
+    { t: 1800, cls: 'is-swim' },
+    { t: 8200, cls: 'is-build' },
+    { t: 13800, cls: 'is-dome' },
+    { t: 16800, cls: 'is-kit', fxFront: { type: 'sparks', rate: 18 } }
+  ],
+  captions: [
+    { t: 500, text: 'Свибловские бобры', big: true, hold: 2400 },
+    { t: 2600, text: 'Бобр тащит ветку для плотины', hold: 3800 },
+    { t: 8400, text: 'Из веток и ила получается плотина', hold: 3600 },
+    { t: 14000, text: 'А это хатка: вход в неё — под водой', hold: 3000 },
+    { t: 17000, text: 'У свибловских бобров родился бобрёнок!', big: true, hold: 4000 }
+  ],
+  sound: [
+    { t: 300, s: 'water' }, { t: 2000, s: 'water' },
+    ...[8400, 8900, 9400, 9900, 10400, 10900].map(t => ({ t, s: 'crack' })),
+    { t: 14000, s: 'birds' }, { t: 17000, s: 'chime' }
+  ]
+});
+
+/* 2. Главный дом: терем Жеребцовых */
+SCENES.push({
+  id: 'zherebtsov',
+  day: AL,
+  title: 'Терем Жеребцовых',
+  place: 'Усадьба Алтуфьево, главный дом',
+  aim: 'Встань перед главным домом усадьбы и наведи камеру на фасад, чтобы он занял почти весь экран.',
+  lead: 'Окна вспыхивают кокошниками, вырастают колонки-кувшины, а наверху появляется герб с годом 1851.',
+  say: 'Посмотри на этот дом. В тысяча восемьсот пятьдесят первом году хозяин усадьбы Николай Жеребцов перестроил его в русском стиле, как старинный терем. Сейчас загорятся окна с кокошниками. А вот колонки, похожие на кувшины. Наверху, на фронтоне, появляется герб хозяев. Говорят, это единственный усадебный дом в Москве в таком стиле.',
+  tint: 'radial-gradient(120% 80% at 50% 25%, rgba(60,30,20,.2), rgba(18,10,8,.5))',
+  fxBack: { type: 'pollen', rate: 14 },
+  layers: [
+    { depth: .6, z: 1, html: `
+      <svg class="fit hz-house" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
+        <defs>${glow('hzGold', 6, '#ffcf5a')}</defs>
+        <g fill="none" stroke="#ffd36a" stroke-width="5" filter="url(#hzGold)" stroke-linejoin="round">
+          <path class="hz-line" style="--len:2200" d="M80 820 V480 H720 V820 M60 480 L400 330 L740 480"/>
+          ${rep(4, i => {
+            const x = 140 + i * 150;
+            return `<path class="hz-line hz-win" style="--len:700;animation-delay:${(.6 + i * .35).toFixed(2)}s" d="M${x} 760 V610 Q${x} 560 ${x + 40} 548 Q${x + 60} 520 ${x + 80} 548 Q${x + 120} 560 ${x + 120} 610 V760 Z"/>`;
+          })}
+        </g>
+        <g class="hz-cols">
+          ${rep(5, i => `<g transform="translate(${118 + i * 150} 600)"><g class="hz-col" style="--i:${i}">
+            <path d="M0 220 Q-14 150 -10 110 Q-22 70 0 40 Q22 70 10 110 Q14 150 0 220 Z" fill="#f4e7c6" stroke="#9b7a3a" stroke-width="3"/>
+            <rect x="-14" y="30" width="28" height="10" rx="3" fill="#c9a46a"/></g></g>`)}
+        </g>
+        <g class="hz-crest">
+          <path d="M360 360 h80 v50 q0 40 -40 56 q-40 -16 -40 -56 z" fill="#b3261e" stroke="#ffe39a" stroke-width="4"/>
+          <path d="M380 380 h40 M400 372 v60" stroke="#ffe39a" stroke-width="6"/>
+          <text x="400" y="320" text-anchor="middle" class="hz-year">1851</text>
+        </g>
+      </svg>` }
+  ],
+  beats: [
+    { t: 300, cls: 'is-draw' },
+    { t: 5600, cls: 'is-lit', fxFront: { type: 'sparks', rate: 22 } },
+    { t: 9200, cls: 'is-cols' },
+    { t: 13200, cls: 'is-crest' }
+  ],
+  captions: [
+    { t: 500, text: 'Терем Жеребцовых', big: true, hold: 2600 },
+    { t: 3200, text: '1851 год: дом перестроили в русском стиле', hold: 3400 },
+    { t: 6000, text: 'Окна с кокошниками — как у старинного терема', hold: 3000 },
+    { t: 9400, text: 'Колонки похожи на кувшины', hold: 3400 },
+    { t: 13400, text: 'Наверху — герб хозяев', big: true, hold: 4200 }
+  ],
+  sound: [{ t: 300, s: 'chime' }, { t: 5600, s: 'sparkle' }, { t: 9200, s: 'grow' }, { t: 13200, s: 'bells' }]
+});
+
+/* 3. Аллеи: гость Куракина Крылов и его басня */
+SCENES.push({
+  id: 'krylov',
+  day: AL,
+  title: 'Ворона и Лисица',
+  place: 'Липовые аллеи усадьбы',
+  aim: 'Встань в липовой аллее и наведи камеру на деревья, чтобы ветки были в верхней части экрана.',
+  lead: 'На ветке появляется ворона с сыром, из кустов выходит лисица — и оживает басня Крылова, гостя князя Куракина.',
+  say: 'При князе Куракине сюда в гости приезжал баснописец Иван Крылов. Давай оживим его самую известную басню. Вороне где-то Бог послал кусочек сыру. На ель ворона взгромоздясь, позавтракать было совсем уж собралась. А вот и лисица! Она хвалит ворону и просит спеть. Ворона каркнула во всё воронье горло. Сыр выпал — с ним была плутовка такова. Мораль: не верь льстецам.',
+  tint: 'linear-gradient(180deg, rgba(30,40,20,.15), rgba(10,16,8,.45))',
+  fxBack: { type: 'leaves', rate: 10 },
+  layers: [
+    { depth: .9, z: 1, cls: 'wide', html: `
+      <svg class="fit hr-branch" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        <path d="M-20 300 Q120 280 260 330" stroke="#4a3220" stroke-width="18" fill="none" stroke-linecap="round"/>
+        ${rep(6, i => `<ellipse cx="${30 + i * 40}" cy="${290 + (i % 2) * 22}" rx="22" ry="9" fill="#d8a13a" transform="rotate(${i % 2 ? 25 : -20} ${30 + i * 40} ${290 + (i % 2) * 22})"/>`)}
+        <g class="hr-crow">
+          <ellipse cx="170" cy="270" rx="34" ry="24" fill="#1a1a22"/>
+          <circle cx="200" cy="248" r="16" fill="#1a1a22"/><circle cx="206" cy="244" r="3" fill="#fff"/>
+          <path class="hr-beak" d="M214 248 l22 6 l-22 6 z" fill="#3a3a44"/>
+          <path d="M140 272 l-30 10 l30 4 z" fill="#1a1a22"/>
+          <g class="hr-cheese"><path d="M232 252 l26 -4 l-6 22 z" fill="#ffd34a" stroke="#c9a020" stroke-width="2"/><circle cx="246" cy="256" r="2.5" fill="#c9a020"/></g>
+        </g>
+      </svg>` },
+    { depth: 1.3, z: 2, cls: 'wide', html: `
+      <svg class="fit hr-ground" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        <g class="hr-fox">
+          <path d="M0 0 q-40 -30 -80 -10 q30 6 40 20 z" fill="#d9631e"/>
+          <ellipse cx="40" cy="0" rx="50" ry="24" fill="#d9631e"/>
+          <path d="M80 -10 l30 -30 l-6 34 z M98 -16 l20 -24 l-4 30 z" fill="#d9631e"/>
+          <path d="M84 -20 q34 6 38 20 q-20 8 -40 0 z" fill="#d9631e"/><circle cx="104" cy="-10" r="3" fill="#111"/>
+          <path d="M120 0 l6 2 l-6 3 z" fill="#111"/>
+          <path d="M-74 -4 q14 -8 22 2 q-12 4 -22 -2 z" fill="#fff"/>
+          <path d="M10 20 v26 M30 20 v26 M60 20 v26 M76 20 v26" stroke="#9b3e10" stroke-width="7"/>
+        </g>
+      </svg>` },
+    { depth: 1.7, z: 3, html: `
+      <svg class="fit hr-quill" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
+        <g class="hr-sign">
+          <path d="M260 120 q120 -40 260 10" stroke="#ffe39a" stroke-width="3" fill="none"/>
+          <text x="400" y="100" text-anchor="middle" class="hr-name">И. А. Крылов</text>
+          <path d="M560 30 q-60 50 -90 110" stroke="#f4e7c6" stroke-width="6" stroke-linecap="round"/>
+          <path d="M560 30 q30 -10 40 -30 q-30 0 -40 30 z" fill="#f4e7c6"/>
+        </g>
+      </svg>` }
+  ],
+  beats: [
+    { t: 300, cls: 'is-crow' },
+    { t: 7000, cls: 'is-fox' },
+    { t: 13600, cls: 'is-caw' },
+    { t: 14400, cls: 'is-drop' },
+    { t: 15800, cls: 'is-run' },
+    { t: 18400, cls: 'is-sign', fxFront: { type: 'sparks', rate: 20 } }
+  ],
+  captions: [
+    { t: 500, text: 'В гостях у князя Куракина бывал Иван Крылов', hold: 3800 },
+    { t: 4600, text: '«Вороне где-то Бог послал кусочек сыру…»', hold: 2600 },
+    { t: 7300, text: '«…Плутовка к дереву на цыпочках подходит»', hold: 3600 },
+    { t: 13700, text: '«Ворона каркнула во всё воронье горло»', hold: 2400 },
+    { t: 16200, text: '«Сыр выпал — с ним была плутовка такова»', hold: 2400 },
+    { t: 18600, text: 'Мораль: не верь льстецам', big: true, hold: 3800 }
+  ],
+  sound: [{ t: 300, s: 'birds' }, { t: 7100, s: 'wind' }, { t: 13600, s: 'caw' }, { t: 14200, s: 'caw' }, { t: 15900, s: 'hooves' }, { t: 18500, s: 'chime' }]
+});
+
+/* 4. Серебристый клён-великан */
+SCENES.push({
+  id: 'klen',
+  day: AL,
+  title: 'Клён-великан',
+  place: 'Старый парк усадьбы',
+  aim: 'Найди самое большое дерево в парке — серебристый клён — и наведи камеру на его ствол снизу вверх.',
+  lead: 'Ствол обводится золотом, ветки растут до неба, листья переворачиваются серебром, а на срезе считаем годовые кольца.',
+  say: 'Это серебристый клён, великан старинного парка. Смотри, как растут его ветки. Листья у него сверху зелёные, а снизу серебристые, поэтому, когда дует ветер, дерево будто мерцает. Как узнать возраст дерева? По годовым кольцам: каждый год у ствола нарастает одно новое кольцо. Деревья в этом парке видели и князя Куракина, и его знаменитых гостей.',
+  tint: 'linear-gradient(180deg, rgba(20,30,40,.12), rgba(8,12,18,.42))',
+  fxBack: { type: 'leaves', rate: 14 },
+  layers: [
+    { depth: .6, z: 1, cls: 'wide', html: `
+      <svg class="fit hm2-tree" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        <defs>${glow('hlGold', 6, '#ffdc7a')}</defs>
+        <g fill="none" stroke="#ffd36a" stroke-width="6" filter="url(#hlGold)" stroke-linecap="round">
+          <path class="hl-line" style="--len:700" d="M180 900 Q170 700 190 520 M220 900 Q230 700 210 520"/>
+          <path class="hl-line" style="--len:500;animation-delay:.8s" d="M195 560 Q120 470 60 360 M200 540 Q200 420 200 260 M205 560 Q290 470 340 360"/>
+          <path class="hl-line" style="--len:400;animation-delay:1.4s" d="M90 410 Q40 370 20 300 M120 460 Q150 380 140 320 M310 410 Q360 370 380 300 M280 460 Q250 380 260 320"/>
+        </g>
+        ${rep(14, i => {
+          const x = [40, 80, 130, 170, 200, 230, 270, 320, 360, 60, 150, 250, 340, 200][i], y = [300, 250, 280, 230, 200, 230, 280, 250, 300, 360, 330, 330, 360, 280][i];
+          return `<g transform="translate(${x} ${y})"><g class="hl-leaf" style="--i:${i}"><path d="M0 -18 l6 10 l12 -4 l-6 12 l8 8 l-14 0 l-6 10 l-6 -10 l-14 0 l8 -8 l-6 -12 l12 4 z" fill="#8fae43"/></g></g>`;
+        })}
+      </svg>` },
+    { depth: 1.5, z: 2, html: `
+      <svg class="fit hl-rings" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
+        <g class="hl-cut" transform="translate(400 170)">
+          <circle r="120" fill="#e8c992" stroke="#8a5d2a" stroke-width="6"/>
+          ${rep(9, k => `<circle class="hl-ring" style="--i:${k}" r="${108 - k * 12}" fill="none" stroke="#a87447" stroke-width="3"/>`)}
+          <circle r="6" fill="#8a5d2a"/>
+        </g>
+      </svg>` }
+  ],
+  beats: [
+    { t: 300, cls: 'is-draw' },
+    { t: 5600, cls: 'is-leaves' },
+    { t: 9000, cls: 'is-silver', fxFront: { type: 'sparks', rate: 18 } },
+    { t: 13000, cls: 'is-rings' }
+  ],
+  captions: [
+    { t: 500, text: 'Клён-великан', big: true, hold: 2600 },
+    { t: 3200, text: 'Серебристый клён — самое большое дерево парка', hold: 3600 },
+    { t: 9200, text: 'Снизу листья серебристые — дерево мерцает на ветру', hold: 3600 },
+    { t: 13200, text: 'Одно кольцо на срезе — один год жизни', hold: 3400 },
+    { t: 16800, text: 'Деревья помнят князя Куракина', big: true, hold: 3600 }
+  ],
+  sound: [{ t: 300, s: 'grow' }, { t: 5600, s: 'wind' }, { t: 9000, s: 'sparkle' }, { t: 13200, s: 'chime' }, { t: 16800, s: 'birds' }]
+});
+
 // порядок галереи: по дням, четыре сцены Китай-города — среди среды, бонусы в конце
-const ORDER = ['botik', 'glubina', 'kita', 'stena', 'posol', 'khitrov', 'terem', 'dzhungli', 'organ', 'voda', 'most'];
+const ORDER = ['botik', 'glubina', 'kita', 'stena', 'posol', 'khitrov', 'terem', 'bobry', 'zherebtsov', 'krylov', 'klen', 'organ', 'dzhungli', 'voda', 'most'];
 SCENES.sort((a, b) => ORDER.indexOf(a.id) - ORDER.indexOf(b.id));
 
 if (typeof module !== 'undefined') module.exports = { SCENES };

@@ -12,6 +12,7 @@ on:
       - holiday/js/b396.js
       - holiday/js/kitay.js
       - holiday/js/gtg.js
+      - holiday/js/altufyevo.js
       - holiday/voice/**
       - holiday/scripts/build-kvest-*.js
       - .github/workflows/kvest-voice.yml

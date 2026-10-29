@@ -1,0 +1,55 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Велопоход в Алтуфьево</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Каникулы">
+<link rel="apple-touch-icon" href="../icons/icon-180.png">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="css/tour.css">
+
+<div class="wrap">
+  <div class="eyebrow">Четверг · 29 октября · вдоль Яузы</div>
+  <h1>Велопоход в Алтуфьево</h1>
+  <p class="lede">Едем на велосипедах вдоль Яузы мимо Свиблова и Медведкова в старинную усадьбу Алтуфьево: пруд, дом-терем, церковь, липовые аллеи и клён-великан. Туда около 13 км по реке, обратно 11 напрямую. Четыре точки волшебной камеры.</p>
+  <div class="links">
+    <a class="btn fill" id="route" target="_blank" rel="noopener">Маршрут туда в Яндекс Картах</a>
+    <a class="btn" id="route-back" target="_blank" rel="noopener">Обратно напрямую</a>
+    <a class="btn" href="kvest.html">← Квесты недели</a>
+  </div>
+  <div class="offline" id="offline" hidden></div>
+  <div class="facts"><ul>
+    <li><b>Выезд в 11:30.</b> Свиблово ~11:50, привал в Медведкове ~12:20, Алтуфьево ~13:30, обратно в 14:30, дома ~16:00. Темнеет около 16:45.</li>
+    <li><b>С собой:</b> шлемы, фонари, перчатки, термос, перекус, насос, заряженный телефон.</li>
+    <li><b>Усадьба:</b> территория и парк открыты для прогулок. Музей и храм — по своему расписанию.</li>
+    <li><b>Если сын устал:</b> обратная дорога короче на 2 км. Метро с велосипедом не выход: туда пускают только с разобранным.</li>
+  </ul></div>
+  <div class="chips" id="chips"></div>
+  <article class="stop" id="stop" aria-live="polite"></article>
+  <section class="summary" id="summary"></section>
+  <p class="foot">История усадьбы — по Википедии и RUSSPASS, бобры — по «Москвич Mag». Маршрут построен по OpenStreetMap: вдоль Яузы местами дорожки, местами улицы. На переходах спешиваемся. Отметки сохраняются только на этом телефоне.</p>
+</div>
+
+<script src="js/offline.js"></script>
+<script src="js/altufyevo.js"></script>
+<script src="js/tour.js"></script>
+<script>
+// туда — от дома по точкам вдоль Яузы до главного дома усадьбы
+document.getElementById('route').href = 'https://yandex.ru/maps/?mode=routes&rtt=bc&rtext=55.8373,37.6441~' +
+  ALT_STOPS.slice(0, 5).map(s => `${s.lat},${s.lon}`).join('~');
+document.getElementById('route-back').href = 'https://yandex.ru/maps/?rtt=bc&mode=routes&rtext=55.9082,37.5855~55.8373,37.6441';
+Offline.widget(document.getElementById('offline'));
+Tour({
+  key: 'alt-2910', items: ALT_STOPS, prefix: 'alt', kind: 'walk',
+  summary(S, items) {
+    const n = items.filter(i => S.done[i.id]).length;
+    document.getElementById('summary').innerHTML = `<h2>Итог велопохода</h2>
+      <p>Выполнено заданий: <b>${n} из ${items.length}</b>.</p>
+      <p>${n >= 5 ? 'Отлично! Велопоход пройден, экипаж молодец.' : 'Ещё несколько заданий — и поход засчитан.'}</p>`;
+  }
+});
+</script>

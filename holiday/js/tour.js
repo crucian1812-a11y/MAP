@@ -34,7 +34,9 @@ function Tour(cfg) {
     const it = items[S.at], i = S.at;
     const has = TRACKS.has(track(it));
     const meta = cfg.kind === 'art' ? `${esc(it.artist)} · ${esc(it.year)}` : esc(it.where);
-    const cam = it.cam ? `<a class="btn fill" href="${AR}#${it.cam}"${AR === 'ar.html' ? '' : ' target="_blank" rel="noopener"'}>Волшебная камера ▸</a>` : '';
+    // cam: 'id' или [{ id, t }] — несколько сцен на одной остановке
+    const cams = typeof it.cam === 'string' ? [{ id: it.cam, t: 'Волшебная камера' }] : (it.cam || []);
+    const cam = cams.map(c => `<a class="btn fill" href="${AR}#${c.id}"${AR === 'ar.html' ? '' : ' target="_blank" rel="noopener"'}>${esc(c.t)} ▸</a>`).join('');
     const map = cfg.kind === 'walk'
       ? `<div class="links">${cam}<a class="btn" href="https://yandex.ru/maps/?pt=${it.lon},${it.lat}&z=17&l=map" target="_blank" rel="noopener">Точка на карте</a></div>` : '';
     const tags = it.tags ? `<div class="tags">${it.tags.map(t => `<span class="${/площадк/.test(t) ? 'kid' : ''}">${esc(t)}</span>`).join('')}</div>` : '';
