@@ -15,7 +15,7 @@
 <div class="wrap">
   <div class="eyebrow">Четверг · 29 октября · вдоль Яузы</div>
   <h1>Велопоход в Алтуфьево</h1>
-  <p class="lede">Едем на велосипедах вдоль Яузы мимо Свиблова и Медведкова в старинную усадьбу Алтуфьево: пруд, дом-терем, церковь, липовые аллеи и клён-великан. Туда около 13 км по реке, обратно 11 напрямую. Четыре точки волшебной камеры.</p>
+  <p class="lede">Едем на велосипедах вдоль Яузы мимо Свиблова и Медведкова в старинную усадьбу Алтуфьево: пруд, дом-терем, церковь, липовые аллеи и клён-великан. Туда около 13 км по реке, обратно 11 напрямую. Двенадцать остановок, и на каждой — волшебная камера.</p>
   <div class="links">
     <a class="btn fill" id="route" target="_blank" rel="noopener">Маршрут туда в Яндекс Картах</a>
     <a class="btn" id="route-back" target="_blank" rel="noopener">Обратно напрямую</a>
@@ -40,7 +40,7 @@
 <script>
 // туда — от дома по точкам вдоль Яузы до главного дома усадьбы
 document.getElementById('route').href = 'https://yandex.ru/maps/?mode=routes&rtt=bc&rtext=55.8373,37.6441~' +
-  ALT_STOPS.slice(0, 5).map(s => `${s.lat},${s.lon}`).join('~');
+  ALT_STOPS.slice(0, 9).filter(s => s.id !== 'home').map(s => `${s.lat},${s.lon}`).join('~');
 document.getElementById('route-back').href = 'https://yandex.ru/maps/?rtt=bc&mode=routes&rtext=55.9082,37.5855~55.8373,37.6441';
 Offline.widget(document.getElementById('offline'));
 Tour({

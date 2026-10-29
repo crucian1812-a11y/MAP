@@ -169,6 +169,87 @@
 .hl-ring{opacity:0}
 .layers.is-rings .hl-ring{animation:fade-in .4s calc(.6s + var(--i) * .35s) both}
 
+/* ===== Чт: старт ===== */
+.hst-num{font:800 260px "Unbounded","Arial Black",sans-serif;fill:#ffe39a;opacity:0;transform-box:fill-box;transform-origin:center;paint-order:stroke;stroke:#5a3e12;stroke-width:6}
+.layers.is-3:not(.is-2) .hst-n0,.layers.is-2:not(.is-1) .hst-n1,.layers.is-1:not(.is-go) .hst-n2{animation:pop-in .5s both}
+.hst-flag,.hst-go{opacity:0}
+.layers.is-go .hst-flag{opacity:1;transition:opacity .4s}
+.hst-cloth{transform-box:fill-box;transform-origin:left center}
+.layers.is-go .hst-cloth{animation:hst-wave .5s ease-in-out infinite alternate}
+@keyframes hst-wave{from{transform:skewY(-6deg) scaleX(.94)}to{transform:skewY(6deg) scaleX(1.04)}}
+.hst-go{font:800 90px "Unbounded","Arial Black",sans-serif;fill:#ffe39a;transform-box:fill-box;transform-origin:center}
+.layers.is-go .hst-go{animation:pop-in .6s both}
+.hst-speed{opacity:0}
+.layers.is-go .hst-speed{opacity:.8;animation:hst-run .6s linear calc(var(--i) * -.06s) infinite}
+@keyframes hst-run{to{stroke-dashoffset:-100}}
+
+/* ===== Чт: путь Яузы ===== */
+.hym-river{stroke-dasharray:var(--len);stroke-dashoffset:var(--len)}
+.layers.is-draw .hym-river{animation:draw 3.6s ease forwards}
+.hym-moskva{opacity:0}
+.layers.is-draw .hym-moskva{animation:fade-in 1s 3s both}
+.hym-pin{opacity:0}
+.layers.is-pins .hym-pin{animation:fade-in .6s calc(var(--i) * 1.2s) both}
+.hym-t{font:700 24px "Onest",system-ui,sans-serif;fill:#fff;paint-order:stroke;stroke:#0b1a26;stroke-width:5}
+.layers.is-here .hym-pin:nth-of-type(3) circle{animation:glow-pulse 1.2s ease-in-out infinite}
+
+/* ===== Чт: шведский колокол ===== */
+.hkl-swing{transform-origin:400px 150px}
+.layers.is-ring .hkl-swing{animation:hkl-swing 1.6s ease-in-out infinite alternate}
+@keyframes hkl-swing{from{transform:rotate(-16deg)}to{transform:rotate(16deg)}}
+.hkl-waves circle{fill:none;stroke:#ffe39a;stroke-width:4;opacity:0;transform-origin:400px 300px}
+.layers.is-ring .hkl-waves circle{animation:hg-ping 2.4s ease-out calc(var(--i) * .8s) infinite}
+.hkl-swe{opacity:0}
+.layers.is-swe .hkl-swe{animation:fade-in 1s both}
+.hkl-year{font:800 40px Georgia,serif;fill:#ffe39a}
+
+/* ===== Чт: утки ===== */
+.hu-flock{transform:translate(-120px,640px)}
+.layers.is-swim .hu-flock{animation:hu-swim 14s linear forwards}
+@keyframes hu-swim{from{transform:translate(-120px,640px)}to{transform:translate(520px,600px)}}
+.hu-duck{transform-box:fill-box;transform-origin:center;animation:hb-bob 1.8s ease-in-out infinite alternate}
+.layers.is-dive .hu-diver{animation:hu-dive 3s ease-in-out forwards}
+@keyframes hu-dive{0%{transform:none}30%,70%{transform:rotate(-80deg) translateY(14px)}100%{transform:none}}
+
+/* ===== Чт: бибр ===== */
+.hbb-w{font:800 92px Georgia,serif;fill:#ffe39a;opacity:0;paint-order:stroke;stroke:#3a2410;stroke-width:5;transform-box:fill-box;transform-origin:center}
+.layers.is-w0:not(.is-w1) .hbb-w0,.layers.is-w1:not(.is-w2) .hbb-w1,.layers.is-w2 .hbb-w2{animation:pop-in .6s both}
+.hbb-shield{opacity:0;transform-origin:400px 520px}
+.layers.is-shield .hbb-shield{animation:hm-stamp 1s cubic-bezier(.2,.9,.3,1.3) both}
+
+/* ===== Чт: пруд ===== */
+.hsm-lake{opacity:0}
+.layers.is-in .hsm-lake{opacity:1;transition:opacity 1.5s}
+.hsm-in,.hsm-out{stroke-dasharray:var(--len);stroke-dashoffset:var(--len)}
+.layers.is-streams .hsm-in{animation:draw 1.8s ease calc(var(--i) * 1.6s) forwards}
+.layers.is-out .hsm-out{animation:draw 2s ease forwards}
+.hsm-label{opacity:0}
+.layers.is-out .hsm-label{animation:fade-in 1s 1.4s both}
+.hsm-fish{opacity:0}
+.layers.is-fish .hsm-fish g,.layers.is-fish .hsm-fish path{transform-box:fill-box}
+.layers.is-fish .hsm-fish{animation:hsm-jump 1.6s ease-in-out 2}
+@keyframes hsm-jump{0%{opacity:0;transform:translate(420px,600px)}20%{opacity:1}50%{transform:translate(460px,500px) rotate(-30deg)}100%{opacity:0;transform:translate(500px,610px) rotate(30deg)}}
+
+/* ===== Чт: колокольня ===== */
+.hkn-line{stroke-dasharray:var(--len);stroke-dashoffset:var(--len)}
+.layers.is-draw .hkn-line{animation:draw 3s ease forwards}
+.hkn-tower{transform:scaleY(0);transform-origin:0 510px}
+.layers.is-tower .hkn-tower{transform:scaleY(1);transition:transform 2.4s cubic-bezier(.3,.9,.3,1.1)}
+.hkn-bell{transform-box:fill-box;transform-origin:center top}
+.layers.is-ring .hkn-bell{animation:hkl-swing 1.2s ease-in-out infinite alternate}
+.hkn-crest{opacity:0;transform-origin:660px 200px}
+.layers.is-crest .hkn-crest{animation:hm-stamp 1s cubic-bezier(.2,.9,.3,1.3) both}
+.hkn-year{font:800 34px Georgia,serif;fill:#ffe39a}
+
+/* ===== Чт: финиш ===== */
+.hfn-drop{transform:translateY(-700px)}
+.layers.is-drop .hfn-drop{animation:hfn-fall 1.4s cubic-bezier(.3,1.4,.5,1) forwards}
+@keyframes hfn-fall{from{transform:translateY(-700px)}to{transform:none}}
+.hfn-km{font:800 56px Georgia,serif;fill:#5a3a0c}
+.hfn-stamp{opacity:0;transform-origin:400px 620px}
+.layers.is-stamp .hfn-stamp{animation:hm-stamp 1s cubic-bezier(.2,.9,.3,1.3) both}
+.hfn-letter{font:800 90px "Unbounded","Arial Black",sans-serif;fill:#efbd45}
+
 /* ===== Бонус: мост ===== */
 .layer svg.fit.hm-most,.layer svg.fit.hm-stamp{margin-bottom:31%}
 .layers.is-stamp .hm-measure,.layers.is-stamp .hm-badge{opacity:.25;transition:opacity 1s}
@@ -279,5 +360,5 @@
 @keyframes ho-flicker{0%,100%{transform:scale(1,1);opacity:1}40%{transform:scale(.88,1.16);opacity:.85}70%{transform:scale(1.06,.94);opacity:.95}}
 
 @media (prefers-reduced-motion:reduce){
-  .hk-basket,.hx-walker,.hx-flame,.hg-sonar circle,.hb-ripple,.hb-bob,.hb-sail,.hm-flow,.hm-trot,.ht-bob,.hv-fish,.hv-caustic,.hd-step,.hd-leg,.ho-window,.ho-flame{animation:none!important}
+  .hst-speed,.hst-cloth,.hkl-swing,.hu-duck,.hk-basket,.hx-walker,.hx-flame,.hg-sonar circle,.hb-ripple,.hb-bob,.hb-sail,.hm-flow,.hm-trot,.ht-bob,.hv-fish,.hv-caustic,.hd-step,.hd-leg,.ho-window,.ho-flame{animation:none!important}
 }

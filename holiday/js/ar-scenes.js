@@ -1035,8 +1035,218 @@ SCENES.push({
   sound: [{ t: 300, s: 'grow' }, { t: 5600, s: 'wind' }, { t: 9000, s: 'sparkle' }, { t: 13200, s: 'chime' }, { t: 16800, s: 'birds' }]
 });
 
+/* ---------- Чт: ещё восемь сцен велопохода ---------- */
+
+/* Старт: обратный отсчёт */
+SCENES.push({
+  id: 'start', day: AL, title: 'Старт экипажа', place: 'Парк «Яуза» у дома',
+  aim: 'Поставь велосипед на дорожку и наведи камеру вперёд, вдоль дорожки.',
+  lead: 'Обратный отсчёт три-два-один, клетчатый флаг и полосы скорости.',
+  say: 'Экипаж, внимание! Шлем застёгнут? Тормоза работают? Звонок звенит? Тогда начинаем обратный отсчёт. Три! Два! Один! Старт! Впереди двенадцать остановок и старинная усадьба Алтуфьево.',
+  tint: 'linear-gradient(180deg, rgba(10,20,30,.2), rgba(4,8,14,.45))',
+  layers: [
+    { depth: .5, z: 1, cls: 'wide', html: `
+      <svg class="fit hst-lines" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        ${rep(10, i => `<path class="hst-speed" style="--i:${i}" d="M${20 + i * 38} 900 L200 420" stroke="rgba(255,255,255,.7)" stroke-width="${3 + (i % 3)}" stroke-dasharray="40 60"/>`)}
+      </svg>` },
+    { depth: 1.2, z: 2, html: `
+      <svg class="fit hst-count" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
+        ${['3', '2', '1'].map((n, k) => `<text x="400" y="420" text-anchor="middle" class="hst-num hst-n${k}">${n}</text>`).join('')}
+        <g class="hst-flag" transform="translate(300 200)">
+          <rect x="0" y="0" width="8" height="260" fill="#e4ecee"/>
+          <g class="hst-cloth">${rep(24, k => `<rect x="${8 + (k % 6) * 30}" y="${Math.floor(k / 6) * 30}" width="30" height="30" fill="${(k + Math.floor(k / 6)) % 2 ? '#111' : '#fff'}"/>`)}</g>
+        </g>
+        <text x="400" y="560" text-anchor="middle" class="hst-go">СТАРТ!</text>
+      </svg>` }
+  ],
+  beats: [{ t: 3200, cls: 'is-3' }, { t: 4300, cls: 'is-2' }, { t: 5400, cls: 'is-1' }, { t: 6500, cls: 'is-go', fxFront: { type: 'sparks', rate: 40 } }],
+  captions: [{ t: 400, text: 'Шлем, тормоза, звонок — проверено?', hold: 2700 }, { t: 6600, text: 'Старт! Впереди 12 остановок', big: true, hold: 4200 }],
+  sound: [{ t: 3200, s: 'chime' }, { t: 4300, s: 'chime' }, { t: 5400, s: 'chime' }, { t: 6500, s: 'fanfare' }]
+});
+
+/* Путь Яузы: карта реки */
+SCENES.push({
+  id: 'yauzamap', day: AL, title: 'Путь Яузы', place: 'Яуза в Ростокине',
+  aim: 'Встань у реки и наведи камеру на воду, чтобы река шла снизу вверх по экрану.',
+  lead: 'Река рисуется картой: от истока в Подмосковье до Москвы-реки, с точкой «мы здесь» и акведуком.',
+  say: 'Знаешь, откуда течёт Яуза? Она начинается в Подмосковье, течёт через лес Лосиный остров, мимо нашего дома, под Ростокинским акведуком, и впадает в Москву-реку в самом центре, у Котельнической набережной. Длина Яузы около сорока восьми километров. А мы сегодня едем вверх по течению, против воды.',
+  tint: 'linear-gradient(180deg, rgba(10,30,50,.25), rgba(4,12,24,.55))',
+  layers: [
+    { depth: .8, z: 1, html: `
+      <svg class="fit hym-map" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
+        <path class="hym-river" style="--len:1500" d="M680 60 C600 160 660 260 560 340 S420 420 460 520 S380 660 300 700 S160 780 100 860" fill="none" stroke="#5ec8ff" stroke-width="14" stroke-linecap="round"/>
+        <path d="M20 860 H780" stroke="#2f8fd8" stroke-width="20" class="hym-moskva"/>
+        ${[[680, 60, 'Исток в Подмосковье'], [560, 340, 'Лосиный остров'], [440, 520, 'Мы здесь'], [380, 610, 'Акведук'], [100, 860, 'Москва-река']].map(([x, y, t], i) => `
+          <g class="hym-pin" style="--i:${i}"><circle cx="${x}" cy="${y}" r="${i === 2 ? 16 : 10}" fill="${i === 2 ? '#d9631e' : '#ffd36a'}" stroke="#fff" stroke-width="3"/>
+          <text x="${x + (x > 400 ? -20 : 20)}" y="${y - 18}" text-anchor="${x > 400 ? 'end' : 'start'}" class="hym-t">${t}</text></g>`).join('')}
+      </svg>` }
+  ],
+  beats: [{ t: 300, cls: 'is-draw' }, { t: 4000, cls: 'is-pins' }, { t: 12000, cls: 'is-here', fxFront: { type: 'sparks', rate: 18 } }],
+  captions: [{ t: 500, text: 'Путь Яузы', big: true, hold: 2600 }, { t: 4200, text: 'От Подмосковья до Москвы-реки — около 48 км', hold: 4200 }, { t: 12200, text: 'А мы едем вверх, против течения', big: true, hold: 4000 }],
+  sound: [{ t: 300, s: 'water' }, { t: 4000, s: 'chime' }, { t: 12000, s: 'sparkle' }]
+});
+
+/* Свиблово: шведский колокол */
+SCENES.push({
+  id: 'kolokol', day: AL, title: 'Шведский колокол', place: 'Усадьба Свиблово, Троицкая церковь',
+  aim: 'Встань перед Троицкой церковью и наведи камеру на её верх, где колокольня.',
+  lead: 'Раскачивается колокол, от него расходятся звуковые волны, появляются флаг Швеции и год 1709.',
+  say: 'Эта усадьба принадлежала Кириллу Нарышкину, родственнику Петра Первого. После Полтавской битвы, в тысяча семьсот девятом году, сюда привезли пленных шведов, и, по одной из версий, они строили здания усадьбы. А один из колоколов Троицкой церкви считается трофейным шведским. Ещё здесь на даче жил писатель Николай Карамзин, и он начал писать «Историю государства Российского».',
+  tint: 'linear-gradient(180deg, rgba(20,30,50,.2), rgba(8,12,22,.5))',
+  layers: [
+    { depth: .9, z: 1, html: `
+      <svg class="fit hkl-bell" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
+        <g class="hkl-waves">${rep(3, i => `<circle cx="400" cy="300" r="90" style="--i:${i}"/>`)}</g>
+        <g class="hkl-swing">
+          <path d="M400 150 v40" stroke="#c9a46a" stroke-width="8"/>
+          <path d="M330 340 Q330 200 400 190 Q470 200 470 340 L500 380 H300 Z" fill="#d8a53a" stroke="#8a5d12" stroke-width="5"/>
+          <circle cx="400" cy="392" r="16" fill="#8a5d12"/>
+        </g>
+        <g class="hkl-swe" transform="translate(560 520)">
+          <rect width="150" height="96" fill="#2a5db0"/><rect x="44" width="22" height="96" fill="#f4c430"/><rect y="37" width="150" height="22" fill="#f4c430"/>
+          <text x="75" y="140" text-anchor="middle" class="hkl-year">1709</text>
+        </g>
+      </svg>` }
+  ],
+  beats: [{ t: 300, cls: 'is-ring' }, { t: 7000, cls: 'is-swe' }, { t: 14000, cls: 'is-book', fxFront: { type: 'sparks', rate: 16 } }],
+  captions: [{ t: 500, text: 'Шведский колокол', big: true, hold: 2600 }, { t: 3600, text: 'Усадьбой владел Кирилл Нарышкин, родственник Петра I', hold: 3400 }, { t: 7200, text: 'После Полтавы, в 1709 году, сюда привезли пленных шведов', hold: 3800 }, { t: 11200, text: 'Один колокол, по одной из версий, — шведский трофей', hold: 3000 }, { t: 14200, text: 'Здесь Карамзин начал «Историю государства Российского»', hold: 4200 }],
+  sound: [{ t: 300, s: 'bells' }, { t: 3500, s: 'bells' }, { t: 7000, s: 'fanfare' }, { t: 11200, s: 'bells' }]
+});
+
+/* Медведково: утиный патруль */
+SCENES.push({
+  id: 'utki', day: AL, title: 'Утиный патруль', place: 'Парк «Яуза» в Медведкове',
+  aim: 'На привале наведи камеру на реку, где плавают утки, или просто на воду.',
+  lead: 'По воде плывут утки клином, одна ныряет хвостом вверх, вокруг расходятся круги.',
+  say: 'Привал! А на реке свой патруль — утки-кряквы. Как отличить папу-утку от мамы? У селезня голова ярко-зелёная, а утка вся коричневая, пёстрая, так ей легче прятаться в траве. Смотри: утка ныряет за едой и показывает хвост. Утки остаются на Яузе даже зимой там, где вода не замерзает.',
+  tint: 'linear-gradient(180deg, rgba(20,40,40,.15), rgba(6,16,18,.45))',
+  layers: [
+    { depth: .6, z: 1, cls: 'wide', html: `
+      <svg class="fit hu-water" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        <g fill="none" stroke="rgba(205,236,255,.7)" stroke-width="2.5" stroke-linecap="round">
+          ${rep(7, i => `<path class="hb-ripple" style="animation-delay:${(-i * .3).toFixed(1)}s" d="M-30 ${620 + i * 40} q25 -${5 + i} 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0"/>`)}
+        </g>
+      </svg>` },
+    { depth: 1.2, z: 2, cls: 'wide', html: `
+      <svg class="fit hu-ducks" viewBox="0 0 400 900" preserveAspectRatio="xMidYMax slice">
+        <g class="hu-flock">
+          ${[[0, 0, 1], [-70, 30, 0], [-140, 60, 1]].map(([x, y, male], i) => `<g transform="translate(${x} ${y})"><g class="hu-duck${i === 1 ? ' hu-diver' : ''}">
+            <ellipse cx="0" cy="0" rx="34" ry="16" fill="${male ? '#9a8a74' : '#8a6a44'}"/>
+            <path d="M-34 -4 l-14 -10 l6 14 z" fill="${male ? '#3a3a44' : '#6a4a2a'}"/>
+            <circle cx="26" cy="-18" r="13" fill="${male ? '#1f7a3a' : '#7a5a34'}"/>
+            ${male ? '<rect x="18" y="-8" width="16" height="4" fill="#fff"/>' : ''}
+            <path d="M36 -20 l16 4 l-16 4 z" fill="#f2b630"/><circle cx="30" cy="-21" r="2.4" fill="#111"/>
+          </g></g>`).join('')}
+        </g>
+      </svg>` }
+  ],
+  beats: [{ t: 300, cls: 'is-in' }, { t: 1500, cls: 'is-swim' }, { t: 8000, cls: 'is-dive' }, { t: 12500, cls: 'is-up' }],
+  captions: [{ t: 500, text: 'Утиный патруль', big: true, hold: 2600 }, { t: 3500, text: 'У селезня голова зелёная, утка — пёстрая', hold: 4000 }, { t: 8200, text: 'Утка ныряет за едой — видно только хвост!', hold: 3800 }, { t: 12800, text: 'Привал: чай из термоса и перекус', big: true, hold: 3800 }],
+  sound: [{ t: 300, s: 'water' }, { t: 8100, s: 'bubbles' }, { t: 12600, s: 'birds' }]
+});
+
+/* Бибирево: бибр — значит бобр */
+SCENES.push({
+  id: 'bibr', day: AL, title: 'Бибр — значит бобр', place: 'Бибирево, Костромская улица',
+  aim: 'Остановись на тротуаре и наведи камеру на любую ровную стену или в небо.',
+  lead: 'Старинное слово «бебръ» превращается в «Бибирево», а потом появляется золотой щит с бобром.',
+  say: 'Мы едем по Бибиреву. Знаешь, что значит это название? Скорее всего, оно от старинного слова «биберь», то есть бобёр. По-древнерусски бобра называли «бебръ». Есть и другая версия: здесь жили бобровники — люди, которые охотились на бобров для князя и собирали бобровый налог. Бобры у нас сегодня повсюду: и на Яузе, и в названии района!',
+  tint: 'linear-gradient(180deg, rgba(40,30,20,.2), rgba(14,10,6,.5))',
+  layers: [
+    { depth: 1, z: 1, html: `
+      <svg class="fit hbb-words" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
+        ${['БЕБРЪ', 'БИБИРЬ', 'БИБИРЕВО'].map((w, k) => `<text x="400" y="300" text-anchor="middle" class="hbb-w hbb-w${k}">${w}</text>`).join('')}
+        <g class="hbb-shield">
+          <path d="M310 400 h180 v120 q0 90 -90 130 q-90 -40 -90 -130 z" fill="#2f6a4a" stroke="#ffd36a" stroke-width="6"/>
+          <ellipse cx="400" cy="540" rx="60" ry="30" fill="#8a5d2a"/>
+          <circle cx="450" cy="520" r="20" fill="#8a5d2a"/><circle cx="458" cy="514" r="3" fill="#111"/>
+          <ellipse cx="335" cy="550" rx="28" ry="11" fill="#5a3a1e"/>
+        </g>
+      </svg>` }
+  ],
+  beats: [{ t: 300, cls: 'is-w0' }, { t: 5500, cls: 'is-w1' }, { t: 9000, cls: 'is-w2' }, { t: 13000, cls: 'is-shield', fxFront: { type: 'sparks', rate: 22 } }],
+  captions: [{ t: 500, text: 'Древнерусское «бебръ» — это бобр', hold: 4600 }, { t: 5600, text: '«Биберь», «Бибирь» — так звали людей и деревни', hold: 3200 }, { t: 9200, text: 'Отсюда и Бибирево!', big: true, hold: 3400 }, { t: 13200, text: 'Ещё версия: здесь жили княжеские бобровники', hold: 4000 }],
+  sound: [{ t: 300, s: 'chime' }, { t: 5500, s: 'chime' }, { t: 9000, s: 'sparkle' }, { t: 13000, s: 'bells' }]
+});
+
+/* Алтуфьевский пруд: три ручья и Самотёка */
+SCENES.push({
+  id: 'samoteka', day: AL, title: 'Три ручья и Самотёка', place: 'Алтуфьевский пруд',
+  aim: 'Встань на берегу пруда и наведи камеру на воду, чтобы видно было и дальний берег.',
+  lead: 'В пруд по очереди вливаются три ручья, вытекает речка Самотёка, а из воды выпрыгивает рыба.',
+  say: 'Посмотри, как устроен этот пруд. С одной стороны в него впадают три маленькие речки. А вытекает из него речка Самотёка — она течёт сама, без насосов, отсюда и название. Когда-то здесь было два пруда, Верхний и Нижний, но сохранился только этот. Смотри, рыба плеснула!',
+  tint: 'linear-gradient(180deg, rgba(10,30,40,.2), rgba(4,12,18,.5))',
+  layers: [
+    { depth: .8, z: 1, html: `
+      <svg class="fit hsm-pond" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
+        <ellipse class="hsm-lake" cx="400" cy="600" rx="300" ry="150" fill="rgba(60,160,220,.35)" stroke="#5ec8ff" stroke-width="5"/>
+        ${[['M40 300 C120 380 140 460 160 520', 0], ['M240 200 C260 320 280 400 300 470', 1], ['M440 180 C430 300 420 380 420 450', 2]].map(([d, i]) => `<path class="hsm-in" style="--len:500;--i:${i}" d="${d}" fill="none" stroke="#7fd4ff" stroke-width="9" stroke-linecap="round"/>`).join('')}
+        <path class="hsm-out" style="--len:400" d="M690 640 C740 700 760 780 790 860" fill="none" stroke="#7fd4ff" stroke-width="12" stroke-linecap="round"/>
+        <text x="720" y="760" text-anchor="end" class="hym-t hsm-label">Самотёка</text>
+        <g class="hsm-fish" transform="translate(420 600)"><path d="M0 0 q30 -26 60 0 q-30 26 -60 0 z M0 0 l-20 -14 v28 z" fill="#c9d3d8"/></g>
+      </svg>` }
+  ],
+  beats: [{ t: 300, cls: 'is-in' }, { t: 2500, cls: 'is-streams' }, { t: 8500, cls: 'is-out' }, { t: 13500, cls: 'is-fish' }],
+  captions: [{ t: 500, text: 'Три ручья и Самотёка', big: true, hold: 2400 }, { t: 2800, text: 'В пруд впадают три маленькие речки', hold: 4200 }, { t: 8700, text: 'А вытекает речка Самотёка — течёт сама', hold: 4200 }, { t: 13700, text: 'Плюх! Рыба плеснула', big: true, hold: 3200 }],
+  sound: [{ t: 300, s: 'water' }, { t: 2500, s: 'water' }, { t: 8500, s: 'water' }, { t: 13600, s: 'bubbles' }]
+});
+
+/* Церковь Воздвижения: колокольня вместо купола */
+SCENES.push({
+  id: 'kolokolnya', day: AL, title: 'Колокольня вместо купола', place: 'Церковь Воздвижения Креста, Алтуфьево',
+  aim: 'Встань перед церковью и наведи камеру на её верхнюю часть.',
+  lead: 'Обводится барочная церковь, на ней вырастает колокольня с колоколом, а потом появляется щит герба Лианозова с храмом.',
+  say: 'Эту каменную церковь построили в тысяча семьсот шестьдесят третьем году, при хозяине усадьбы Иване Вельяминове, в стиле барокко. А до неё здесь стояла деревянная. Посмотри: у церкви нет большого купола, вместо него наверху колокольня. Эта церковь даже нарисована на гербе района Лианозово.',
+  tint: 'radial-gradient(120% 80% at 50% 25%, rgba(30,30,50,.2), rgba(10,10,20,.5))',
+  layers: [
+    { depth: .7, z: 1, html: `
+      <svg class="fit hkn-church" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
+        <defs>${glow('hknGold', 6, '#ffcf5a')}</defs>
+        <g fill="none" stroke="#ffd36a" stroke-width="5" filter="url(#hknGold)" stroke-linejoin="round">
+          <path class="hkn-line" style="--len:1800" d="M220 860 V560 Q220 520 260 510 H540 Q580 520 580 560 V860 M300 860 V650 Q300 610 340 610 H460 Q500 610 500 650 V860"/>
+        </g>
+        <g class="hkn-tower">
+          <rect x="350" y="300" width="100" height="210" fill="rgba(255,236,190,.25)" stroke="#ffd36a" stroke-width="5"/>
+          <path d="M340 300 Q400 200 460 300 Z" fill="rgba(255,211,106,.35)" stroke="#ffd36a" stroke-width="5"/>
+          <path d="M400 210 V140 M380 160 H420" stroke="#ffd36a" stroke-width="6"/>
+          <g class="hkn-bell"><path d="M375 430 Q375 370 400 366 Q425 370 425 430 L435 446 H365 Z" fill="#d8a53a" stroke="#8a5d12" stroke-width="3"/></g>
+        </g>
+        <g class="hkn-crest"><path d="M600 120 h120 v80 q0 60 -60 86 q-60 -26 -60 -86 z" fill="#1d5f7c" stroke="#ffe39a" stroke-width="5"/>
+          <path d="M640 230 V160 h40 v70 M660 160 v-26" stroke="#ffe39a" stroke-width="6" fill="none"/><text x="660" y="100" text-anchor="middle" class="hkn-year">1763</text></g>
+      </svg>` }
+  ],
+  beats: [{ t: 300, cls: 'is-draw' }, { t: 4500, cls: 'is-tower' }, { t: 8000, cls: 'is-ring' }, { t: 13000, cls: 'is-crest', fxFront: { type: 'sparks', rate: 18 } }],
+  captions: [{ t: 500, text: 'Церковь Воздвижения Креста', big: true, hold: 2800 }, { t: 3600, text: '1763 год, стиль барокко', hold: 3000 }, { t: 6800, text: 'Вместо большого купола — колокольня', hold: 4000 }, { t: 13200, text: 'Эта церковь — на гербе района Лианозово', big: true, hold: 4200 }],
+  sound: [{ t: 300, s: 'chime' }, { t: 4500, s: 'grow' }, { t: 8000, s: 'bells' }, { t: 13000, s: 'sparkle' }]
+});
+
+/* Финиш: медаль велопохода */
+SCENES.push({
+  id: 'finish', day: AL, title: 'Финиш!', place: 'Дома, у подъезда',
+  aim: 'Дома или у подъезда наведи камеру на свой велосипед.',
+  lead: 'Падает золотая медаль «24 км», салют и печать дня с буквой «Р».',
+  say: 'Финиш! Экипаж, ты проехал около двадцати четырёх километров: вдоль Яузы, мимо бобров и уток, через Бибирево до старинной усадьбы и обратно. Это настоящий велопоход! Получай медаль и печать дня с буквой «Р». Завтра — последний день и самый главный секрет экспедиции.',
+  tint: 'linear-gradient(180deg, rgba(10,10,30,.3), rgba(4,4,16,.6))',
+  layers: [
+    { depth: 1.2, z: 2, html: `
+      <svg class="fit hfn-medal" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
+        <defs><radialGradient id="hfnG" cx=".4" cy=".35"><stop offset="0" stop-color="#fff2b0"/><stop offset=".55" stop-color="#e8b93b"/><stop offset="1" stop-color="#9b6a17"/></radialGradient></defs>
+        <g class="hfn-drop">
+          <path d="M340 60 L380 260 M460 60 L420 260" stroke="#d6312b" stroke-width="26"/>
+          <circle cx="400" cy="360" r="120" fill="url(#hfnG)" stroke="#fff4c4" stroke-width="6"/>
+          <text x="400" y="380" text-anchor="middle" class="hfn-km">24 км</text>
+          <text x="400" y="420" text-anchor="middle" class="hm-medal-sub">ВЕЛОПОХОД</text>
+        </g>
+        <g class="hfn-stamp"><circle cx="400" cy="620" r="70" fill="none" stroke="#efbd45" stroke-width="6"/><text x="400" y="652" text-anchor="middle" class="hfn-letter">Р</text></g>
+      </svg>` }
+  ],
+  beats: [{ t: 300, cls: 'is-drop' }, { t: 5000, cls: 'is-fire', fxBack: { type: 'fireworks' } }, { t: 10000, cls: 'is-stamp' }],
+  captions: [{ t: 500, text: 'Финиш!', big: true, hold: 2400 }, { t: 3000, text: 'Около 24 километров — настоящий велопоход', hold: 4000 }, { t: 10200, text: 'Печать дня — буква «Р»', big: true, hold: 4200 }],
+  sound: [{ t: 300, s: 'fanfare' }, { t: 5000, s: 'salute' }, { t: 10000, s: 'bells' }]
+});
+
 // порядок галереи: по дням, четыре сцены Китай-города — среди среды, бонусы в конце
-const ORDER = ['botik', 'glubina', 'kita', 'stena', 'posol', 'khitrov', 'terem', 'bobry', 'zherebtsov', 'krylov', 'klen', 'organ', 'dzhungli', 'voda', 'most'];
+const ORDER = ['botik', 'glubina', 'kita', 'stena', 'posol', 'khitrov', 'terem', 'start', 'yauzamap', 'kolokol', 'bobry', 'utki', 'bibr', 'samoteka', 'zherebtsov', 'kolokolnya', 'krylov', 'klen', 'finish', 'organ', 'dzhungli', 'voda', 'most'];
 SCENES.sort((a, b) => ORDER.indexOf(a.id) - ORDER.indexOf(b.id));
 
 if (typeof module !== 'undefined') module.exports = { SCENES };
