@@ -1245,8 +1245,190 @@ SCENES.push({
   sound: [{ t: 300, s: 'fanfare' }, { t: 5000, s: 'salute' }, { t: 10000, s: 'bells' }]
 });
 
+/* ============================================================
+   ПТ. ПОЕЗД ПО КОЛЬЦУ — пять станций МЦК по часовой стрелке
+   от «Ботанического сада» до «Лужников». Камеру наводим в окно поезда.
+   ============================================================ */
+const MC = 'Пт 30 · МЦК';
+const spruce = (x, s, i) => `<g transform="translate(${x} 760) scale(${s})"><g class="hmc-tree" style="--i:${i}">
+  <path d="M0 -260 L-70 -120 h30 L-90 -20 h40 L-110 60 h220 L50 -20 h40 L40 -120 h30 Z" fill="#163b26"/>
+  <rect x="-10" y="60" width="20" height="40" fill="#3a2614"/></g></g>`;
+
+/* Белокаменная: Лосиный остров */
+SCENES.push({
+  id: 'los', day: MC, title: 'Лосиный остров', place: 'МЦК «Белокаменная», в окно поезда',
+  aim: 'Когда поезд подъезжает к «Белокаменной», наведи камеру в окно на лес.',
+  lead: 'За окном вырастает еловый лес, из него выходит лось, и у него вспыхивают рога-лопаты.',
+  say: 'Станция Белокаменная — самая далёкая от центра Москвы на всём кольце. Вокруг неё лес, национальный парк «Лосиный остров». Его так назвали потому, что здесь живут настоящие лоси! Лось — самый большой олень на свете. У самца рога широкие, как лопаты, и каждую зиму он их сбрасывает, а весной отращивает новые. Смотри в окно: вдруг увидишь лося?',
+  tint: 'linear-gradient(180deg, rgba(20,40,30,.25), rgba(6,16,10,.55))',
+  fxBack: { type: 'leaves', rate: 6 },
+  layers: [
+    { depth: .5, z: 1, html: `
+      <svg class="fit hmc-forest" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
+        ${[[60, 1.1], [190, .8], [320, 1.25], [470, .9], [600, 1.15], [740, .85]].map(([x, s], i) => spruce(x, s, i)).join('')}
+      </svg>` },
+    { depth: 1.1, z: 2, html: `
+      <svg class="fit" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
+        <g class="hmc-moose"><g transform="scale(1.25)">
+          <ellipse cx="0" cy="0" rx="95" ry="48" fill="#4a3220"/>
+          <path d="M-60 -40 q40 -30 90 -18 z" fill="#4a3220"/>
+          <path d="M55 -25 q25 -45 55 -55 l55 30 q12 18 -6 30 l-34 -2 q-10 14 -22 10 l-20 -6 z" fill="#4a3220"/>
+          <path d="M150 0 q6 14 -4 22" stroke="#4a3220" stroke-width="8" fill="none"/>
+          <circle cx="132" cy="-62" r="4" fill="#111"/>
+          <g class="hmc-legs">${[-70, -40, 40, 70].map((x, k) => `<rect class="hmc-leg" style="--d:${k % 2 ? .2 : 0}s" x="${x - 7}" y="30" width="14" height="95" rx="6" fill="#3a2616"/>`).join('')}</g>
+          <g class="hmc-antler">
+            <path d="M118 -86 q-30 -10 -60 -60 q30 10 40 0 q10 25 30 40 z" fill="#d8b878"/>
+            <path d="M138 -88 q20 -30 70 -60 q-10 30 -30 40 q-10 18 -30 26 z" fill="#d8b878"/>
+          </g>
+        </g></g>
+        <text x="400" y="200" text-anchor="middle" class="hmc-title">ЛОСИНЫЙ ОСТРОВ</text>
+      </svg>` }
+  ],
+  beats: [{ t: 300, cls: 'is-forest' }, { t: 4500, cls: 'is-moose' }, { t: 13000, cls: 'is-antler', fxFront: { type: 'sparks', rate: 16 } }],
+  captions: [{ t: 600, text: 'Станция «Белокаменная» — в лесу', hold: 3600 }, { t: 4800, text: 'Национальный парк «Лосиный остров»', hold: 4000 }, { t: 9200, text: 'Лось — самый большой олень на свете', hold: 3600 }, { t: 13200, text: 'Рога сбрасывает каждую зиму!', big: true, hold: 3600 }],
+  sound: [{ t: 300, s: 'wind' }, { t: 4500, s: 'hooves' }, { t: 13000, s: 'sparkle' }]
+});
+
+/* Локомотив: паровоз 1908 и «Ласточка» 2016 */
+SCENES.push({
+  id: 'parovoz', day: MC, title: 'Паровоз и «Ласточка»', place: 'МЦК «Локомотив», в окно поезда',
+  aim: 'Наведи камеру в окно поезда на соседние пути.',
+  lead: 'По рельсам пыхтит паровоз 1908 года, за ним проносится «Ласточка», а кольцо замыкается: 88 минут.',
+  say: 'Станция называется «Локомотив», как футбольный клуб: рядом его стадион. А сама дорога очень старая. Это кольцо построили больше ста лет назад, к тысяча девятьсот восьмому году, и по нему бегали паровозы. Потом много лет по кольцу возили только грузы, а в две тысячи шестнадцатом году вышли пассажирские поезда «Ласточка». Мы сейчас едем как раз в ней! Полный круг она проходит за восемьдесят восемь минут.',
+  tint: 'linear-gradient(180deg, rgba(30,26,20,.25), rgba(10,8,6,.55))',
+  layers: [
+    { depth: .8, z: 1, html: `
+      <svg class="fit hmc-up" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
+        <path d="M-40 760 H840" stroke="#8a7a66" stroke-width="8"/><path d="M-40 790 H840" stroke="#8a7a66" stroke-width="8"/>
+        ${rep(22, i => `<rect x="${i * 40 - 30}" y="752" width="14" height="46" fill="#4a3a2a"/>`)}
+        <g class="hmc-loco"><g class="hmc-shake">
+          <rect x="0" y="-150" width="190" height="110" rx="20" fill="#1e2228"/>
+          <rect x="140" y="-230" width="90" height="190" rx="8" fill="#2a2f36"/>
+          <rect x="160" y="-210" width="50" height="45" fill="#ffd36a"/>
+          <rect x="20" y="-210" width="34" height="60" fill="#2a2f36"/><rect x="12" y="-222" width="50" height="16" fill="#2a2f36"/>
+          <path d="M0 -40 L-40 0 H0 Z" fill="#9b2c25"/>
+          ${[40, 110, 180].map(x => `<g transform="translate(${x} -18)"><g class="hmc-wheel"><circle r="34" fill="#9b2c25" stroke="#111" stroke-width="6"/><path d="M-30 0 H30 M0 -30 V30" stroke="#111" stroke-width="5"/></g></g>`).join('')}
+          ${rep(4, i => `<circle class="hmc-puff" style="--i:${i}" cx="37" cy="-240" r="${26 + i * 6}" fill="#e8e8e8"/>`)}
+        </g></g>
+        <g class="hmc-swallow">
+          ${rep(5, i => `<g transform="translate(${i * 250} 0)">
+            <rect x="0" y="-150" width="244" height="130" rx="${i === 0 ? 50 : 10}" fill="#f2f2f2"/>
+            <rect x="0" y="-60" width="244" height="22" fill="#d6312b"/>
+            ${rep(5, k => `<rect x="${24 + k * 44}" y="-130" width="30" height="40" rx="5" fill="#2b3a4a"/>`)}
+            <circle cx="50" cy="-12" r="14" fill="#222"/><circle cx="194" cy="-12" r="14" fill="#222"/></g>`)}
+        </g>
+        <g class="hmc-years">
+          <text x="400" y="230" text-anchor="middle" class="hmc-year hmc-y0">1908</text>
+          <text x="400" y="230" text-anchor="middle" class="hmc-year hmc-y1">2016</text>
+        </g>
+        <g class="hmc-ring"><circle cx="400" cy="400" r="150" fill="none" stroke="#d6312b" stroke-width="18" stroke-dasharray="943" stroke-dashoffset="943" transform="rotate(-90 400 400)"/>
+          <text x="400" y="400" text-anchor="middle" class="hmc-big">88</text><text x="400" y="445" text-anchor="middle" class="hym-t">минут по кругу</text></g>
+      </svg>` }
+  ],
+  beats: [{ t: 300, cls: 'is-steam', fxBack: { type: 'steam', rate: 10 } }, { t: 9000, cls: 'is-swallow' }, { t: 16500, cls: 'is-ring', fxFront: { type: 'sparks', rate: 18 } }],
+  captions: [{ t: 600, text: 'Малое кольцо, 1908 год: паровозы', hold: 4200 }, { t: 5200, text: 'Потом много лет — только грузы', hold: 3400 }, { t: 9300, text: '2016: пассажирская «Ласточка»', big: true, hold: 4000 }, { t: 13600, text: 'Мы едем как раз в ней!', hold: 2800 }, { t: 16800, text: 'Полный круг — 88 минут', big: true, hold: 3800 }],
+  sound: [{ t: 300, s: 'steam' }, { t: 2500, s: 'steam' }, { t: 9000, s: 'rumble' }, { t: 16500, s: 'chime' }]
+});
+
+/* Измайлово: кремль и привет из понедельника */
+SCENES.push({
+  id: 'izmkreml', day: MC, title: 'Привет из понедельника', place: 'МЦК «Измайлово», в окно поезда',
+  aim: 'На «Измайлове» наведи камеру в окно: ищи разноцветные крыши.',
+  lead: 'Вырастают разноцветные башни-шатры, по пруду проплывает маленький ботик Петра.',
+  say: 'Станция Измайлово! Узнаёшь? В понедельник мы гуляли здесь недалеко, на царском острове, где юный Пётр Первый нашёл свой ботик. А рядом со станцией стоит Измайловский кремль: разноцветные башни с острыми крышами, как в сказке. Он не старинный, его построили совсем недавно, но выглядит как терем из былины. Если повезёт, ты увидишь его яркие крыши в окно.',
+  tint: 'linear-gradient(180deg, rgba(30,20,40,.2), rgba(10,6,16,.5))',
+  layers: [
+    { depth: .9, z: 1, html: `
+      <svg class="fit hmc-up" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
+        ${[[120, 220, '#d6312b'], [260, 320, '#2f8f5b'], [400, 400, '#efbd45'], [540, 320, '#2f6fb3'], [680, 220, '#c2410c']].map(([x, h, c], i) => `
+          <g class="hmc-tower" style="--i:${i}">
+            <rect x="${x - 45}" y="${720 - h}" width="90" height="${h}" fill="#f4ead8" stroke="#b9a07a" stroke-width="3"/>
+            <rect x="${x - 15}" y="${760 - h}" width="30" height="44" rx="15" fill="#3a2c4a"/>
+            <path d="M${x - 60} ${722 - h} L${x} ${600 - h} L${x + 60} ${722 - h} Z" fill="${c}"/>
+            <path d="M${x} ${600 - h} v-40" stroke="#ffd36a" stroke-width="4"/><path d="M${x} ${560 - h} l26 10 l-26 10 z" fill="#ffd36a"/>
+          </g>`).join('')}
+        <rect x="0" y="720" width="800" height="12" fill="#b9a07a"/>
+        <path d="M0 800 Q200 780 400 800 T800 800 V900 H0 Z" fill="rgba(70,140,200,.45)"/>
+        <g class="hmc-botik"><g class="hmc-bob">
+          <path d="M0 0 H90 L76 18 H12 Z" fill="#1d2633"/><path d="M44 0 V-70" stroke="#3a2a1a" stroke-width="4"/>
+          <path d="M46 -66 L84 -8 H46 Z" fill="#f4ecd8"/><path d="M42 -66 L14 -10 H42 Z" fill="#e7dcc0"/>
+          <path d="M44 -70 l16 6 l-16 6 z" fill="#d6312b"/></g></g>
+      </svg>` }
+  ],
+  beats: [{ t: 300, cls: 'is-towers' }, { t: 9500, cls: 'is-botik', fxFront: { type: 'sparks', rate: 14 } }],
+  captions: [{ t: 600, text: 'Станция «Измайлово»', big: true, hold: 2600 }, { t: 3400, text: 'Измайловский кремль: башни как в сказке', hold: 4400 }, { t: 9800, text: 'А в понедельник мы искали ботик Петра!', hold: 4400 }],
+  sound: [{ t: 300, s: 'grow' }, { t: 4200, s: 'bells' }, { t: 9500, s: 'water' }]
+});
+
+/* ЗИЛ: автомобильный завод */
+SCENES.push({
+  id: 'zil', day: MC, title: 'Завод грузовиков', place: 'МЦК «ЗИЛ», в окно поезда',
+  aim: 'На станции «ЗИЛ» наведи камеру в окно на дома и стройки.',
+  lead: 'Над воротами загораются буквы ЗИЛ, выезжают три грузовика, а за ними длинный лимузин.',
+  say: 'Станция ЗИЛ названа в честь огромного автомобильного завода. Он появился больше ста лет назад, в тысяча девятьсот шестнадцатом году, и сначала назывался АМО. Здесь делали грузовики, автобусы и даже длинные лимузины для руководителей страны. Сейчас завод машины не выпускает, а на его месте строят новый район с домами, парком и школами. Посчитай, сколько грузовиков выедет из ворот!',
+  tint: 'linear-gradient(180deg, rgba(20,24,30,.25), rgba(6,8,12,.55))',
+  layers: [
+    { depth: .9, z: 1, html: `
+      <svg class="fit hmc-up" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
+        <g class="hmc-gate">
+          <rect x="140" y="230" width="520" height="130" rx="12" fill="#2a3644" stroke="#ffd36a" stroke-width="5"/>
+          <text x="400" y="335" text-anchor="middle" class="hmc-zil">ЗИЛ</text>
+          <text x="400" y="400" text-anchor="middle" class="hmc-sub">с 1916 года · сначала АМО</text>
+        </g>
+        <path d="M-20 780 H820" stroke="#555" stroke-width="10"/>
+        ${[0, 1, 2].map(i => `<g class="hmc-truck" style="--i:${i}"><g>
+          <rect x="0" y="-120" width="160" height="90" fill="${['#2f6a4a', '#9b2c25', '#2f6fb3'][i]}"/>
+          <path d="M165 -110 h50 l35 40 v40 h-85 z" fill="#d9d4c7"/><rect x="180" y="-100" width="36" height="28" fill="#2b3a4a"/>
+          <circle cx="40" cy="-22" r="22" fill="#111"/><circle cx="200" cy="-22" r="22" fill="#111"/>
+          <text x="80" y="-62" text-anchor="middle" class="hmc-n">${i + 1}</text></g></g>`).join('')}
+        <g class="hmc-limo"><g>
+          <path d="M0 -40 q10 -40 70 -44 h250 q50 0 80 44 v26 h-400 z" fill="#111" stroke="#666" stroke-width="2"/>
+          <rect x="90" y="-74" width="70" height="28" rx="4" fill="#3a4a5a"/><rect x="180" y="-74" width="90" height="28" rx="4" fill="#3a4a5a"/>
+          <circle cx="70" cy="-12" r="20" fill="#222" stroke="#999" stroke-width="3"/><circle cx="330" cy="-12" r="20" fill="#222" stroke="#999" stroke-width="3"/>
+        </g></g>
+      </svg>` }
+  ],
+  beats: [{ t: 300, cls: 'is-gate' }, { t: 4500, cls: 'is-trucks' }, { t: 14000, cls: 'is-limo', fxFront: { type: 'sparks', rate: 14 } }],
+  captions: [{ t: 600, text: 'Здесь был завод ЗИЛ', big: true, hold: 3200 }, { t: 4800, text: 'Грузовики, автобусы…', hold: 4200 }, { t: 9300, text: 'Сколько грузовиков выехало?', hold: 4200 }, { t: 14200, text: '…и длинные лимузины!', big: true, hold: 3600 }],
+  sound: [{ t: 300, s: 'crack' }, { t: 4500, s: 'rumble' }, { t: 8000, s: 'rumble' }, { t: 14000, s: 'fanfare' }]
+});
+
+/* Площадь Гагарина: ракета */
+SCENES.push({
+  id: 'raketa', day: MC, title: 'Поехали!', place: 'МЦК «Площадь Гагарина», в окно поезда',
+  aim: 'Наведи камеру в окно на небо.',
+  lead: 'Обратный отсчёт, ракета уходит в небо, а корабль «Восток» облетает Землю за 108 минут.',
+  say: 'Площадь Гагарина! Здесь стоит высокий памятник Юрию Гагарину, первому человеку в космосе. Двенадцатого апреля тысяча девятьсот шестьдесят первого года его ракета поднялась в небо, и корабль «Восток» облетел всю Землю за сто восемь минут. Перед стартом Гагарин сказал: «Поехали!» А наш поезд проходит весь круг МЦК за восемьдесят восемь минут. Почти как космонавт, только по Москве!',
+  tint: 'linear-gradient(180deg, rgba(6,10,30,.4), rgba(2,4,14,.65))',
+  fxBack: { type: 'stars', rate: 20 },
+  layers: [
+    { depth: 1, z: 2, html: `
+      <svg class="fit" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
+        ${['3', '2', '1'].map((n, k) => `<text x="400" y="330" text-anchor="middle" class="hmc-count hmc-c${k}">${n}</text>`).join('')}
+        <g class="hmc-rocket"><g transform="translate(400 820)">
+          <path d="M0 -330 q46 60 46 160 v130 h-92 v-130 q0 -100 46 -160 z" fill="#f2f2f2" stroke="#9aa4ae" stroke-width="4"/>
+          <circle cx="0" cy="-190" r="20" fill="#2f6fb3" stroke="#9aa4ae" stroke-width="4"/>
+          <text x="0" y="-100" text-anchor="middle" class="hmc-ussr" transform="rotate(-90 0 -100)">ВОСТОК</text>
+          <path d="M-46 -80 l-40 70 h40 z M46 -80 l40 70 h-40 z" fill="#d6312b"/>
+          <g class="hmc-flame"><path d="M-30 -40 q30 140 60 0 z" fill="#ffb02e"/><path d="M-16 -40 q16 90 32 0 z" fill="#fff4b0"/></g>
+        </g></g>
+        <g class="hmc-orbit">
+          <circle cx="400" cy="420" r="110" fill="#2f6fb3"/>
+          <path d="M330 380 q30 -40 70 -20 q20 30 -10 50 q-40 10 -60 -30 z M430 450 q40 -10 50 20 q-20 30 -50 10 z" fill="#2f8f5b"/>
+          <ellipse cx="400" cy="420" rx="200" ry="200" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="3" stroke-dasharray="10 10"/>
+          <g class="hmc-ship"><circle cx="400" cy="220" r="14" fill="#f2f2f2" stroke="#ffd36a" stroke-width="4"/></g>
+          <text x="400" y="700" text-anchor="middle" class="hmc-big">108 минут</text>
+          <text x="400" y="745" text-anchor="middle" class="hym-t">вокруг всей Земли · 12 апреля 1961</text>
+        </g>
+      </svg>` }
+  ],
+  beats: [{ t: 300, cls: 'is-c0' }, { t: 1300, cls: 'is-c1' }, { t: 2300, cls: 'is-c2' }, { t: 3300, cls: 'is-launch', fxFront: { type: 'embers', rate: 30 } }, { t: 9000, cls: 'is-orbit' }],
+  captions: [{ t: 3400, text: '«Поехали!»', big: true, hold: 2800 }, { t: 6400, text: 'Юрий Гагарин — первый человек в космосе', hold: 3000 }, { t: 9300, text: 'Корабль «Восток» облетел Землю', hold: 4000 }, { t: 13500, text: 'А МЦК мы объезжаем за 88 минут!', big: true, hold: 4000 }],
+  sound: [{ t: 300, s: 'chime' }, { t: 1300, s: 'chime' }, { t: 2300, s: 'chime' }, { t: 3300, s: 'rumble' }, { t: 3600, s: 'boom' }, { t: 9000, s: 'sparkle' }]
+});
+
 // порядок галереи: по дням, четыре сцены Китай-города — среди среды, бонусы в конце
-const ORDER = ['botik', 'glubina', 'kita', 'stena', 'posol', 'khitrov', 'terem', 'start', 'yauzamap', 'kolokol', 'bobry', 'utki', 'bibr', 'samoteka', 'zherebtsov', 'kolokolnya', 'krylov', 'klen', 'finish', 'voda', 'organ', 'dzhungli', 'most'];
+const ORDER = ['botik', 'glubina', 'kita', 'stena', 'posol', 'khitrov', 'terem', 'start', 'yauzamap', 'kolokol', 'bobry', 'utki', 'bibr', 'samoteka', 'zherebtsov', 'kolokolnya', 'krylov', 'klen', 'finish', 'los', 'parovoz', 'izmkreml', 'zil', 'raketa', 'voda', 'organ', 'dzhungli', 'most'];
 SCENES.sort((a, b) => ORDER.indexOf(a.id) - ORDER.indexOf(b.id));
 
 if (typeof module !== 'undefined') module.exports = { SCENES };

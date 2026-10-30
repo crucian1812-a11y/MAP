@@ -362,3 +362,68 @@
 @media (prefers-reduced-motion:reduce){
   .hst-speed,.hst-cloth,.hkl-swing,.hu-duck,.hk-basket,.hx-walker,.hx-flame,.hg-sonar circle,.hb-ripple,.hb-bob,.hb-sail,.hm-flow,.hm-trot,.ht-bob,.hv-fish,.hv-caustic,.hd-step,.hd-leg,.ho-window,.ho-flame{animation:none!important}
 }
+
+/* ===== Пт: поезд по кольцу МЦК ===== */
+.hmc-title,.hmc-year,.hmc-big,.hmc-zil,.hmc-count{font:800 64px Georgia,serif;fill:#ffe39a;paint-order:stroke;stroke:#1a1208;stroke-width:6}
+.hmc-sub{font:700 26px "Onest",system-ui,sans-serif;fill:#ffe7a8}
+.hmc-n{font:800 46px Georgia,serif;fill:#fff}
+.hmc-ussr{font:800 22px Georgia,serif;fill:#d6312b;letter-spacing:.1em}
+.hmc-zil{font-size:110px;fill:#ffd36a;stroke:none}
+.hmc-count{font-size:200px}
+.layer svg.fit.hmc-up{margin-bottom:30%}
+/* Белокаменная */
+.hmc-tree{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(0)}
+.layers.is-forest .hmc-tree{animation:ho-rise 1.1s calc(var(--i) * .3s) cubic-bezier(.3,1.3,.5,1) both}
+.hmc-moose{transform:translate(-420px,600px)}
+.layers.is-moose .hmc-moose{animation:hmc-walk 8s cubic-bezier(.3,.6,.4,1) forwards}
+@keyframes hmc-walk{from{transform:translate(-420px,600px)}to{transform:translate(300px,600px)}}
+.hmc-leg{transform-box:fill-box;transform-origin:50% 0}
+.layers.is-moose:not(.is-antler) .hmc-leg{animation:hd-leg .45s var(--d) ease-in-out infinite alternate}
+.layers.is-antler .hmc-antler{animation:glow-pulse 1.6s ease-in-out infinite;filter:drop-shadow(0 0 10px #ffd36a)}
+.hmc-title{opacity:0}
+.layers.is-moose .hmc-title{animation:fade-in 1.4s 1s both}
+/* Локомотив */
+.hmc-loco{transform:translate(-320px,760px)}
+.layers.is-steam .hmc-loco{animation:hmc-chug 8.5s linear forwards}
+@keyframes hmc-chug{from{transform:translate(-320px,760px)}to{transform:translate(900px,760px)}}
+.hmc-shake{animation:hm-bob .22s ease-in-out infinite alternate}
+.hmc-wheel{transform-box:fill-box;transform-origin:center;animation:ho-spin .8s linear infinite}
+.hmc-puff{opacity:0;transform-box:fill-box;transform-origin:center}
+.layers.is-steam .hmc-puff{animation:hmc-puff 1.6s calc(var(--i) * .4s) ease-out infinite}
+@keyframes hmc-puff{0%{opacity:.9;transform:translate(0,0) scale(.4)}100%{opacity:0;transform:translate(-90px,-120px) scale(1.5)}}
+.hmc-swallow{transform:translate(900px,760px)}
+.layers.is-swallow .hmc-swallow{animation:hmc-zoom 6.5s cubic-bezier(.4,0,.6,1) forwards}
+@keyframes hmc-zoom{from{transform:translate(900px,760px)}to{transform:translate(-1350px,760px)}}
+.hmc-year{opacity:0;transform-box:fill-box;transform-origin:center;font-size:110px}
+.layers.is-steam:not(.is-swallow) .hmc-y0,.layers.is-swallow:not(.is-ring) .hmc-y1{animation:pop-in .7s both}
+.hmc-ring{opacity:0}
+.hmc-big{font-size:96px}
+.layers.is-ring .hmc-ring{animation:fade-in .6s both}
+.layers.is-ring .hmc-ring circle{animation:hmc-draw 2.4s .2s ease-out forwards}
+@keyframes hmc-draw{to{stroke-dashoffset:0}}
+/* Измайлово */
+.hmc-tower{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(0)}
+.layers.is-towers .hmc-tower{animation:ho-rise 1.2s calc(var(--i) * .45s) cubic-bezier(.3,1.3,.5,1) both}
+.hmc-botik{transform:translate(-160px,790px)}
+.layers.is-botik .hmc-botik{animation:hmc-sail 9s linear forwards}
+@keyframes hmc-sail{from{transform:translate(-160px,790px)}to{transform:translate(860px,785px)}}
+.hmc-bob{animation:hb-bob 1.2s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
+/* ЗИЛ */
+.hmc-gate{opacity:0;transform-origin:400px 300px}
+.layers.is-gate .hmc-gate{animation:hm-stamp 1s cubic-bezier(.2,.9,.3,1.3) both}
+.hmc-truck{transform:translate(-300px,780px)}
+.layers.is-trucks .hmc-truck{animation:hmc-drive 3.2s calc(var(--i) * 3s) linear both}
+@keyframes hmc-drive{from{transform:translate(-300px,780px)}to{transform:translate(900px,780px)}}
+.hmc-limo{transform:translate(-460px,780px)}
+.layers.is-limo .hmc-limo{animation:hmc-cruise 5s cubic-bezier(.3,.6,.6,1) forwards}
+@keyframes hmc-cruise{from{transform:translate(-460px,780px)}to{transform:translate(880px,780px)}}
+/* Площадь Гагарина */
+.hmc-count{opacity:0;transform-box:fill-box;transform-origin:center}
+.layers.is-c0:not(.is-c1) .hmc-c0,.layers.is-c1:not(.is-c2) .hmc-c1,.layers.is-c2:not(.is-launch) .hmc-c2{animation:pop-in .6s both}
+.layers.is-launch .hmc-rocket{animation:hmc-lift 5.5s cubic-bezier(.5,0,.8,.6) forwards}
+@keyframes hmc-lift{0%{transform:none}8%{transform:translateX(3px)}12%{transform:translateX(-3px)}100%{transform:translateY(-1400px)}}
+.hmc-flame{opacity:0;transform-box:fill-box;transform-origin:50% 0}
+.layers.is-launch .hmc-flame{animation:ho-flicker .18s linear infinite;opacity:1}
+.hmc-orbit{opacity:0}
+.layers.is-orbit .hmc-orbit{animation:fade-in 1.2s both}
+.hmc-ship{transform-origin:400px 420px;animation:ho-spin 5s linear infinite}

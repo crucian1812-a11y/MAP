@@ -1,0 +1,49 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Поезд по кольцу</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Каникулы">
+<link rel="apple-touch-icon" href="../icons/icon-180.png">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="css/tour.css">
+
+<div class="wrap">
+  <div class="eyebrow">Пятница · 30 октября · по дороге в Лужники</div>
+  <h1>Поезд по кольцу</h1>
+  <p class="lede">Едем по МЦК по часовой стрелке: от «Ботанического сада» через Ростокино, лес Лосиного острова, Измайлово и ЗИЛ до «Лужников». 18 перегонов, около 50 минут. На пяти станциях — волшебная камера прямо в окно поезда.</p>
+  <div class="links">
+    <a class="btn" href="kvest.html">← Квесты недели</a>
+  </div>
+  <div class="offline" id="offline" hidden></div>
+  <div class="facts"><ul>
+    <li><b>Направление:</b> садимся в поезд по часовой стрелке, следующая станция — «Ростокино». Если на табло «Владыкино», это обратная сторона.</li>
+    <li><b>Время:</b> от «Ботанического сада» около 50 минут. Полный круг — 88 минут.</li>
+    <li><b>Камера:</b> у окна, звук потише или в наушниках. Сцены можно запустить заранее, пока поезд подъезжает к станции.</li>
+    <li><b>Выходим</b> на «Лужниках», сразу после моста через Москву-реку.</li>
+  </ul></div>
+  <div class="chips" id="chips"></div>
+  <article class="stop" id="stop" aria-live="polite"></article>
+  <section class="summary" id="summary"></section>
+  <p class="foot">Порядок станций и время в пути — по схеме МЦК и Википедии. Отметки сохраняются только на этом телефоне.</p>
+</div>
+
+<script src="js/offline.js"></script>
+<script src="js/mck.js"></script>
+<script src="js/tour.js"></script>
+<script>
+Offline.widget(document.getElementById('offline'));
+Tour({
+  key: 'mck-3010', items: MCK_STOPS, prefix: 'mck', kind: 'walk',
+  summary(S, items) {
+    const n = items.filter(i => S.done[i.id]).length;
+    document.getElementById('summary').innerHTML = `<h2>Итог поездки</h2>
+      <p>Выполнено заданий: <b>${n} из ${items.length}</b>.</p>
+      <p>${n >= 3 ? 'Отлично! Кольцо пройдено, впереди горки.' : 'Ещё пара станций — и поездка засчитана.'}</p>`;
+  }
+});
+</script>

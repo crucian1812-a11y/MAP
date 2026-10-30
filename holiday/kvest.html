@@ -109,16 +109,6 @@ h1{font-size:clamp(26px,6vw,40px);line-height:1.08;letter-spacing:-.01em}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chips span{font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:3px 9px}
 
-.choice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-@media (max-width:620px){.choice{grid-template-columns:1fr}}
-.opt{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:6px;min-width:0}
-.opt.on{border-color:var(--river);box-shadow:0 0 0 1px var(--river)}
-.opt h4{margin:0;font-family:var(--display);font-size:14.5px;font-weight:500}
-.opt p{margin:0;font-size:13.5px}
-.opt .sum{font-variant-numeric:tabular-nums;font-weight:600}
-.opt button{justify-self:start;font:inherit;font-size:13px;font-weight:600;border-radius:9px;padding:6px 12px;cursor:pointer;
-  border:1px solid var(--river);background:transparent;color:var(--river)}
-.opt.on button{background:var(--river);color:var(--paper)}
 
 .tasks{display:grid;gap:8px}
 .task{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:11px 13px;display:grid;grid-template-columns:30px 1fr auto;gap:10px;min-width:0}
@@ -411,14 +401,15 @@ const DAYS = [
   },
   {
     id:'fri', short:'Пт', date:'30 окт', title:'Вода и орган', letter:'О', need:6,
-    tours:[{ href:'ar.html#voda', btn:'Камера: подводный мир ▸', title:'Утром в Лужниках.', text:'У бортика наведи камеру на воду: рыбы, медузы, кит и закон Архимеда. Телефон в воду не берём!' }],
+    tours:[{ href:'mck.html', btn:'Поезд по кольцу ▸', title:'По дороге, в окно МЦК.', text:'Пять станций — пять сцен волшебной камеры: лось на Белокаменной, паровоз на Локомотиве, привет из понедельника в Измайлове, грузовики ЗИЛа и ракета Гагарина.' },
+      { href:'ar.html#voda', btn:'Камера: подводный мир ▸', title:'Утром в Лужниках.', text:'У бортика наведи камеру на воду: рыбы, медузы, кит и закон Архимеда. Телефон в воду не берём!' }],
     weather:'под крышей · вечером +4…+8', cost:'≈ 7 500 ₽', where:'Аквапарк «Лужники» · Англиканский собор св. Андрея',
     intro:'Последний день экспедиции. Утром четыре часа горок и волн в Лужниках, днём отдых, а вечером первый настоящий концерт: орган при свечах, ровно час. И секретное слово!',
     plan:[
-      ['09:15','Выход. Пешком 15 минут до МЦК «Ботанический сад», по МЦК без пересадок до «Лужников», около 40 минут.'],
-      ['10:00','Аквакомплекс «Лужники», Лужники, 24, стр. 4. Открытие: людей меньше всего. Тариф 4 часа, договориться о точке встречи.'],
-      ['10:15','Горки, волны, медленная река, термы. Задания 1–5. В 13:45 будильник: сверх времени платим поминутно.'],
-      ['14:15','Обед в кафе аквапарка или рядом. Дальше без спешки.'],
+      ['09:15','Выход. Пешком 15 минут до МЦК «Ботанический сад». Едем по часовой стрелке (следующая — «Ростокино») без пересадок до «Лужников»: 18 перегонов, около 50 минут. По дороге пять станций с волшебной камерой — кнопка «Поезд по кольцу».'],
+      ['10:20','Аквакомплекс «Лужники», Лужники, 24, стр. 4. Утром людей меньше всего. Тариф 4 часа, договориться о точке встречи.'],
+      ['10:35','Горки, волны, медленная река, термы. Задания 1–5. В 14:05 будильник: сверх времени платим поминутно.'],
+      ['14:30','Обед в кафе аквапарка или рядом. Дальше без спешки.'],
       ['15:30','Метро «Воробьёвы горы» → «Охотный ряд» по красной ветке без пересадок, около 15 минут. Тихая прогулка по Никитской, чай, задания 6–8 в метро.'],
       ['17:40','У собора, Вознесенский пер., 8. Найти места, осмотреться: задания 9–10.'],
       ['18:00','Концерт «Бах, Брамс, Мендельсон», 60 минут без антракта: задания 11–12.'],
@@ -467,37 +458,6 @@ const DAYS = [
   }
 ];
 
-const AQUA = {
-  luzh: {
-    name:'Лужники', sum:5180, rec:true,
-    text:'9 горок, волновой бассейн, тёплые бассейны с балконом. Есть горки на ватрушках. Можно доехать без пересадок.',
-    price:'3 часа в будни: 3 390 ₽ взрослый + 1 790 ₽ детский (7–13 лет)',
-    plan:[
-      ['10:15','Выход из дома.'],
-      ['10:25','МЦК «Ботанический сад» → «Лужники», без пересадок, около 40 минут.'],
-      ['11:15','Аквакомплекс, Лужники, 24, стр. 4. Переодеться, договориться о точке встречи.'],
-      ['11:30','Три часа: горки, волны, задания 2–7.'],
-      ['14:30','Выход, обед.'],
-      ['15:30','Домой по МЦК.']
-    ],
-    road:'Ежедневно 10:00–22:00. Цены по обзору Т—Ж за апрель 2026, перед покупкой сверить на сайте аквапарка.'
-  },
-  karib: {
-    name:'Карибия', sum:4280,
-    text:'4 горки, все от 120 см. Спокойнее и меньше людей. Дети ростом 120–150 см идут по детскому тарифу.',
-    price:'3 часа в будни: 2 690 ₽ взрослый + 1 590 ₽ детский',
-    plan:[
-      ['10:15','Выход из дома.'],
-      ['10:25','МЦК «Ботанический сад» → «Шоссе Энтузиастов», пересадка на метро до «Перово», около 50 минут.'],
-      ['11:20','Зелёный проспект, 10Б. Переодеться, договориться о точке встречи.'],
-      ['11:30','Три часа: горки, волны, задания 2–7.'],
-      ['14:30','Выход, обед.'],
-      ['15:30','Домой.']
-    ],
-    road:'Ежедневно 10:00–22:00. Сверх оплаченного времени 20 ₽ в минуту. Цены с сайта karibiya.ru на 21 октября.'
-  }
-};
-const WED_TAKE = ['плавки','шлёпанцы','полотенце','очки для плавания','шапочка для бассейна','бутылка воды','перекус на после','расчёска'];
 const WORD = 'ОРГАН';
 
 /* Сцены дополненной реальности: камера работает только на GitHub Pages,
@@ -514,9 +474,8 @@ const CAM = {
 };
 
 const KEY = 'kvest-week-2610';
-let S = { done:{}, aqua:'luzh', picked:[] };
+let S = { done:{}, picked:[] };
 try { Object.assign(S, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
-if (!AQUA[S.aqua]) S.aqua = 'luzh';
 if (!Array.isArray(S.picked)) S.picked = [];
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -562,22 +521,12 @@ const earned = d => doneCount(d) >= d.need;
 let current = DAYS.some(d => d.id === location.hash.slice(1)) ? location.hash.slice(1) : 'mon';
 
 function dayHTML(d) {
-  const aqua = AQUA[S.aqua];
-  const plan = d.choice ? aqua.plan : d.plan;
-  const road = d.choice ? aqua.road : d.road;
-  const take = d.choice ? WED_TAKE : d.take;
-  const cost = d.choice ? money(aqua.sum) : d.cost;
-  const choice = d.choice ? `<div class="block"><h3>Куда едем <small>сравнение</small></h3><div class="choice">${
-    Object.entries(AQUA).map(([k, o]) => `<div class="opt ${S.aqua === k ? 'on' : ''}">
-      <h4>${o.name}${o.rec ? ' · советую' : ''}</h4><p>${o.text}</p><p>${o.price}</p>
-      <p class="sum">На двоих ${money(o.sum)}</p>
-      <button data-aqua="${k}" aria-pressed="${S.aqua === k}">${S.aqua === k ? 'Выбрано' : 'Выбрать'}</button></div>`).join('')
-  }</div></div>` : '';
+  const { plan, road, take, cost } = d;
   return `<section class="day" id="${d.id}-panel" role="tabpanel">
     <div class="dayhead">
       <div class="eyebrow">${d.short} ${d.date} · печать «${earned(d) ? d.letter : '?'}»</div>
       <h2>${d.title}</h2>
-      <div class="pills"><span class="pill w">${d.weather}</span><span class="pill">${d.choice ? aqua.name : d.where}</span><span class="pill">${cost}${/₽/.test(cost) ? ' на двоих' : ''}</span></div>
+      <div class="pills"><span class="pill w">${d.weather}</span><span class="pill">${d.where}</span><span class="pill">${cost}${/₽/.test(cost) ? ' на двоих' : ''}</span></div>
     </div>
     <div class="introrow">${say(d.id + '-intro')}<p class="intro">${d.intro}</p></div>
     <div class="block"><div class="cam">
@@ -586,7 +535,6 @@ function dayHTML(d) {
     ${(d.tours || []).map(t => `<div class="block"><div class="cam">
       <a class="arbtn" href="${PAGES_BASE}${t.href}" ${NEWTAB}>${t.btn}</a>
       <p><b>${t.title}</b> ${t.text}</p></div></div>`).join('')}
-    ${choice}
     <div class="block"><h3>Расписание</h3>
       <ol class="timeline">${plan.map(([t, x]) => `<li><time>${t}</time><div>${x}</div></li>`).join('')}</ol>
       <div class="road">${road}</div></div>
@@ -669,8 +617,6 @@ document.addEventListener('click', e => {
   const tab = e.target.closest('[data-day]');
   if (tab) { stopAudio(); current = tab.dataset.day; try { history.replaceState(null, '', '#' + current); } catch (x) {}
     renderTabs(); renderDay(); return; }
-  const aq = e.target.closest('[data-aqua]');
-  if (aq) { S.aqua = aq.dataset.aqua; save(); renderDay(); renderMoney(); return; }
   const l = e.target.closest('[data-letter]');
   if (l) { if (S.picked.length < 5) S.picked.push(+l.dataset.letter); save(); renderStamps();
     if (S.picked.map(i => DAYS[i].letter).join('') === WORD && TRACKS.has('finale')) { playing = ''; play('finale'); }

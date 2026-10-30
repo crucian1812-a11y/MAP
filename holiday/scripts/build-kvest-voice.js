@@ -13,7 +13,7 @@ const OUT = path.join(ROOT, 'audio', 'kvest-text');
 const html = fs.readFileSync(path.join(ROOT, 'kvest.html'), 'utf8');
 
 // Данные дней — обычный литерал в скрипте страницы, вычисляем только его
-const src = html.slice(html.indexOf('const DAYS = ['), html.indexOf('const AQUA = {'));
+const src = html.slice(html.indexOf('const DAYS = ['), html.indexOf('const WORD = '));
 const DAYS = new Function(src + '; return DAYS;')();
 
 const NAMES = { mon: 'Понедельник', tue: 'Вторник', wed: 'Среда', thu: 'Четверг', fri: 'Пятница' };
@@ -58,6 +58,10 @@ for (const pt of GTG_PAINTINGS) put(`gtg-${pt.id}`, `${pt.title}. ${pt.artist}. 
 // велопоход в Алтуфьево (altufyevo.html)
 const { ALT_STOPS } = require(path.join(ROOT, 'js', 'altufyevo.js'));
 for (const st of ALT_STOPS) put(`alt-${st.id}`, st.say);
+
+// поезд по кольцу МЦК в пятницу (mck.html)
+const { MCK_STOPS } = require(path.join(ROOT, 'js', 'mck.js'));
+for (const st of MCK_STOPS) put(`mck-${st.id}`, st.say);
 
 // аудиоэкскурсия по подлодке Б-396 (holiday/b396.html)
 const { B396_STOPS } = require(path.join(ROOT, 'js', 'b396.js'));
