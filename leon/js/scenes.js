@@ -149,32 +149,32 @@ SCENES.push({
     { t: 9700, cls: 'is-speed', fxFront: { type: 'coins', rate: 26 } }, { t: 11500, cls: 'is-sonic' },
     { t: 14000, cls: 'is-race', fxFront: { type: 'sparks', rate: 12 } },
     { t: 16800, cls: 'is-cars' },
-    { t: 19300, cls: 'is-web' }, { t: 19700, cls: 'is-swing' },
-    { t: 21300, cls: 'is-venom' }, { t: 22300, cls: 'is-leap' },
-    { t: 24900, cls: 'is-hulk' }, { t: 25600, cls: 'is-boom' },
-    { t: 28500, cls: 'is-treats', fxFront: { type: 'sparks', rate: 18 } },
-    { t: 32000, cls: 'is-cake', fxFront: { type: 'stars', rate: 14 } },
-    { t: 34400, cls: 'is-b0' }, { t: 35000, cls: 'is-b1' }, { t: 35600, cls: 'is-b2' }, { t: 36100, cls: 'is-b3' },
-    { t: 36600, cls: 'is-ura', fxBack: { type: 'fireworks' }, fxFront: { type: 'sparks', rate: 40 } }
+    { t: 19300, cls: 'is-web' }, { t: 19500, cls: 'is-swing' },
+    { t: 21500, cls: 'is-venom' }, { t: 22300, cls: 'is-leap' },
+    { t: 25300, cls: 'is-hulk' }, { t: 26000, cls: 'is-boom' },
+    { t: 29000, cls: 'is-treats', fxFront: { type: 'sparks', rate: 18 } },
+    { t: 32100, cls: 'is-cake', fxFront: { type: 'stars', rate: 14 } },
+    { t: 34400, cls: 'is-b0' }, { t: 34900, cls: 'is-b1' }, { t: 35400, cls: 'is-b2' }, { t: 35900, cls: 'is-b3' },
+    { t: 36300, cls: 'is-ura', fxBack: { type: 'fireworks' }, fxFront: { type: 'sparks', rate: 40 } }
   ],
   captions: [
     { t: 1800, text: 'С днём рождения, Леон!', big: true, hold: 4200 },
     { t: 9800, text: 'Соник собирает кольца!', hold: 3600 },
     { t: 14100, text: 'Молния Маккуин: ка-чау!', big: true, hold: 2300 },
     { t: 16900, text: 'Гонка маленьких машинок', hold: 2000 },
-    { t: 19400, text: 'Человек-паук прилетел!', hold: 1700 },
-    { t: 21400, text: 'Веном тоже поздравляет!', hold: 3200 },
-    { t: 25000, text: 'Ого! Это же Халк!', big: true, hold: 2000 },
-    { t: 27200, text: 'Две руки — в каждой по вкусняшке!', big: true, hold: 4400 },
-    { t: 32100, text: 'Задуваем четыре свечки!', big: true, hold: 2000 },
-    { t: 36800, text: 'Ура! Леону 4 года!', big: true, hold: 5000 }
+    { t: 19400, text: 'Человек-паук прилетел!', hold: 1900 },
+    { t: 21600, text: 'Веном тоже поздравляет!', hold: 3500 },
+    { t: 25400, text: 'Ого! Это же Халк!', big: true, hold: 2500 },
+    { t: 28100, text: 'Две руки — в каждой по вкусняшке!', big: true, hold: 3800 },
+    { t: 32200, text: 'Задуваем четыре свечки!', big: true, hold: 2000 },
+    { t: 36400, text: 'Ура! Леону 4 года!', big: true, hold: 5000 }
   ],
   sound: [
     { t: 300, s: 'fanfare' }, { t: 9700, s: 'sparkle' }, { t: 10300, s: 'sparkle' }, { t: 11500, s: 'chime' },
-    { t: 14000, s: 'rumble' }, { t: 15400, s: 'crack' }, { t: 16800, s: 'hooves' }, { t: 19300, s: 'grow' }, { t: 19700, s: 'lift' },
-    { t: 21300, s: 'rumble' }, { t: 22300, s: 'crack' }, { t: 25600, s: 'boom' }, { t: 25700, s: 'rumble' }, { t: 28500, s: 'sparkle' },
-    { t: 34400, s: 'chime' }, { t: 35000, s: 'chime' }, { t: 35600, s: 'chime' }, { t: 36100, s: 'chime' },
-    { t: 36600, s: 'salute' }, { t: 36700, s: 'fanfare' }
+    { t: 14000, s: 'rumble' }, { t: 15400, s: 'crack' }, { t: 16800, s: 'hooves' }, { t: 19300, s: 'grow' }, { t: 19500, s: 'lift' },
+    { t: 21500, s: 'rumble' }, { t: 22300, s: 'crack' }, { t: 26000, s: 'boom' }, { t: 26100, s: 'rumble' }, { t: 29000, s: 'sparkle' },
+    { t: 34400, s: 'chime' }, { t: 34900, s: 'chime' }, { t: 35400, s: 'chime' }, { t: 35900, s: 'chime' },
+    { t: 36300, s: 'salute' }, { t: 36400, s: 'fanfare' }
   ]
 });
 
@@ -243,9 +243,9 @@ SCENES.push({
   say: 'Земля трясётся! Бум! Бум! Это Халк, самый сильный герой! Он пришёл на день рождения к Леону и говорит важное правило: если у тебя две руки, значит, в каждой надо держать что-нибудь вкусненькое! Вот пончик, а вот леденец. С днём рождения, Леон!',
   tint: 'linear-gradient(180deg, rgba(10,40,10,.22), rgba(4,14,4,.5))',
   layers: [{ depth: 1, z: 2, html: `<svg class="fit lb-up" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">${hulkPic()}</svg>` }],
-  beats: [{ t: 2600, cls: 'is-hulk' }, { t: 3300, cls: 'is-boom' }, { t: 9000, cls: 'is-treats', fxFront: { type: 'sparks', rate: 22 } }, { t: 14000, cls: 'is-party', fxBack: { type: 'fireworks' } }],
-  captions: [{ t: 400, text: 'Бум! Бум!', big: true, hold: 2000 }, { t: 3500, text: 'Это Халк — самый сильный герой!', hold: 3400 }, { t: 7200, text: 'Правило Халка:', big: true, hold: 1600 }, { t: 9000, text: 'Две руки — в каждой по вкусняшке!', big: true, hold: 4600 }, { t: 14000, text: 'С днём рождения, Леон!', big: true, hold: 4000 }],
-  sound: [{ t: 400, s: 'boom' }, { t: 1200, s: 'boom' }, { t: 3300, s: 'boom' }, { t: 3400, s: 'rumble' }, { t: 9000, s: 'sparkle' }, { t: 9500, s: 'chime' }, { t: 14000, s: 'salute' }]
+  beats: [{ t: 3000, cls: 'is-hulk' }, { t: 3700, cls: 'is-boom' }, { t: 13500, cls: 'is-treats', fxFront: { type: 'sparks', rate: 22 } }, { t: 15400, cls: 'is-party', fxBack: { type: 'fireworks' } }],
+  captions: [{ t: 500, text: 'Земля трясётся! Бум! Бум!', big: true, hold: 3000 }, { t: 3800, text: 'Это Халк — самый сильный герой!', hold: 2000 }, { t: 6000, text: 'Правило Халка:', big: true, hold: 3200 }, { t: 9400, text: 'Две руки — в каждой по вкусняшке!', big: true, hold: 4000 }, { t: 13500, text: 'Вот пончик, а вот леденец!', hold: 1800 }, { t: 15500, text: 'С днём рождения, Леон!', big: true, hold: 3800 }],
+  sound: [{ t: 2300, s: 'boom' }, { t: 3000, s: 'boom' }, { t: 3700, s: 'boom' }, { t: 3800, s: 'rumble' }, { t: 13500, s: 'sparkle' }, { t: 14100, s: 'chime' }, { t: 15400, s: 'salute' }]
 });
 
 if (typeof module !== 'undefined') module.exports = { SCENES };
