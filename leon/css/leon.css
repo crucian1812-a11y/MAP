@@ -78,7 +78,7 @@
 @keyframes lb-wobble{0%{opacity:1;transform:none}100%{opacity:1;transform:translateY(-10px) scaleY(1.02)}}
 .lb-goo{transform-origin:400px 900px}
 .lb-eyes{opacity:0;transform-box:fill-box;transform-origin:center}
-.layers.is-venom .lb-eyes{animation:lb-blink .5s 3.2s both}
+.layers.is-eyes .lb-eyes{animation:lb-blink .5s both}
 @keyframes lb-blink{0%{opacity:0;transform:scaleY(.05)}100%{opacity:1;transform:none}}
 .layers.is-venom.is-four .lb-goo{animation:lb-sink 1s forwards}
 @keyframes lb-sink{from{opacity:1;transform:none}to{opacity:0;transform:translateY(300px) scaleY(.4)}}

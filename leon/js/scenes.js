@@ -125,30 +125,30 @@ SCENES.push({
   ],
   beats: [
     { t: 300, cls: 'is-hello', fxFront: { type: 'sparks', rate: 20 } },
-    { t: 7600, cls: 'is-speed', fxFront: { type: 'coins', rate: 26 } },
-    { t: 12300, cls: 'is-race', fxFront: { type: 'sparks', rate: 12 } },
-    { t: 15300, cls: 'is-cars' },
-    { t: 17800, cls: 'is-web' }, { t: 18700, cls: 'is-mask' },
-    { t: 20400, cls: 'is-venom' },
-    { t: 24200, cls: 'is-cake', fxFront: { type: 'stars', rate: 14 } },
-    { t: 26400, cls: 'is-b0' }, { t: 27200, cls: 'is-b1' }, { t: 28000, cls: 'is-b2' }, { t: 28800, cls: 'is-b3' },
-    { t: 29600, cls: 'is-ura', fxBack: { type: 'fireworks' }, fxFront: { type: 'sparks', rate: 40 } }
+    { t: 9700, cls: 'is-speed', fxFront: { type: 'coins', rate: 26 } },
+    { t: 14000, cls: 'is-race', fxFront: { type: 'sparks', rate: 12 } },
+    { t: 16800, cls: 'is-cars' },
+    { t: 19300, cls: 'is-web' }, { t: 20000, cls: 'is-mask' },
+    { t: 21100, cls: 'is-venom' }, { t: 22300, cls: 'is-eyes' },
+    { t: 24300, cls: 'is-cake', fxFront: { type: 'stars', rate: 14 } },
+    { t: 26700, cls: 'is-b0' }, { t: 27300, cls: 'is-b1' }, { t: 27900, cls: 'is-b2' }, { t: 28400, cls: 'is-b3' },
+    { t: 28800, cls: 'is-ura', fxBack: { type: 'fireworks' }, fxFront: { type: 'sparks', rate: 40 } }
   ],
   captions: [
     { t: 1800, text: 'С днём рождения, Леон!', big: true, hold: 4200 },
-    { t: 7800, text: 'Соник собирает кольца!', hold: 3800 },
-    { t: 12500, text: 'Молния Маккуин: ка-чау!', big: true, hold: 2600 },
-    { t: 15400, text: 'Гонка маленьких машинок', hold: 2300 },
-    { t: 17900, text: 'Человек-паук плетёт паутину', hold: 2400 },
-    { t: 20500, text: 'Веном тоже поздравляет!', hold: 3400 },
-    { t: 24300, text: 'Задуваем четыре свечки!', big: true, hold: 2000 },
-    { t: 29800, text: 'Ура! Леону 4 года!', big: true, hold: 5000 }
+    { t: 9800, text: 'Соник собирает кольца!', hold: 3600 },
+    { t: 14100, text: 'Молния Маккуин: ка-чау!', big: true, hold: 2300 },
+    { t: 16900, text: 'Гонка маленьких машинок', hold: 2000 },
+    { t: 19400, text: 'Человек-паук плетёт паутину', hold: 1500 },
+    { t: 21300, text: 'Веном тоже поздравляет!', hold: 2700 },
+    { t: 24400, text: 'Задуваем четыре свечки!', big: true, hold: 2000 },
+    { t: 29000, text: 'Ура! Леону 4 года!', big: true, hold: 5000 }
   ],
   sound: [
-    { t: 300, s: 'fanfare' }, { t: 7600, s: 'sparkle' }, { t: 8200, s: 'sparkle' }, { t: 12300, s: 'rumble' }, { t: 12900, s: 'crack' },
-    { t: 15300, s: 'hooves' }, { t: 17800, s: 'grow' }, { t: 20400, s: 'rumble' },
-    { t: 26400, s: 'chime' }, { t: 27200, s: 'chime' }, { t: 28000, s: 'chime' }, { t: 28800, s: 'chime' },
-    { t: 29600, s: 'salute' }, { t: 29700, s: 'fanfare' }
+    { t: 300, s: 'fanfare' }, { t: 9700, s: 'sparkle' }, { t: 10300, s: 'sparkle' }, { t: 14000, s: 'rumble' }, { t: 15400, s: 'crack' },
+    { t: 16800, s: 'hooves' }, { t: 19300, s: 'grow' }, { t: 21100, s: 'rumble' },
+    { t: 26700, s: 'chime' }, { t: 27300, s: 'chime' }, { t: 27900, s: 'chime' }, { t: 28400, s: 'chime' },
+    { t: 28800, s: 'salute' }, { t: 28900, s: 'fanfare' }
   ]
 });
 
@@ -163,9 +163,9 @@ SCENES.push({
   tint: 'linear-gradient(180deg, rgba(10,30,80,.2), rgba(4,10,30,.5))',
   layers: [{ depth: 1, z: 2, html: `<svg class="fit lb-up" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
     ${speedBall()}<g class="lb-four lb-four--gold"><text x="400" y="460" text-anchor="middle" class="lb-four-t">4</text></g></svg>` }],
-  beats: [{ t: 2600, cls: 'is-speed', fxFront: { type: 'coins', rate: 26 } }, { t: 8000, cls: 'is-again' }, { t: 11000, cls: 'is-four', fxBack: { type: 'fireworks' } }],
-  captions: [{ t: 600, text: 'Раз, два, три…', big: true, hold: 2000 }, { t: 2800, text: 'Быстрее ветра!', big: true, hold: 3000 }, { t: 8100, text: 'Ещё разок!', hold: 2400 }, { t: 11200, text: 'Леону — 4!', big: true, hold: 4000 }],
-  sound: [{ t: 600, s: 'chime' }, { t: 2600, s: 'sparkle' }, { t: 3100, s: 'sparkle' }, { t: 8000, s: 'sparkle' }, { t: 11000, s: 'salute' }]
+  beats: [{ t: 5700, cls: 'is-speed', fxFront: { type: 'coins', rate: 26 } }, { t: 9500, cls: 'is-again' }, { t: 12000, cls: 'is-four', fxBack: { type: 'fireworks' } }],
+  captions: [{ t: 2200, text: 'Соник разгоняется…', hold: 1900 }, { t: 4300, text: 'Раз, два, три!', big: true, hold: 1300 }, { t: 5900, text: 'Быстрее ветра!', big: true, hold: 3200 }, { t: 9600, text: 'Ещё разок!', hold: 2200 }, { t: 12100, text: 'Леону — 4!', big: true, hold: 4000 }],
+  sound: [{ t: 4300, s: 'chime' }, { t: 5700, s: 'sparkle' }, { t: 6200, s: 'sparkle' }, { t: 9500, s: 'sparkle' }, { t: 12000, s: 'salute' }]
 });
 
 SCENES.push({
@@ -181,9 +181,9 @@ SCENES.push({
     <text x="400" y="300" text-anchor="middle" class="lb-big lb-kachow">КА-ЧАУ!</text>
     <g class="lb-flag"><g transform="translate(400 160)">${rep(16, k => `<rect x="${(k % 4) * 40 - 80}" y="${Math.floor(k / 4) * 30}" width="40" height="30" fill="${(k + Math.floor(k / 4)) % 2 ? '#111' : '#fff'}"/>`)}</g></g>
   </svg>` }],
-  beats: [{ t: 2400, cls: 'is-park', fxFront: { type: 'sparks', rate: 18 } }, { t: 4600, cls: 'is-race' }, { t: 9200, cls: 'is-cars' }, { t: 13500, cls: 'is-flag', fxBack: { type: 'fireworks' } }],
-  captions: [{ t: 600, text: 'Внимание, гонка!', big: true, hold: 1800 }, { t: 4700, text: 'Ка-чау!', big: true, hold: 2600 }, { t: 9300, text: 'Кто приедет первым?', hold: 3400 }, { t: 13600, text: 'Победитель — Леон!', big: true, hold: 4000 }],
-  sound: [{ t: 2400, s: 'rumble' }, { t: 4600, s: 'crack' }, { t: 9200, s: 'hooves' }, { t: 13500, s: 'fanfare' }]
+  beats: [{ t: 2400, cls: 'is-park', fxFront: { type: 'sparks', rate: 18 } }, { t: 4600, cls: 'is-race' }, { t: 8100, cls: 'is-cars' }, { t: 12200, cls: 'is-flag', fxBack: { type: 'fireworks' } }],
+  captions: [{ t: 600, text: 'Внимание, гонка!', big: true, hold: 1800 }, { t: 4700, text: 'Ка-чау!', big: true, hold: 2600 }, { t: 8200, text: 'Гонка маленьких машинок!', hold: 2300 }, { t: 10700, text: 'Кто приедет первым?', hold: 1400 }, { t: 12300, text: 'Победитель — Леон!', big: true, hold: 4000 }],
+  sound: [{ t: 2400, s: 'rumble' }, { t: 4600, s: 'crack' }, { t: 8100, s: 'hooves' }, { t: 12200, s: 'fanfare' }]
 });
 
 SCENES.push({
@@ -194,9 +194,9 @@ SCENES.push({
   tint: 'linear-gradient(180deg, rgba(10,20,60,.22), rgba(4,6,24,.5))',
   layers: [{ depth: .7, z: 1, html: `<svg class="fit lb-up" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">${web()}</svg>` },
     { depth: 1.1, z: 2, html: `<svg class="fit lb-up" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">${spiderDrop()}${spiderMask()}</svg>` }],
-  beats: [{ t: 500, cls: 'is-web' }, { t: 5200, cls: 'is-drop' }, { t: 10000, cls: 'is-mask', fxFront: { type: 'sparks', rate: 20 } }],
-  captions: [{ t: 700, text: 'Кто плетёт паутину?', hold: 3800 }, { t: 5400, text: 'Паучок спускается по нитке', hold: 3800 }, { t: 10200, text: 'Человек-паук поздравляет Леона!', big: true, hold: 4200 }],
-  sound: [{ t: 500, s: 'grow' }, { t: 5200, s: 'lift' }, { t: 10000, s: 'fanfare' }]
+  beats: [{ t: 500, cls: 'is-web' }, { t: 5600, cls: 'is-drop' }, { t: 8600, cls: 'is-mask', fxFront: { type: 'sparks', rate: 20 } }],
+  captions: [{ t: 700, text: 'Кто плетёт паутину?', hold: 3800 }, { t: 5700, text: 'Паучок спускается по нитке', hold: 2700 }, { t: 8700, text: 'Человек-паук поздравляет Леона!', big: true, hold: 4200 }],
+  sound: [{ t: 500, s: 'grow' }, { t: 5600, s: 'lift' }, { t: 8600, s: 'fanfare' }]
 });
 
 SCENES.push({
@@ -206,9 +206,9 @@ SCENES.push({
   say: 'Ой! Что это за чёрная капля? Она растёт и растёт! Смотри, у неё глаза! Это Веном. Не бойся, он пришёл на праздник. Веном превращается… в цифру четыре! С днём рождения, Леон!',
   tint: 'linear-gradient(180deg, rgba(20,10,30,.25), rgba(4,2,8,.55))',
   layers: [{ depth: 1, z: 2, html: `<svg class="fit lb-up" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">${venomGoo()}</svg>` }],
-  beats: [{ t: 400, cls: 'is-venom' }, { t: 9000, cls: 'is-four', fxBack: { type: 'fireworks' } }],
-  captions: [{ t: 600, text: 'Ой! Что это?', big: true, hold: 2600 }, { t: 4200, text: 'У капли есть глаза!', hold: 3200 }, { t: 9200, text: 'Веном стал цифрой 4!', big: true, hold: 4200 }],
-  sound: [{ t: 400, s: 'rumble' }, { t: 4000, s: 'crack' }, { t: 9000, s: 'salute' }]
+  beats: [{ t: 400, cls: 'is-venom' }, { t: 4900, cls: 'is-eyes' }, { t: 11600, cls: 'is-four', fxBack: { type: 'fireworks' } }],
+  captions: [{ t: 600, text: 'Ой! Что это?', big: true, hold: 2600 }, { t: 5000, text: 'У капли есть глаза!', hold: 2400 }, { t: 7600, text: 'Это Веном. Не бойся!', hold: 3200 }, { t: 11800, text: 'Веном стал цифрой 4!', big: true, hold: 4200 }],
+  sound: [{ t: 400, s: 'rumble' }, { t: 4900, s: 'crack' }, { t: 11600, s: 'salute' }]
 });
 
 if (typeof module !== 'undefined') module.exports = { SCENES };
