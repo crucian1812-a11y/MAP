@@ -1,6 +1,6 @@
 /* Кэш приложения: после первого захода сайт открывается и без сети.
    Тайлы карты не кэшируются — их слишком много, интернет на прогулке всё же нужен. */
-const CACHE = 'walk-bauman-v14';
+const CACHE = 'walk-bauman-v15';
 const KEEP = /^holiday-offline/;   // кэш, который пользователь скачал кнопкой, не трогаем
 const FILES = [
   './', './index.html', './ar.html',
@@ -31,8 +31,9 @@ const OPTIONAL = [
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE)
-      .then(c => c.addAll(FILES).then(() =>
-        Promise.all(OPTIONAL.map(u => c.add(u).catch(() => {})))))
+      // cache: 'reload' — мимо HTTP-кэша браузера (Pages держит файлы 10 минут)
+      .then(c => c.addAll(FILES.map(u => new Request(u, { cache: 'reload' }))).then(() =>
+        Promise.all(OPTIONAL.map(u => c.add(new Request(u, { cache: 'reload' })).catch(() => {})))))
       .then(() => self.skipWaiting())
   );
 });
@@ -50,7 +51,8 @@ self.addEventListener('fetch', e => {
   // (дольше 4 секунд) — то, что скачано заранее или сохранено раньше
   if (url.origin === location.origin && /\/(holiday|leon)\//.test(url.pathname)) {
     const fromCache = () => caches.match(e.request, { ignoreSearch: true });
-    const net = fetch(e.request).then(res => {
+    // страницы — с проверкой на сервере, чтобы не залеживались в HTTP-кэше
+    const net = (e.request.mode === 'navigate' ? fetch(e.request.url, { cache: 'no-cache' }) : fetch(e.request)).then(res => {
       if (res.ok && res.status === 200 && !e.request.headers.has('range')) {
         const copy = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copy));
       }

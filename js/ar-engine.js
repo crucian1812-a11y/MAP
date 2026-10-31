@@ -123,39 +123,96 @@ const Stage = (() => {
   /* ---------------- камера ---------------- */
   // какая камера: страница может попросить фронтальную (window.AR_FACING = 'user')
   let facing = (typeof window !== 'undefined' && window.AR_FACING) || 'environment';
-  // Сначала просим нужную камеру строго: с мягким «ideal» телефон ради
-  // разрешения 1920×1080 берёт заднюю, даже когда просили фронтальную.
+  // Камеру выбираем по списку устройств телефона: просьба «фронтальная» через
+  // facingMode срабатывает не везде (телефон ради 1920×1080 отдаёт заднюю,
+  // а строгий exact кое-где не поддержан). deviceId — надёжнее всего.
+  const FRONT = /front|user|selfie|передн|фронт|селфи/i;
+  let deviceId = null;            // камера, выбранная кнопкой 🔄
+  let lastError = '';
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  async function cameras() {
+    try { return (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput'); }
+    catch (e) { return []; }
+  }
   async function getStream() {
     const size = { width: { ideal: 1920 }, height: { ideal: 1080 } };
-    const tries = [
-      { facingMode: { exact: facing }, ...size },
-      { facingMode: { exact: facing } },
-      { facingMode: { ideal: facing }, ...size }    // ноутбук: одна камера без стороны
-    ];
+    const tries = deviceId ? [{ deviceId: { exact: deviceId }, ...size }, { deviceId: { exact: deviceId } }] : [];
+    tries.push({ facingMode: { exact: facing }, ...size }, { facingMode: { exact: facing } }, { facingMode: { ideal: facing } });
     let err;
     for (const video of tries) {
-      try { return await navigator.mediaDevices.getUserMedia({ video, audio: false }); }
-      catch (e) { err = e; if (e && e.name === 'NotAllowedError') break; }
+      for (let k = 0; k < 2; k++) {
+        try { return await navigator.mediaDevices.getUserMedia({ video, audio: false }); }
+        catch (e) {
+          err = e;
+          if (e && e.name === 'NotAllowedError') throw e;
+          // прежняя камера ещё не отпустила сенсор — подождать и повторить
+          if (e && (e.name === 'NotReadableError' || e.name === 'AbortError') && !k) { await wait(450); continue; }
+          break;
+        }
+      }
     }
     throw err;
   }
+  const track = () => stream && stream.getVideoTracks()[0];
+  const isFront = t => {
+    const st = (t.getSettings && t.getSettings()) || {};
+    if (st.facingMode) return st.facingMode === 'user';
+    return FRONT.test(t.label || '') || (facing === 'user' && !!deviceId);
+  };
+  let camToken = 0;            // номер последнего запуска: опоздавший поток сразу гасим
   async function startCamera() {
     stopCamera();              // если сцену переключили на лету, прежний поток гасим
+    const my = camToken;
     try {
-      stream = await getStream();
+      const s = await getStream();
+      if (my !== camToken) { s.getTracks().forEach(t => t.stop()); return false; }
+      stream = s;
       el.cam.srcObject = stream;
-      await el.cam.play().catch(() => {});
+      await Promise.race([el.cam.play().catch(() => {}), wait(1500)]);
       el.stage.classList.remove('no-cam');
-      // зеркалим только настоящую фронтальную: что дали, смотрим в настройках дорожки
-      const got = (stream.getVideoTracks()[0].getSettings() || {}).facingMode;
-      el.stage.classList.toggle('is-selfie', (got || facing) === 'user');
+      el.stage.classList.toggle('is-selfie', isFront(track()));   // зеркалим только фронтальную
+      lastError = '';
       return true;
     } catch (e) {
+      lastError = (e && (e.name || e.message)) || 'ошибка';
       el.stage.classList.add('no-cam');
       return false;
     }
   }
+  // 🔄: перейти на другую камеру телефона
+  async function flipCamera() {
+    const was = track();
+    const wasId = was && (was.getSettings() || {}).deviceId;
+    const wasFront = was ? isFront(was) : facing === 'user';
+    facing = wasFront ? 'environment' : 'user';
+    const list = await cameras();
+    if (facing === 'user') {
+      const front = list.find(d => FRONT.test(d.label) && d.deviceId !== wasId);
+      const other = list.find(d => d.deviceId && d.deviceId !== wasId);
+      deviceId = (front || other || {}).deviceId || null;
+    } else {
+      deviceId = null;         // задняя: по facingMode, иначе на iPhone выберется ширик
+    }
+    stopCamera();
+    await wait(250);           // Android: дать сенсору освободиться
+    const ok = await startCamera();
+    const now = track();
+    const nowId = now && (now.getSettings() || {}).deviceId;
+    if (!ok) toast(`Камера не включилась: ${lastError}. Камер найдено: ${list.length}`);
+    else if (wasId && nowId === wasId) toast(`Телефон не дал другую камеру. Камер найдено: ${list.length}`);
+    else toast(isFront(now) ? 'Передняя камера — помаши рукой!' : 'Задняя камера');
+  }
+  // короткая подпись поверх сцены
+  function toast(text) {
+    const d = document.createElement('div');
+    d.className = 'cap cap--toast';
+    d.textContent = text;
+    el.caption.appendChild(d);
+    setTimeout(() => d.classList.add('is-out'), 2600);
+    setTimeout(() => d.remove(), 3500);
+  }
   function stopCamera() {
+    camToken++;
     if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
     el.cam.srcObject = null;
   }
@@ -292,6 +349,9 @@ const Stage = (() => {
   }
 
   async function open(id) {
+    // open сам ставит #id, и страница по hashchange зовёт его ещё раз — второй запуск
+    // включил бы вторую камеру, а первая держала бы сенсор
+    if (scene && scene.id === id && !el.stage.hidden) return;
     scene = SCENES.find(s => s.id === id);
     if (!scene) return;
     if (typeof Voice !== 'undefined') Voice.load();
@@ -363,9 +423,7 @@ const Stage = (() => {
     if (flip) flip.addEventListener('click', async () => {
       if (flipping) return;                // двойной тап не должен запускать две камеры
       flipping = true;
-      facing = facing === 'user' ? 'environment' : 'user';
-      await startCamera();
-      flipping = false;
+      try { await flipCamera(); } finally { flipping = false; }
     });
 
     const sb = document.getElementById('stage-sound');

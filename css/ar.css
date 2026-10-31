@@ -563,3 +563,4 @@ button{font:inherit;color:inherit;cursor:pointer}
 .scheme img{width:100%;display:block;border-radius:10px}
 .layers.is-open .scheme{opacity:1;transform:translateX(0) rotate(-2deg);animation:scheme-sway 7s ease-in-out 1.6s infinite}
 @keyframes scheme-sway{0%,100%{transform:translateX(0) rotate(-2deg)}50%{transform:translateX(-4px) rotate(1deg)}}
+.cap--toast{background:#ffd23f;color:#2a1450;font-weight:700;text-shadow:none;border-color:#fff}
