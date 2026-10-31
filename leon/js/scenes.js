@@ -1,7 +1,7 @@
 /* Волшебная камера для Леона: поздравление с четырёхлетием.
    Движок общий (../js/ar-engine.js): слои SVG, такты-классы, титры, звук.
    say — текст для озвучки Silero (дорожка leon-<id> в holiday/audio/kvest/).
-   Герои нарисованы по мотивам любимых персонажей Леона, без настоящих логотипов. */
+   Соник, Человек-паук, Веном и Халк — картинки из img/ с вырезанным фоном, остальное нарисовано. */
 
 const SCENES = [];
 const rep = (n, fn) => Array.from({ length: n }, (_, i) => fn(i)).join('');
@@ -66,13 +66,6 @@ const web = () => {
     ${R.map((r, j) => `<path class="lb-thread lb-loop" pathLength="100" style="--i:${j + 4}" d="M${rep(spokes, k => `${k ? 'L' : ''}${pt(r, k)} `)}Z"/>`).join('')}
   </g>`;
 };
-const spiderMask = () => `<g class="lb-mask"><g transform="translate(400 420)">
-  <ellipse rx="120" ry="150" fill="#d7262b"/>
-  ${rep(6, k => `<path transform="rotate(${k * 30 - 75})" d="M0 0 L0 -160" stroke="#7a0d10" stroke-width="3"/>`)}
-  <ellipse rx="60" ry="75" fill="none" stroke="#7a0d10" stroke-width="3"/><ellipse rx="100" ry="125" fill="none" stroke="#7a0d10" stroke-width="3"/>
-  <path d="M-92 -30 q40 -40 78 10 q-36 34 -78 -10 z" fill="#fff" stroke="#111" stroke-width="7"/>
-  <path d="M92 -30 q-40 -40 -78 10 q36 34 78 -10 z" fill="#fff" stroke="#111" stroke-width="7"/>
-</g></g>`;
 const spiderDrop = () => `<g class="lb-spider"><path d="M400 -200 V340" stroke="#fff" stroke-width="3"/>
   <g transform="translate(400 370)">${rep(4, k => `<path d="M0 0 q${-40 - k * 6} ${-30 + k * 22} ${-60 - k * 4} ${-10 + k * 30} M0 0 q${40 + k * 6} ${-30 + k * 22} ${60 + k * 4} ${-10 + k * 30}" stroke="#151515" stroke-width="6" fill="none"/>`)}
     <ellipse rx="30" ry="36" fill="#151515"/><circle cy="-38" r="20" fill="#151515"/>
@@ -101,6 +94,34 @@ const cake = () => `<g class="lb-cake"><g transform="translate(400 700)">
     <text y="-150" text-anchor="middle" class="lb-num lb-n${i}">${i + 1}</text></g>`).join('')}
 </g></g>`;
 
+/* ---------- герои с картинок (img/, фон вырезан) ---------- */
+const sonicPic = () => `<g class="lb-sonic"><image href="img/sonic.webp" x="262" y="230" width="276" height="358"/></g>`;
+const spiderPortal = () => `<g class="lb-portal">
+  <path d="M400 -400 V150" stroke="#fff" stroke-width="5"/>
+  <defs><clipPath id="lbSpClip"><circle cx="400" cy="400" r="240"/></clipPath></defs>
+  <circle cx="400" cy="400" r="252" fill="#1f4fbf"/>
+  <image href="img/spider.webp" x="140" y="140" width="520" height="520" clip-path="url(#lbSpClip)"/>
+  <circle cx="400" cy="400" r="246" fill="none" stroke="#e5383b" stroke-width="12"/>
+  ${rep(12, k => `<path transform="rotate(${k * 30} 400 400)" d="M400 140 L400 100" stroke="#fff" stroke-width="4"/>`)}
+</g>`;
+const venomPic = () => `<g class="lb-venom"><image href="img/venom.webp" x="170" y="150" width="460" height="555"/></g>`;
+// два угощения — по одному в каждую руку Халка
+const donut = (x, y, i) => `<g transform="translate(${x} ${y})"><g class="lb-treat" style="--i:${i}">
+  <circle r="44" fill="none" stroke="#d9904a" stroke-width="36"/>
+  <circle r="44" fill="none" stroke="#ff70a6" stroke-width="26"/>
+  ${rep(9, k => `<rect transform="rotate(${k * 40}) translate(0 -44) rotate(${k * 23})" x="-6" y="-2" width="12" height="4" rx="2" fill="${NAME_COLORS[k % 4]}"/>`)}
+</g></g>`;
+const lollipop = (x, y, i) => `<g transform="translate(${x} ${y})"><g class="lb-treat" style="--i:${i}">
+  <path d="M0 40 V150" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
+  <circle r="54" fill="#fff"/>
+  <path d="M0 0 m0 -6 a6 6 0 1 1 0 12 a12 12 0 1 1 0 -24 a18 18 0 1 1 0 36 a24 24 0 1 1 0 -48 a30 30 0 1 1 0 60 a36 36 0 1 1 0 -72 a42 42 0 1 1 0 84" fill="none" stroke="#e5383b" stroke-width="9"/>
+</g></g>`;
+const hulkPic = () => `<g class="lb-hulk">
+  <image href="img/hulk.webp" x="196" y="118" width="408" height="598"/>
+  ${donut(244, 506, 0)}${lollipop(552, 500, 1)}
+  <text x="400" y="86" text-anchor="middle" class="lb-big lb-rule">2 руки — 2 вкусняшки!</text>
+</g>`;
+
 /* ============================================================
    БОЛЬШОЕ ПОЗДРАВЛЕНИЕ — все герои по очереди
    ============================================================ */
@@ -109,46 +130,51 @@ SCENES.push({
   title: 'Леону 4 года!',
   place: 'Где угодно: дома, за столом, на празднике',
   aim: 'Наведи камеру на Леона или переверни её кнопкой 🔄, чтобы он увидел себя.',
-  lead: 'Шары и имя радугой, синий ёжик собирает кольца, «Ка-чау!», гонка машинок, паутина, чёрная капля с глазами и торт с четырьмя свечами.',
-  say: 'Внимание! Волшебная камера включена. С днём рождения, Леон! Сегодня тебе четыре года! Смотри, кто пришёл тебя поздравить. Синий ёжик Соник мчится быстрее ветра и собирает для тебя золотые кольца! А вот и Молния Маккуин: ка-чау! За ним целая гонка маленьких машинок. Человек-паук плетёт паутину, а Веном тоже хочет сказать: с днём рождения! А теперь задуваем четыре свечки. Раз, два, три, четыре! Ура, Леон!',
+  lead: 'Шары и имя радугой, Соник с кольцами, «Ка-чау!», гонка машинок, Человек-паук на паутине, Веном, Халк с двумя вкусняшками и торт с четырьмя свечами.',
+  say: 'Внимание! Волшебная камера включена. С днём рождения, Леон! Сегодня тебе четыре года! Смотри, кто пришёл тебя поздравить. Синий ёжик Соник мчится быстрее ветра и собирает для тебя золотые кольца! А вот и Молния Маккуин: ка-чау! За ним целая гонка маленьких машинок. Человек-паук прилетел на паутине! А вот и Веном, он тоже хочет сказать: с днём рождения! Ого, это же Халк! Халк говорит: если у тебя две руки, значит, в каждой надо держать что-нибудь вкусненькое! А теперь задуваем четыре свечки. Раз, два, три, четыре! Ура, Леон!',
   tint: 'linear-gradient(180deg, rgba(20,10,40,.18), rgba(8,4,20,.45))',
   layers: [
     { depth: .6, z: 1, html: `<svg class="fit lb-up" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">${balloons()}${web()}</svg>` },
     { depth: 1, z: 2, html: `<svg class="fit lb-up" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
-      ${nameTitle()}${speedBall()}
+      ${nameTitle()}${speedBall()}${sonicPic()}
       <g transform="translate(0 640)">${raceCar('lb-car lb-car--pass')}</g>
       <g transform="translate(0 640)">${smallCars()}</g>
-      ${spiderMask()}${venomGoo()}${cake()}
+      ${spiderPortal()}${venomGoo()}${venomPic()}${hulkPic()}${cake()}
       <text x="400" y="300" text-anchor="middle" class="lb-big lb-kachow">КА-ЧАУ!</text>
       <text x="400" y="260" text-anchor="middle" class="lb-big lb-ura">УРА, ЛЕОН!</text>
     </svg>` }
   ],
   beats: [
     { t: 300, cls: 'is-hello', fxFront: { type: 'sparks', rate: 20 } },
-    { t: 9700, cls: 'is-speed', fxFront: { type: 'coins', rate: 26 } },
+    { t: 9700, cls: 'is-speed', fxFront: { type: 'coins', rate: 26 } }, { t: 11500, cls: 'is-sonic' },
     { t: 14000, cls: 'is-race', fxFront: { type: 'sparks', rate: 12 } },
     { t: 16800, cls: 'is-cars' },
-    { t: 19300, cls: 'is-web' }, { t: 20000, cls: 'is-mask' },
-    { t: 21100, cls: 'is-venom' }, { t: 22300, cls: 'is-eyes' },
-    { t: 24300, cls: 'is-cake', fxFront: { type: 'stars', rate: 14 } },
-    { t: 26700, cls: 'is-b0' }, { t: 27300, cls: 'is-b1' }, { t: 27900, cls: 'is-b2' }, { t: 28400, cls: 'is-b3' },
-    { t: 28800, cls: 'is-ura', fxBack: { type: 'fireworks' }, fxFront: { type: 'sparks', rate: 40 } }
+    { t: 19300, cls: 'is-web' }, { t: 19700, cls: 'is-swing' },
+    { t: 21300, cls: 'is-venom' }, { t: 22300, cls: 'is-leap' },
+    { t: 24900, cls: 'is-hulk' }, { t: 25600, cls: 'is-boom' },
+    { t: 28500, cls: 'is-treats', fxFront: { type: 'sparks', rate: 18 } },
+    { t: 32000, cls: 'is-cake', fxFront: { type: 'stars', rate: 14 } },
+    { t: 34400, cls: 'is-b0' }, { t: 35000, cls: 'is-b1' }, { t: 35600, cls: 'is-b2' }, { t: 36100, cls: 'is-b3' },
+    { t: 36600, cls: 'is-ura', fxBack: { type: 'fireworks' }, fxFront: { type: 'sparks', rate: 40 } }
   ],
   captions: [
     { t: 1800, text: 'С днём рождения, Леон!', big: true, hold: 4200 },
     { t: 9800, text: 'Соник собирает кольца!', hold: 3600 },
     { t: 14100, text: 'Молния Маккуин: ка-чау!', big: true, hold: 2300 },
     { t: 16900, text: 'Гонка маленьких машинок', hold: 2000 },
-    { t: 19400, text: 'Человек-паук плетёт паутину', hold: 1500 },
-    { t: 21300, text: 'Веном тоже поздравляет!', hold: 2700 },
-    { t: 24400, text: 'Задуваем четыре свечки!', big: true, hold: 2000 },
-    { t: 29000, text: 'Ура! Леону 4 года!', big: true, hold: 5000 }
+    { t: 19400, text: 'Человек-паук прилетел!', hold: 1700 },
+    { t: 21400, text: 'Веном тоже поздравляет!', hold: 3200 },
+    { t: 25000, text: 'Ого! Это же Халк!', big: true, hold: 2000 },
+    { t: 27200, text: 'Две руки — в каждой по вкусняшке!', big: true, hold: 4400 },
+    { t: 32100, text: 'Задуваем четыре свечки!', big: true, hold: 2000 },
+    { t: 36800, text: 'Ура! Леону 4 года!', big: true, hold: 5000 }
   ],
   sound: [
-    { t: 300, s: 'fanfare' }, { t: 9700, s: 'sparkle' }, { t: 10300, s: 'sparkle' }, { t: 14000, s: 'rumble' }, { t: 15400, s: 'crack' },
-    { t: 16800, s: 'hooves' }, { t: 19300, s: 'grow' }, { t: 21100, s: 'rumble' },
-    { t: 26700, s: 'chime' }, { t: 27300, s: 'chime' }, { t: 27900, s: 'chime' }, { t: 28400, s: 'chime' },
-    { t: 28800, s: 'salute' }, { t: 28900, s: 'fanfare' }
+    { t: 300, s: 'fanfare' }, { t: 9700, s: 'sparkle' }, { t: 10300, s: 'sparkle' }, { t: 11500, s: 'chime' },
+    { t: 14000, s: 'rumble' }, { t: 15400, s: 'crack' }, { t: 16800, s: 'hooves' }, { t: 19300, s: 'grow' }, { t: 19700, s: 'lift' },
+    { t: 21300, s: 'rumble' }, { t: 22300, s: 'crack' }, { t: 25600, s: 'boom' }, { t: 25700, s: 'rumble' }, { t: 28500, s: 'sparkle' },
+    { t: 34400, s: 'chime' }, { t: 35000, s: 'chime' }, { t: 35600, s: 'chime' }, { t: 36100, s: 'chime' },
+    { t: 36600, s: 'salute' }, { t: 36700, s: 'fanfare' }
   ]
 });
 
@@ -158,13 +184,12 @@ SCENES.push({
 SCENES.push({
   id: 'sonik', title: 'Золотые кольца', place: 'Где угодно',
   aim: 'Наведи камеру на пол или на стол: по нему промчится синий ёжик.',
-  lead: 'Синий колючий шар разгоняется, собирает пять колец, и из колец вспыхивает цифра 4.',
+  lead: 'Синий колючий шар разгоняется, собирает кольца, а потом Соник выпрыгивает и показывает «класс!».',
   say: 'Леон, смотри! Синий ёжик Соник разгоняется. Раз, два, три! И он уже мчится быстрее ветра! Лови золотые кольца! А теперь давай ещё раз, это так быстро! Соник поздравляет тебя с днём рождения!',
   tint: 'linear-gradient(180deg, rgba(10,30,80,.2), rgba(4,10,30,.5))',
-  layers: [{ depth: 1, z: 2, html: `<svg class="fit lb-up" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">
-    ${speedBall()}<g class="lb-four lb-four--gold"><text x="400" y="460" text-anchor="middle" class="lb-four-t">4</text></g></svg>` }],
-  beats: [{ t: 5700, cls: 'is-speed', fxFront: { type: 'coins', rate: 26 } }, { t: 9500, cls: 'is-again' }, { t: 12000, cls: 'is-four', fxBack: { type: 'fireworks' } }],
-  captions: [{ t: 2200, text: 'Соник разгоняется…', hold: 1900 }, { t: 4300, text: 'Раз, два, три!', big: true, hold: 1300 }, { t: 5900, text: 'Быстрее ветра!', big: true, hold: 3200 }, { t: 9600, text: 'Ещё разок!', hold: 2200 }, { t: 12100, text: 'Леону — 4!', big: true, hold: 4000 }],
+  layers: [{ depth: 1, z: 2, html: `<svg class="fit lb-up" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">${speedBall()}${sonicPic()}</svg>` }],
+  beats: [{ t: 5700, cls: 'is-speed', fxFront: { type: 'coins', rate: 26 } }, { t: 9500, cls: 'is-again' }, { t: 12000, cls: 'is-sonic', fxBack: { type: 'fireworks' } }],
+  captions: [{ t: 2200, text: 'Соник разгоняется…', hold: 1900 }, { t: 4300, text: 'Раз, два, три!', big: true, hold: 1300 }, { t: 5900, text: 'Быстрее ветра!', big: true, hold: 3200 }, { t: 9600, text: 'Ещё разок!', hold: 2200 }, { t: 12100, text: 'Соник: с днём рождения, Леон!', big: true, hold: 4000 }],
   sound: [{ t: 4300, s: 'chime' }, { t: 5700, s: 'sparkle' }, { t: 6200, s: 'sparkle' }, { t: 9500, s: 'sparkle' }, { t: 12000, s: 'salute' }]
 });
 
@@ -189,26 +214,38 @@ SCENES.push({
 SCENES.push({
   id: 'pauk', title: 'Паутина', place: 'Где угодно',
   aim: 'Наведи камеру на стену или в угол комнаты: там появится паутина.',
-  lead: 'Из углов растёт паутина, по нитке спускается паучок, а потом появляется маска героя.',
+  lead: 'Из углов растёт паутина, по нитке спускается паучок, а потом на паутине прилетает Человек-паук.',
   say: 'Тссс! Кто это плетёт паутину? Нитка за ниткой, по всей комнате! А вот и маленький паучок спускается по ниточке. Человек-паук передаёт привет и поздравляет Леона с днём рождения!',
   tint: 'linear-gradient(180deg, rgba(10,20,60,.22), rgba(4,6,24,.5))',
   layers: [{ depth: .7, z: 1, html: `<svg class="fit lb-up" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">${web()}</svg>` },
-    { depth: 1.1, z: 2, html: `<svg class="fit lb-up" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">${spiderDrop()}${spiderMask()}</svg>` }],
-  beats: [{ t: 500, cls: 'is-web' }, { t: 5600, cls: 'is-drop' }, { t: 8600, cls: 'is-mask', fxFront: { type: 'sparks', rate: 20 } }],
-  captions: [{ t: 700, text: 'Кто плетёт паутину?', hold: 3800 }, { t: 5700, text: 'Паучок спускается по нитке', hold: 2700 }, { t: 8700, text: 'Человек-паук поздравляет Леона!', big: true, hold: 4200 }],
+    { depth: 1.1, z: 2, html: `<svg class="fit lb-up" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">${spiderDrop()}${spiderPortal()}</svg>` }],
+  beats: [{ t: 500, cls: 'is-web' }, { t: 5600, cls: 'is-drop' }, { t: 8600, cls: 'is-mask' }, { t: 8700, cls: 'is-swing', fxFront: { type: 'sparks', rate: 20 } }],
+  captions: [{ t: 700, text: 'Кто плетёт паутину?', hold: 3800 }, { t: 5700, text: 'Паучок спускается по нитке', hold: 2700 }, { t: 8800, text: 'Человек-паук поздравляет Леона!', big: true, hold: 4200 }],
   sound: [{ t: 500, s: 'grow' }, { t: 5600, s: 'lift' }, { t: 8600, s: 'fanfare' }]
 });
 
 SCENES.push({
   id: 'venom', title: 'Чёрная капля', place: 'Где угодно',
   aim: 'Наведи камеру на пол или на диван: оттуда что-то вылезет!',
-  lead: 'Снизу поднимается чёрная блестящая капля, открывает белые глаза и превращается в цифру 4.',
+  lead: 'Снизу поднимается чёрная блестящая капля, открывает глаза, из неё выпрыгивает Веном и превращается в цифру 4.',
   say: 'Ой! Что это за чёрная капля? Она растёт и растёт! Смотри, у неё глаза! Это Веном. Не бойся, он пришёл на праздник. Веном превращается… в цифру четыре! С днём рождения, Леон!',
   tint: 'linear-gradient(180deg, rgba(20,10,30,.25), rgba(4,2,8,.55))',
-  layers: [{ depth: 1, z: 2, html: `<svg class="fit lb-up" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">${venomGoo()}</svg>` }],
-  beats: [{ t: 400, cls: 'is-venom' }, { t: 4900, cls: 'is-eyes' }, { t: 11600, cls: 'is-four', fxBack: { type: 'fireworks' } }],
+  layers: [{ depth: 1, z: 2, html: `<svg class="fit lb-up" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">${venomGoo()}${venomPic()}</svg>` }],
+  beats: [{ t: 400, cls: 'is-venom' }, { t: 4900, cls: 'is-eyes' }, { t: 7500, cls: 'is-leap' }, { t: 11600, cls: 'is-four', fxBack: { type: 'fireworks' } }],
   captions: [{ t: 600, text: 'Ой! Что это?', big: true, hold: 2600 }, { t: 5000, text: 'У капли есть глаза!', hold: 2400 }, { t: 7600, text: 'Это Веном. Не бойся!', hold: 3200 }, { t: 11800, text: 'Веном стал цифрой 4!', big: true, hold: 4200 }],
-  sound: [{ t: 400, s: 'rumble' }, { t: 4900, s: 'crack' }, { t: 11600, s: 'salute' }]
+  sound: [{ t: 400, s: 'rumble' }, { t: 4900, s: 'crack' }, { t: 7500, s: 'boom' }, { t: 11600, s: 'salute' }]
+});
+
+SCENES.push({
+  id: 'halk', title: 'Правило Халка', place: 'Где угодно',
+  aim: 'Наведи камеру на Леона или на праздничный стол.',
+  lead: 'Земля трясётся, сверху приземляется Халк, а в руках у него появляются пончик и леденец.',
+  say: 'Земля трясётся! Бум! Бум! Это Халк, самый сильный герой! Он пришёл на день рождения к Леону и говорит важное правило: если у тебя две руки, значит, в каждой надо держать что-нибудь вкусненькое! Вот пончик, а вот леденец. С днём рождения, Леон!',
+  tint: 'linear-gradient(180deg, rgba(10,40,10,.22), rgba(4,14,4,.5))',
+  layers: [{ depth: 1, z: 2, html: `<svg class="fit lb-up" viewBox="0 0 800 900" preserveAspectRatio="xMidYMax meet">${hulkPic()}</svg>` }],
+  beats: [{ t: 2600, cls: 'is-hulk' }, { t: 3300, cls: 'is-boom' }, { t: 9000, cls: 'is-treats', fxFront: { type: 'sparks', rate: 22 } }, { t: 14000, cls: 'is-party', fxBack: { type: 'fireworks' } }],
+  captions: [{ t: 400, text: 'Бум! Бум!', big: true, hold: 2000 }, { t: 3500, text: 'Это Халк — самый сильный герой!', hold: 3400 }, { t: 7200, text: 'Правило Халка:', big: true, hold: 1600 }, { t: 9000, text: 'Две руки — в каждой по вкусняшке!', big: true, hold: 4600 }, { t: 14000, text: 'С днём рождения, Леон!', big: true, hold: 4000 }],
+  sound: [{ t: 400, s: 'boom' }, { t: 1200, s: 'boom' }, { t: 3300, s: 'boom' }, { t: 3400, s: 'rumble' }, { t: 9000, s: 'sparkle' }, { t: 9500, s: 'chime' }, { t: 14000, s: 'salute' }]
 });
 
 if (typeof module !== 'undefined') module.exports = { SCENES };
