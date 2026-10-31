@@ -123,17 +123,32 @@ const Stage = (() => {
   /* ---------------- камера ---------------- */
   // какая камера: страница может попросить фронтальную (window.AR_FACING = 'user')
   let facing = (typeof window !== 'undefined' && window.AR_FACING) || 'environment';
+  // Сначала просим нужную камеру строго: с мягким «ideal» телефон ради
+  // разрешения 1920×1080 берёт заднюю, даже когда просили фронтальную.
+  async function getStream() {
+    const size = { width: { ideal: 1920 }, height: { ideal: 1080 } };
+    const tries = [
+      { facingMode: { exact: facing }, ...size },
+      { facingMode: { exact: facing } },
+      { facingMode: { ideal: facing }, ...size }    // ноутбук: одна камера без стороны
+    ];
+    let err;
+    for (const video of tries) {
+      try { return await navigator.mediaDevices.getUserMedia({ video, audio: false }); }
+      catch (e) { err = e; if (e && e.name === 'NotAllowedError') break; }
+    }
+    throw err;
+  }
   async function startCamera() {
     stopCamera();              // если сцену переключили на лету, прежний поток гасим
     try {
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: facing }, width: { ideal: 1920 }, height: { ideal: 1080 } },
-        audio: false
-      });
+      stream = await getStream();
       el.cam.srcObject = stream;
       await el.cam.play().catch(() => {});
       el.stage.classList.remove('no-cam');
-      el.stage.classList.toggle('is-selfie', facing === 'user');
+      // зеркалим только настоящую фронтальную: что дали, смотрим в настройках дорожки
+      const got = (stream.getVideoTracks()[0].getSettings() || {}).facingMode;
+      el.stage.classList.toggle('is-selfie', (got || facing) === 'user');
       return true;
     } catch (e) {
       el.stage.classList.add('no-cam');
@@ -344,9 +359,13 @@ const Stage = (() => {
 
     // кнопка «перевернуть камеру», если она есть на странице
     const flip = document.getElementById('stage-flip');
-    if (flip) flip.addEventListener('click', () => {
+    let flipping = false;
+    if (flip) flip.addEventListener('click', async () => {
+      if (flipping) return;                // двойной тап не должен запускать две камеры
+      flipping = true;
       facing = facing === 'user' ? 'environment' : 'user';
-      startCamera();
+      await startCamera();
+      flipping = false;
     });
 
     const sb = document.getElementById('stage-sound');
