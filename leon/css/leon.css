@@ -1,0 +1,102 @@
+/* Волшебная камера для Леона: анимации сцен (биты-классы на .layers) */
+.layer svg.fit.lb-up{margin-bottom:26%;overflow:visible}
+.stage.is-selfie .stage__cam{transform:scaleX(-1)}
+
+.lb-letter{font:900 128px "Arial Black","Unbounded",sans-serif;paint-order:stroke;stroke:#fff;stroke-width:8;opacity:0;transform-box:fill-box;transform-origin:center}
+.lb-sub{font:800 46px "Arial Rounded MT Bold","Onest",system-ui,sans-serif;fill:#fff;paint-order:stroke;stroke:#2a1450;stroke-width:8;opacity:0}
+.lb-big{font:900 92px "Arial Black","Unbounded",sans-serif;fill:#ffd23f;paint-order:stroke;stroke:#7a1010;stroke-width:10;opacity:0;transform-box:fill-box;transform-origin:center}
+.lb-95{font:900 44px "Arial Black",sans-serif;fill:#fff;paint-order:stroke;stroke:#7a1010;stroke-width:4}
+.lb-num{font:900 56px "Arial Black",sans-serif;fill:#fff;paint-order:stroke;stroke:#2a1450;stroke-width:7;opacity:0;transform-box:fill-box;transform-origin:center}
+.lb-four-t{font:900 380px "Arial Black","Unbounded",sans-serif;fill:#14141c;paint-order:stroke;stroke:#fff;stroke-width:14}
+.lb-four--gold .lb-four-t{fill:#ffd23f;stroke:#1f5fd6}
+.lb-four{opacity:0;transform-box:fill-box;transform-origin:center}
+@keyframes lb-pop{0%{opacity:0;transform:scale(0) rotate(-12deg)}70%{opacity:1;transform:scale(1.15) rotate(4deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+@keyframes lb-hide{to{opacity:0}}
+
+/* шары и имя */
+.lb-balloons{opacity:0}
+.layers.is-hello:not(.is-speed) .lb-balloons,.layers.is-ura .lb-balloons{opacity:1}
+.lb-balloon{transform-box:fill-box;transform-origin:50% 100%;transform:translateY(900px)}
+.layers.is-hello:not(.is-speed) .lb-balloon,.layers.is-ura .lb-balloon{animation:lb-rise 3.2s calc(var(--i) * .25s) cubic-bezier(.2,.7,.3,1) both,lb-sway 2.4s calc(3s + var(--i) * .3s) ease-in-out infinite alternate}
+@keyframes lb-rise{from{transform:translateY(900px)}to{transform:none}}
+@keyframes lb-sway{from{transform:rotate(-4deg)}to{transform:rotate(4deg) translateY(-12px)}}
+.layers.is-hello:not(.is-speed) .lb-letter{animation:lb-pop .7s calc(1.4s + var(--i) * .22s) both,lb-hop 1s calc(2.6s + var(--i) * .12s) ease-in-out infinite alternate}
+@keyframes lb-hop{to{transform:translateY(-14px)}}
+.layers.is-hello:not(.is-speed) .lb-sub{animation:fade-in .8s 2.6s both}
+
+/* синий ёжик и кольца */
+.lb-ball{transform:translate(-320px,600px)}
+.layers.is-speed .lb-ball{animation:lb-roll 1.7s cubic-bezier(.5,.1,.7,1) forwards}
+.layers.is-again .lb-ball{animation:lb-roll2 1.3s cubic-bezier(.5,.1,.7,1) forwards}
+@keyframes lb-roll{from{transform:translate(-320px,600px)}to{transform:translate(1150px,600px)}}
+@keyframes lb-roll2{from{transform:translate(1150px,600px) scaleX(-1)}to{transform:translate(-320px,600px) scaleX(-1)}}
+.lb-spin{animation:ho-spin .35s linear infinite}
+.lb-ring{opacity:0;transform-box:fill-box;transform-origin:center}
+.layers.is-speed .lb-ring{animation:lb-collect .5s var(--d) both,ho-spin 1s linear infinite}
+.layers.is-again .lb-ring{animation:lb-collect2 .5s calc(1.25s - var(--d)) both}
+@keyframes lb-collect{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(2.2)}}
+@keyframes lb-collect2{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(2.2)}}
+.layers.is-race .lb-rings{display:none}
+.layers.is-four .lb-four{animation:lb-pop .9s both}
+
+/* гоночная машина и машинки */
+.lb-car{transform:translateX(-320px)}
+.layers.is-race .lb-car--pass{animation:lb-pass 3s cubic-bezier(.3,.6,.7,.4) forwards}
+@keyframes lb-pass{0%{transform:translateX(-320px)}45%{transform:translateX(370px)}55%{transform:translateX(430px)}100%{transform:translateX(1150px)}}
+.layers.is-park .lb-car--park{animation:lb-park 1.8s cubic-bezier(.2,.8,.3,1) forwards}
+.layers.is-park.is-race .lb-car--park{animation:lb-leave 1.6s cubic-bezier(.6,0,.8,.5) forwards}
+@keyframes lb-park{from{transform:translateX(-320px)}to{transform:translateX(400px)}}
+@keyframes lb-leave{from{transform:translateX(400px)}to{transform:translateX(1200px)}}
+.lb-car-bob{animation:hm-bob .2s ease-in-out infinite alternate}
+.lb-wheel{animation:ho-spin .5s linear infinite}
+.layers.is-race:not(.is-cars) .lb-kachow{animation:lb-pop .6s .3s both}
+.lb-parade{transform:translateX(-820px)}
+.layers.is-cars .lb-parade{animation:lb-parade 4.2s linear forwards}
+@keyframes lb-parade{from{transform:translateX(-820px)}to{transform:translateX(980px)}}
+.lb-flag{opacity:0;transform-origin:400px 220px}
+.layers.is-flag .lb-flag{animation:lb-pop .7s both,lb-wave .5s .7s ease-in-out infinite alternate}
+@keyframes lb-wave{from{transform:rotate(-6deg)}to{transform:rotate(6deg)}}
+
+/* паутина и паук */
+.lb-thread{fill:none;stroke:#fff;stroke-width:3.5;opacity:.85;stroke-dasharray:100;stroke-dashoffset:100}
+.layers.is-web .lb-thread{animation:lb-draw .9s calc(var(--i) * .12s) ease-out forwards}
+@keyframes lb-draw{to{stroke-dashoffset:0}}
+.layers.is-venom .lb-web{animation:lb-hide .8s forwards}
+.lb-spider{transform:translateY(-1200px)}
+.layers.is-drop .lb-spider{animation:lb-descend 2.6s cubic-bezier(.3,1.2,.5,1) forwards,lb-swing 1.6s 2.6s ease-in-out infinite alternate}
+@keyframes lb-descend{from{transform:translateY(-1200px)}to{transform:none}}
+@keyframes lb-swing{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}
+.lb-spider{transform-origin:400px 0}
+.lb-mask{opacity:0;transform-origin:400px 420px}
+.layers.is-mask:not(.is-venom) .lb-mask{animation:lb-pop .8s both}
+.layers.is-mask .lb-spider{animation:lb-hide .5s forwards}
+
+/* чёрная капля */
+.lb-goo{opacity:0;transform:translateY(700px)}
+.layers.is-venom:not(.is-cake) .lb-goo{animation:lb-ooze 3.4s cubic-bezier(.3,.8,.4,1) forwards,lb-wobble 1.4s 3.4s ease-in-out infinite alternate}
+@keyframes lb-ooze{0%{opacity:1;transform:translateY(700px)}100%{opacity:1;transform:none}}
+@keyframes lb-wobble{0%{opacity:1;transform:none}100%{opacity:1;transform:translateY(-10px) scaleY(1.02)}}
+.lb-goo{transform-origin:400px 900px}
+.lb-eyes{opacity:0;transform-box:fill-box;transform-origin:center}
+.layers.is-venom .lb-eyes{animation:lb-blink .5s 3.2s both}
+@keyframes lb-blink{0%{opacity:0;transform:scaleY(.05)}100%{opacity:1;transform:none}}
+.layers.is-venom.is-four .lb-goo{animation:lb-sink 1s forwards}
+@keyframes lb-sink{from{opacity:1;transform:none}to{opacity:0;transform:translateY(300px) scaleY(.4)}}
+
+/* торт */
+.lb-cake{opacity:0;transform:translateY(260px)}
+.layers.is-cake .lb-cake{animation:lb-cake 1.2s cubic-bezier(.2,.9,.3,1.2) forwards}
+@keyframes lb-cake{to{opacity:1;transform:none}}
+.lb-flame{transform-box:fill-box;transform-origin:50% 100%;animation:ho-flicker .2s linear infinite}
+.lb-smoke{opacity:0}
+.layers.is-b0 .lb-f0,.layers.is-b1 .lb-f1,.layers.is-b2 .lb-f2,.layers.is-b3 .lb-f3{animation:lb-hide .25s forwards}
+.layers.is-b0 .lb-s0,.layers.is-b1 .lb-s1,.layers.is-b2 .lb-s2,.layers.is-b3 .lb-s3{animation:lb-smoke 1.4s forwards}
+@keyframes lb-smoke{0%{opacity:.8;transform:none}100%{opacity:0;transform:translate(10px,-70px) scale(2.4)}}
+.layers.is-b0 .lb-n0,.layers.is-b1 .lb-n1,.layers.is-b2 .lb-n2,.layers.is-b3 .lb-n3{animation:lb-pop .5s both}
+.layers.is-ura .lb-ura{animation:lb-pop .8s both,lb-hop .9s .8s ease-in-out infinite alternate}
+.layers.is-ura .lb-num{animation:lb-hide .4s forwards}
+/* ключевые кадры, которых нет в общем ar.css */
+@keyframes ho-spin{to{transform:rotate(360deg)}}
+@keyframes ho-flicker{0%,100%{transform:scale(1,1);opacity:1}40%{transform:scale(.88,1.16);opacity:.85}70%{transform:scale(1.06,.94);opacity:.95}}
+@keyframes hm-bob{to{transform:translateY(-6px)}}
+.layers.is-cake .lb-goo{opacity:1;transform:none;animation:lb-sink 1s forwards}

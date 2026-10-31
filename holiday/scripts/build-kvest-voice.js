@@ -63,6 +63,10 @@ for (const st of ALT_STOPS) put(`alt-${st.id}`, st.say);
 const { MCK_STOPS } = require(path.join(ROOT, 'js', 'mck.js'));
 for (const st of MCK_STOPS) put(`mck-${st.id}`, st.say);
 
+// поздравление Леона с днём рождения (leon/index.html)
+const LEON = require(path.join(ROOT, '..', 'leon', 'js', 'scenes.js')).SCENES;
+for (const sc of LEON) put(`leon-${sc.id}`, sc.say);
+
 // аудиоэкскурсия по подлодке Б-396 (holiday/b396.html)
 const { B396_STOPS } = require(path.join(ROOT, 'js', 'b396.js'));
 for (const st of B396_STOPS) put(`b396-${st.id}`, st.say);

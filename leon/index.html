@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#2a1450">
+<title>Леону 4 года!</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Леон, 4">
+<link rel="icon" href="../icons/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../css/ar.css">
+<link rel="stylesheet" href="css/leon.css">
+<style>
+  body{background:#1b0f36;color:#fff}
+  .party{min-height:100vh;padding:max(28px,env(safe-area-inset-top)) 16px 40px;box-sizing:border-box;
+    background:radial-gradient(120% 60% at 50% 0%,#5b2bb8 0%,#2a1450 55%,#1b0f36 100%);text-align:center}
+  .party__in{max-width:560px;margin:0 auto}
+  .party__kicker{font-size:13px;letter-spacing:.18em;text-transform:uppercase;opacity:.75}
+  .party h1{font:900 clamp(40px,12vw,68px)/1.02 "Arial Black",system-ui,sans-serif;margin:10px 0 6px;letter-spacing:.02em}
+  .party h1 span:nth-child(1){color:#ff595e}.party h1 span:nth-child(2){color:#ffca3a}
+  .party h1 span:nth-child(3){color:#8ac926}.party h1 span:nth-child(4){color:#4cc9f0}
+  .party__age{font:900 22px "Arial Black",system-ui,sans-serif;color:#ffd23f;margin:0 0 18px}
+  .party p{margin:0 auto 18px;max-width:42ch;opacity:.88}
+  .go{display:block;width:100%;border:0;border-radius:22px;padding:22px 16px;font:900 24px "Arial Black",system-ui,sans-serif;
+    color:#2a1450;background:linear-gradient(180deg,#ffe066,#ffb703);box-shadow:0 8px 0 #c77800,0 14px 30px rgba(0,0,0,.35);cursor:pointer}
+  .go small{display:block;font:600 14px system-ui,sans-serif;margin-top:4px;opacity:.75}
+  .go:active{transform:translateY(4px);box-shadow:0 4px 0 #c77800}
+  .heroes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:26px 0 18px}
+  .hero-btn{border:0;border-radius:18px;padding:16px 10px;color:#fff;font:800 16px system-ui,sans-serif;cursor:pointer;min-height:112px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;box-shadow:0 6px 0 rgba(0,0,0,.28)}
+  .hero-btn b{font-size:40px;line-height:1}
+  .hero-btn:active{transform:translateY(3px)}
+  .hb-sonik{background:linear-gradient(160deg,#2f7bff,#1747b8)}
+  .hb-makvin{background:linear-gradient(160deg,#ff4d4d,#b3121a)}
+  .hb-pauk{background:linear-gradient(160deg,#e5383b 0 50%,#1f4fbf 50%)}
+  .hb-venom{background:linear-gradient(160deg,#2b2b3a,#05050a)}
+  .tips{text-align:left;background:rgba(255,255,255,.08);border-radius:16px;padding:12px 16px;font-size:14.5px;line-height:1.5}
+  .tips li{margin:4px 0}
+  .tips ul{margin:0;padding-left:18px}
+</style>
+</head>
+<body>
+
+<main class="party">
+  <div class="party__in">
+    <div class="party__kicker">Волшебная камера</div>
+    <h1><span>Л</span><span>Е</span><span>О</span><span>Н</span></h1>
+    <div class="party__age">С днём рождения! Тебе 4 года!</div>
+    <p>Нажми большую кнопку и наведи телефон на Леона. Кнопка 🔄 в углу переворачивает камеру, и тогда Леон увидит себя среди героев.</p>
+    <button class="go" data-go="prazdnik">🎂 Большое поздравление<small>все герои и торт со свечами · 35 секунд</small></button>
+    <div class="heroes">
+      <button class="hero-btn hb-sonik" data-go="sonik"><b>🦔</b>Соник</button>
+      <button class="hero-btn hb-makvin" data-go="makvin"><b>🏎️</b>Молния Маккуин</button>
+      <button class="hero-btn hb-pauk" data-go="pauk"><b>🕸️</b>Человек-паук</button>
+      <button class="hero-btn hb-venom" data-go="venom"><b>👀</b>Веном</button>
+    </div>
+    <div class="tips"><ul>
+      <li>Звук включён: голос поздравит Леона по имени.</li>
+      <li>Для видео на память включите запись экрана и нажмите «Ещё раз».</li>
+      <li id="full-hint" hidden></li>
+    </ul></div>
+  </div>
+</main>
+
+<!-- сцена -->
+<div class="stage" id="stage" hidden>
+  <video class="stage__cam" id="cam" playsinline muted autoplay></video>
+  <div class="stage__tint" id="tint"></div>
+  <canvas class="stage__fx" id="fx-back"></canvas>
+  <div class="stage__layers layers" id="layers"></div>
+  <canvas class="stage__fx stage__fx--front" id="fx-front"></canvas>
+  <div class="stage__flash" id="stage-flash"></div>
+  <div class="stage__vignette"></div>
+  <div class="stage__hud">
+    <div class="stage__top">
+      <div class="stage__name" id="stage-title"></div>
+      <button class="round" id="stage-flip" aria-label="Перевернуть камеру">🔄</button>
+      <button class="round" id="stage-full" aria-label="Во весь экран" hidden>⛶</button>
+      <button class="round" id="stage-close" aria-label="Закрыть">✕</button>
+    </div>
+    <div class="stage__aim" id="stage-aim"></div>
+    <div class="stage__caption" id="stage-caption"></div>
+    <div class="stage__bottom">
+      <button class="pill" id="stage-replay">↻ Ещё раз</button>
+      <button class="round round--sound" id="stage-sound" aria-label="Звук">🔊</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* Голос: озвучка Silero лежит рядом с дорожками каникул (leon-<сцена>.mp3) */
+const Voice = (() => {
+  const DIR = '../holiday/audio/kvest/';
+  let tracks = null, loading = null;
+  const audio = new Audio();
+  function load() {
+    if (tracks) return Promise.resolve();
+    return loading = loading || fetch(DIR + 'manifest.json', { cache: 'no-cache' })
+      .then(r => r.ok ? r.json() : { tracks: [] })
+      .then(m => { tracks = new Set(m.tracks || []); })
+      .catch(() => { tracks = new Set(); });
+  }
+  const file = id => 'leon-' + id.replace(/^scene-/, '');
+  return {
+    load,
+    has: id => !!tracks && tracks.has(file(id)),
+    play(id) { audio.src = DIR + file(id) + '.mp3'; audio.play().catch(() => {}); },
+    stop() { audio.pause(); }
+  };
+})();
+</script>
+<script src="../js/ar-particles.js"></script>
+<script src="js/scenes.js"></script>
+<script src="../js/ar-engine.js"></script>
+<script>
+(() => {
+  Stage.init();
+  document.addEventListener('click', e => {
+    const go = e.target.closest('[data-go]');
+    if (go) Stage.open(go.dataset.go);
+  });
+  const hint = document.getElementById('full-hint');
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if (ios && !Stage.fullscreen.can && !Stage.standalone()) {
+    hint.innerHTML = 'На iPhone без рамки Safari: <b>Поделиться → «На экран Домой»</b> и открыть с иконки.';
+    hint.hidden = false;
+  }
+  const openFromHash = () => {
+    const id = location.hash.replace('#', '');
+    if (id && SCENES.some(s => s.id === id)) Stage.open(id);
+  };
+  window.addEventListener('hashchange', openFromHash);
+  openFromHash();
+})();
+</script>
+</body>
+</html>

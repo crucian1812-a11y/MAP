@@ -121,16 +121,19 @@ const Stage = (() => {
   })();
 
   /* ---------------- камера ---------------- */
+  // какая камера: страница может попросить фронтальную (window.AR_FACING = 'user')
+  let facing = (typeof window !== 'undefined' && window.AR_FACING) || 'environment';
   async function startCamera() {
     stopCamera();              // если сцену переключили на лету, прежний поток гасим
     try {
       stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } },
+        video: { facingMode: { ideal: facing }, width: { ideal: 1920 }, height: { ideal: 1080 } },
         audio: false
       });
       el.cam.srcObject = stream;
       await el.cam.play().catch(() => {});
       el.stage.classList.remove('no-cam');
+      el.stage.classList.toggle('is-selfie', facing === 'user');
       return true;
     } catch (e) {
       el.stage.classList.add('no-cam');
@@ -338,6 +341,13 @@ const Stage = (() => {
       document.addEventListener('webkitfullscreenchange', paintFull);
       paintFull();
     }
+
+    // кнопка «перевернуть камеру», если она есть на странице
+    const flip = document.getElementById('stage-flip');
+    if (flip) flip.addEventListener('click', () => {
+      facing = facing === 'user' ? 'environment' : 'user';
+      startCamera();
+    });
 
     const sb = document.getElementById('stage-sound');
     const paint = () => { sb.textContent = soundOn ? '🔊' : '🔇'; sb.classList.toggle('is-off', !soundOn); };

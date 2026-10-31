@@ -14,6 +14,7 @@ on:
       - holiday/js/gtg.js
       - holiday/js/altufyevo.js
       - holiday/js/mck.js
+      - leon/js/scenes.js
       - holiday/voice/**
       - holiday/scripts/build-kvest-*.js
       - .github/workflows/kvest-voice.yml
