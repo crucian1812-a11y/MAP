@@ -362,5 +362,5 @@ const Stage = (() => {
     window.addEventListener('keydown', e => { if (e.key === 'Escape' && !el.stage.hidden) close(); });
   }
 
-  return { init, open, close, isOpen: () => !el.stage.hidden, fullscreen: Full, standalone };
+  return { init, open, close, isOpen: () => !el.stage.hidden, fullscreen: Full, standalone, sound: name => Sound.play(name) };
 })();
